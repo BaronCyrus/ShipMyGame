@@ -1,0 +1,160 @@
+启用测试广告 | Unity | Google for Developers
+跳至主要内容
+AdMob
+/
+English
+Deutsch
+Español
+Español – América Latina
+Français
+Indonesia
+Italiano
+Polski
+Português – Brasil
+Tiếng Việt
+Türkçe
+Русский
+עברית
+العربيّة
+فارسی
+हिंदी
+বাংলা
+ภาษาไทย
+中文 – 简体
+中文 – 繁體
+日本語
+한국어
+登录
+Mobile Ads SDK Unity Plugin
+首页
+产品
+AdMob
+Mobile Ads SDK Unity Plugin
+发送反馈
+启用测试广告
+使用集合让一切井井有条
+根据您的偏好保存内容并对其进行分类。
+请选择平台：
+Android
+iOS
+Unity
+Flutter
+Android（旧版）
+本指南介绍如何在植入了广告的应用中启用测试广告。在开发过程中，务必启用测试广告，这样您就可以放心点击，而不会向 Google 广告客户收取任何费用。如果您在非测试模式下点击过多广告，则可能会导致您的账号因为无效活动而被举报。
+获得测试广告的方法有两种：
+使用 Google 的任一示例广告单元。
+使用您自己的广告单元并启用测试设备。
+前提条件
+完成入门指南的学习。
+将 Google 移动广告 Unity 插件导入您的 Unity 应用。
+示例广告单元
+启用测试的最快方法是使用 Google 提供的测试广告单元。这些广告单元未与您的 AdMob 账号相关联，因此在使用这些广告单元时，您的账号不会产生无效流量。
+请务必注意，您应该根据平台选择使用 Google 提供的不同测试广告单元。在 iOS 设备上发出测试广告请求时，您需要使用 iOS 测试广告单元，而在 Android 设备上发出请求时，您需要使用 Android 测试广告单元。
+要点：确保在发布应用前将这些测试广告单元 ID 替换为自己的广告单元 ID。
+以下是针对 Android 和 iOS 上每种格式的示例广告单元：
+Android
+广告格式
+示例广告单元 ID
+开屏广告
+ca-app-pub-3940256099942544/9257395921
+固定尺寸的横幅广告
+ca-app-pub-3940256099942544/6300978111
+锚定自适应横幅广告
+ca-app-pub-3940256099942544/9214589741
+插页式广告
+ca-app-pub-3940256099942544/1033173712
+激励广告
+ca-app-pub-3940256099942544/5224354917
+插页式激励广告
+ca-app-pub-3940256099942544/5354046379
+原生广告
+ca-app-pub-3940256099942544/2247696110
+画中画
+ca-app-pub-3940256099942544/9657123429
+iOS
+广告格式
+示例广告单元 ID
+开屏广告
+ca-app-pub-3940256099942544/5575463023
+固定尺寸的横幅广告
+ca-app-pub-3940256099942544/2934735716
+锚定自适应横幅广告
+ca-app-pub-3940256099942544/2435281174
+插页式广告
+ca-app-pub-3940256099942544/4411468910
+激励广告
+ca-app-pub-3940256099942544/1712485313
+插页式激励广告
+ca-app-pub-3940256099942544/6978759866
+原生广告
+ca-app-pub-3940256099942544/3986624511
+画中画
+ca-app-pub-3940256099942544/8810945611
+这些广告单元会指向特定的测试广告素材。
+启用测试设备
+如果您希望使用实际投放的广告进行更严格的测试，那么您现在可以将您的设备配置为测试设备，并使用您在 AdMob 界面中自行创建的广告单元 ID。您可以在 AdMob 界面中添加测试设备，也可以使用 Google Mobile Ads Unity Plugin以程序化方式进行添加。
+请按照以下步骤操作，将您的设备添加为测试设备。
+要点：系统会自动将 Android 模拟器和 iOS 模拟器配置为测试设备。
+在 AdMob 界面中添加测试设备
+要通过简单的非编程方式添加测试设备并测试新的或现有的应用 build，请使用 AdMob 界面。点此可了解具体方法。
+要点：新的测试设备通常会在 15 分钟内开始在您的应用中投放测试广告，但最长也可能需要 24 小时。
+以编程方式添加测试设备
+如果您希望在应用开发过程中测试广告，请按照以下步骤以程序化方式注册您的测试设备。
+运行已配置 Google Mobile Ads Unity Plugin的应用，并使用上面列出的其中一个测试广告单元 ID 发出广告请求。代码清单。
+...
+private void RequestBanner()
+{
+#if UNITY_ANDROID
+string adUnitId = "ca-app-pub-3940256099942544/6300978111";
+#elif UNITY_IPHONE
+string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+#else
+string adUnitId = "unexpected_platform";
+#endif
+// Create a 320x50 banner at the top of the screen.
+bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
+// Create an empty ad request.
+AdRequest request = new AdRequest();
+// Load the banner with the request.
+bannerView.LoadAd(request);
+}
+检查控制台或 logcat 输出，查找类似以下内容的消息：
+Android
+I/Ads: Use
+RequestConfiguration.Builder
+.setTestDeviceIds(Arrays.asList("33BE2250B43518CCDA7DE426D04EE231"))
+to get test ads on this device.
+iOS
+<Google> To get test ads on this device, set:
+GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers =
+@[ @"2077ef9a63d2b398840261c8221a0c9b" ];
+将测试设备的字母数字 ID 复制到剪贴板。
+修改代码，将测试设备 ID 添加到 RequestConfiguration.TestDeviceIds 列表中。
+List<string> testDeviceIds = new List<string>();
+testDeviceIds.Add("TEST_DEVICE_ID");
+RequestConfiguration requestConfiguration = new RequestConfiguration
+{
+TestDeviceIds = testDeviceIds
+};
+RequestConfigurationSnippets.cs
+将 TEST_DEVICE_ID 替换为您自己的测试设备 ID。
+在发布应用之前，请务必移除设置这些测试设备的代码。
+将 requestConfiguration 设置为 MobileAds（全局）。
+MobileAds.SetRequestConfiguration(requestConfiguration);
+RequestConfigurationSnippets.cs
+重新运行您的应用。如果您将设备正确地添加为测试设备，则会在横幅广告、插页式广告和激励广告顶部的中间部分看到一个 Test Ad 标签：
+凡是带有 Test Ad 标签的广告，均可以放心点击。关于测试广告的任何请求、展示和点击数据均不会显示在您账号的报告中。
+参与中介的广告不会呈现 Test Ad 标签。
+现在，您的设备已注册为测试设备；通过将测试 adUnitID 替换为您自己的 adUnitID，您就可以开始接收真实程度更高的测试广告了。
+使用 Unity 编辑器进行测试
+从 5.4.0 版开始，您可以直接在 Unity 编辑器中测试广告。编辑器将添加一个 Prefab 图片，以提供与在移动设备上投放实际广告类似的体验。
+注意：由于模拟广告是 Prefab 对象，因此会显示在 Unity 编辑器的 GUI“下方”。但是，当您将其导出到移动平台后，广告就会呈现在任何游戏视图之上。
+用中介进行测试
+Google 的示例广告单元只展示 Google 广告。要测试中介配置，您必须使用“启用测试设备”的做法。
+参与中介的广告不会呈现 Test Ad 标签。所以，您要负责确保为每个中介广告联盟启用测试广告，以便这些广告联盟不会因为无效活动而举报您的账号。如需了解详情，请参阅每个广告联盟各自的中介指南。
+如果您不确定某个中介广告联盟适配器是否支持测试广告，则最安全的做法是避免在开发期间点击来自该广告联盟的广告。您可以对所有广告格式使用 MediationAdapterClassName() 方法，以此确定是哪个广告联盟投放了当前广告。
+发送反馈
+如未另行说明，那么本页面中的内容已根据知识共享署名 4.0 许可获得了许可，并且代码示例已根据 Apache 2.0 许可获得了许可。有关详情，请参阅 Google 开发者网站政策。Java 是 Oracle 和/或其关联公司的注册商标。
+最后更新时间 (UTC)：2026-10-27。
+需要向我们提供更多信息？
+[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-10-27。"],[],["To enable test ads, use Google's sample ad units, replacing them with your own before publishing. Alternatively, register your device as a test device through the AdMob UI or programmatically. Programmatic registration involves requesting ads with sample IDs, retrieving your device ID from the console, and adding it to your `RequestConfiguration.TestDeviceIds` list. Test ads will display a \"Test Ad\" label. For mediation testing, use the device registration method, noting mediated ads lack the label.\n"]]

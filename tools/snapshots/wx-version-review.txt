@@ -1,0 +1,31 @@
+# 版本审核
+## 1. 提醒
+版本审核通过后，需在[“小程序备案”](xcxba)完成后，方可发布。
+具体表现为：管局审核通过后，将下发的小程序备案号，代表你的小程序已完成备案，可以进入版本发布等流程。
+## 2. 办结时限
+正常情况：1 个自然日
+## 3. 操作流程
+### step1：版本管理-开发版本，点击”提交审核“
+![](https://res8.wxqcloud.qq.com.cn/wxdoc/1bd2f7d1-1768-4355-9ffe-81edab8e0e24.png)
+### step2：
+- 选择游戏开发对应的引擎
+- 完善用户隐私保护指引
+[小游戏落实《个人信息保护法》常见问题汇总 | 微信开放社区](https://developers.weixin.qq.com/community/minigame/doc/0004e4ca0dcba05474fc4a1b75c808)
+- 完成[适龄提示设置](slts)
+- 填写版本更新说明
+![](https://res8.wxqcloud.qq.com.cn/wxdoc/dc8337ff-f9a0-4790-845f-7044bd86fcf5.png)
+### step3：上传宣传图（非必填）
+![](https://res8.wxqcloud.qq.com.cn/wxdoc/4219b4b1-a52f-41b4-b196-9c514c72838f.png)
+### step4：
+在提交审核时，开发者信息下的苹果开发者账号为必填项（可以填写邮箱地址），苹果开发者信息非必填项，并且开发者账号和信息每次提交版本时都可以修改。
+![](https://mmgame.qpic.cn/image/48e9a11aa1be3c1ae49b915684a31bfe38d2081a4fda1e4d2a87f23b20d9fd72/0)
+### step5：提交版本审核
+![](https://res8.wxqcloud.qq.com.cn/wxdoc/2c13f0d3-c989-4fbf-9bf4-d2c514d17bee.png)
+### step6：版本审核通过后，需在[“小程序备案”](xcxba)也完成后，方可发布。
+![](https://res8.wxqcloud.qq.com.cn/wxdoc/2fc4cf0c-333f-4549-8252-317b71a87ced.png)
+## 加急流程
+如有紧急需求（BUG 修复/重大活动），可申请加急审核，加急审核需满足以下条件：
+（1）该小游戏版本属于更新版本，即：历史已有已通过的小游戏版本，首版本不可使用
+（2） 剩余可用加急次数大于 0。所有账号每季度有 2 次加急次数，每年的 1 月、4 月、7 月、10 月的 1 日刷新。过期次数不叠加。请谨慎选择申请加急
+（3） 累计注册用户 > 5000
+[小游戏加急审核申请条件及相关说明 | 微信开放社区](https://developers.weixin.qq.com/community/develop/doc/0004cc9ff6c260c81d6925add51401?highLine=%25E5%258A%25A0%25E6%2580%25A5)

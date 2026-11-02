@@ -1,0 +1,5 @@
+915d4bf 2026-10-20 Auto-publish release WXSDK.
+a09d4b2 2026-09-16 Auto-publish release WXSDK.
+d288776 2026-09-03 Auto-publish release WXSDK.
+cefa752 2026-08-27 Auto-publish release WXSDK.
+1bd510f 2026-08-25 Auto-publish release WXSDK.

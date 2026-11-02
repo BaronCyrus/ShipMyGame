@@ -1,0 +1,4 @@
+v1.8.4
+2025-02-05T13:50:14Z
+## com.google.play.review (v1.8.4)
+- Updated Play Core dependency to 1.8.6.

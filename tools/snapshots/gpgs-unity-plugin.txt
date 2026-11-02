@@ -1,0 +1,8 @@
+v2.3.0
+2026-09-29T11:01:56Z
+Version 2.3.0
+New Features:
+- Added support for immediate Game Stats APIs (`RecordEventImmediate` and `RecordEventsImmediate`).
+- Added support for `Duration` (`TimeSpan`) property in `PlayerGameEvent`.
+Minor Updates:
+- Upgraded `com.google.android.gms:play-services-games-v2` dependency to `22.1.0`.

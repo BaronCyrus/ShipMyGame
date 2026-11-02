@@ -1,0 +1,217 @@
+符合 Google Play 的目标 API 级别要求 | Other Play guides | Android Developers
+跳至主要内容
+/
+English
+Deutsch
+Español – América Latina
+Français
+Indonesia
+Italiano
+Polski
+Português – Brasil
+Tiếng Việt
+Türkçe
+Русский
+עברית
+العربيّة
+فارسی
+हिंदी
+বাংলা
+ภาษาไทย
+中文 – 简体
+中文 – 繁體
+日本語
+한국어
+Android Studio
+登录
+Google Play
+Other Play guides
+Google 会使用 AI 技术将内容翻译成您偏好的语言。AI 翻译可能包含错误。
+Android Developers
+Google Play
+Other Play guides
+符合 Google Play 的目标 API 级别要求
+使用集合让一切井井有条
+根据您的偏好保存内容并对其进行分类。
+您上传的 APK 必须符合 Google Play 的目标 API 级别要求。
+自 2026 年 8 月 31 日起：
+新应用和应用更新必须以 Android 16（API 级别 36）或更高版本为目标平台，才能提交到 Google Play；但 Wear OS 和 Android Automotive OS 应用除外，这两类应用必须以 Android 15（API 级别 35）或更高版本为目标平台；Android TV 和 Android XR 应用也除外，这两类应用必须以 Android 14（API 级别 34）或更高版本为目标平台。
+如果新用户的设备搭载的 Android OS 版本高于现有应用的目标 API 级别，则该应用必须以 Android 15（API 级别 35）或更高版本为目标平台，才能继续在此类设备上使用。以 Android 14（API 级别 34）或更低版本为目标平台的应用，包括以 Android 13（API 级别 33）或更低版本为目标平台的 Wear OS、Android TV 和 Android XR 应用，以及以 Android 12（API 级别 31）或更低版本为目标平台的 Android Automotive OS 应用，只能在所搭载 Android OS 版本不高于应用目标 API 级别的设备上使用。
+如果您需要更多时间来更新应用，可以申请延期至 2026 年 11 月 1 日。今年晚些时候，您将能够在 Play 管理中心内获取应用的延期表单。
+不受这些要求约束的例外情况包括：
+永久的专用应用，此类应用仅限特定组织内部的用户使用，且仅供内部分发。
+注意： 如果新用户使用的是搭载更高 Android 版本的设备，则将无法在相应设备上使用过时的应用。如需了解详情，请参阅 Play 管理中心帮助中的 Google Play 应用的目标 API 级别要求一文中的“应用提供情况要求”部分。
+为何要以较新的 SDK 为目标平台？
+每个新的 Android 版本都会引入一些变更，以便改进安全性和性能，并提升 Android 用户体验。其中的一些变更仅适用于通过 targetSdkVersion 清单属性（也称为目标 API 级别）明确声明支持这些变更的应用。
+通过将应用配置为以新近的 API 级别为目标平台，您可以确保用户享受到这些改进，而同时仍可让应用在较低版本的 Android 上运行。通过以新近的 API 级别为目标平台，您还可以让应用利用平台的最新功能，为用户提供愉悦的体验。此外，从 Android 10（API 级别 29）开始，如果应用的目标平台为 Android 5.1（API 级别 22）或更低版本，用户首次启动应用时会看到警告。
+本文重点介绍了有关更新目标 API 级别的重要须知，以便您满足 Google Play 的要求。请参阅以下部分中的说明，具体取决于您要迁移到的版本。
+注意： 如果您的 Gradle 文件包含清单条目，您可以按照配置 build 中的说明，确认或更改应用的 Gradle 文件中当前的 targetSdkVersion 值。或者，您也可以按照 <uses-sdk> 清单元素文档中的说明，使用清单文件中的 android:targetSdkVersion 属性。
+从 Android 12 及更高版本（API 级别 31）迁移到更高版本
+如需将应用更新为以更高版本的 Android 为目标平台，请按照相关行为变更列表操作：
+Android 13 行为变更
+Android 14 行为变更
+Android 15 行为变更
+Android 16 行为变更
+从 Android 11（API 级别 30）迁移到 Android 12（API 级别 31）
+安全与权限
+蓝牙：您必须将声明的 BLUETOOTH 和 BLUETOOTH_ADMIN 权限替换为 BLUETOOTH_SCAN、BLUETOOTH_ADVERTISE 或 BLUETOOTH_CONNECT 权限。替换后，您将不再需要针对蓝牙操作发出 LOCATION 运行时权限请求。
+位置信息：用户可以要求应用只检索大致位置信息。每当您请求 ACCESS_FINE_LOCATION 时，都必须请求 ACCESS_COARSE_LOCATION 权限。
+Intent 过滤器：如果您的应用包含使用 intent 过滤器的 activity、服务或广播接收器，您必须为这些组件明确声明 android:exported 属性。
+休眠：如果用户在一段时间内未使用应用，则相应应用可能会被置于休眠模式。在休眠模式下，应用的运行时权限和缓存会被重置，并且您无法运行作业或发出提醒。您可以查看应用的休眠状态。
+待处理 intent 的可变性：针对应用创建的每个 PendingIntent 对象，您必须为其指定可变性。
+用户体验
+自定义通知：包含自定义内容视图的通知将不再使用完整的通知区域；相反，系统会应用标准模板。此模板可确保自定义通知在所有状态下都与其他通知的装饰相同。此行为与 Notification.DecoratedCustomViewStyle 的行为几乎完全相同。
+Android App Links 验证的变更：在使用 Android App Links 验证时，请确保您的 intent 过滤器包含 BROWSABLE 类别并支持 HTTPS 架构。
+性能
+前台服务启动限制：以 Android 12 或更高版本为目标平台的应用在后台运行时，将无法启动前台服务，但少数特殊情况除外。如果应用在后台运行时尝试启动前台服务，则会引发异常（少数特殊情况除外）。
+请考虑使用 WorkManager 来在您的应用在后台运行时安排和启动加急工作。如需完成用户请求的具有时限的操作，请按照精确闹钟启动前台服务。
+通知 trampoline 限制：当用户点按通知时，某些应用会启动一个应用组件来做出响应，该组件会启动用户看到并与之互动的 activity。该应用组件称为通知 trampoline。
+应用不得从用作通知 trampoline 的服务或广播接收器中启动 activity。当用户点按通知或通知中的操作按钮后，您的应用无法在服务或广播接收器内调用 startActivity()。
+查看会影响以 Android 12（API 级别 31）为目标平台的应用的完整变更列表。
+从低于 Android 11（API 级别 30）的版本迁移
+请选择您要迁出数据的 Android 版本：
+迁移到 Android 5（API 级别 21）
+请查看下列每个版本对应的“行为变更”页面，以确保您的应用已将这些版本中引入的变更纳入考量：
+Android 5.0（API 级别 21）。
+Android 4.4（API 级别 19）。
+Android 4.1.x（API 级别 16）。
+如要继续，请按照下一部分中的说明操作。
+迁移到 Android 6（API 级别 23）
+以下注意事项适用于以 Android 6.0 及更高版本为目标平台的应用：
+运行时权限
+危险权限只能在运行时授予。您的界面操作流程必须提供授予这些权限的直观功能。
+确保您的应用尽可能做好准备，以应对权限请求被拒的情况。例如，如果用户拒绝应用发出的访问设备 GPS 的请求，您的应用应该能够以其他方式继续运行。
+如需查看 Android 6.0（API 级别 23）中引入的变更的详尽列表，请参阅相应平台版本的行为变更页面。
+如要继续，请按照下一部分中的说明操作。
+迁移到 Android 7（API 级别 24）
+以下注意事项适用于以 Android 7.0 及更高版本为目标平台的应用：
+低电耗模式和应用待机模式
+请按照针对低电耗模式和应用待机模式进行优化一文中的说明来设计您的应用行为；这篇文章同时也说明了在多个平台版本中引入的增量变更。
+当设备处于低电耗模式和应用待机模式时，系统的行为如下：
+限制网络访问权限
+延迟提醒、同步和作业
+限制 GPS 和 WLAN 扫描
+限制一般优先级的 Firebase Cloud Messaging 消息
+权限更改
+系统会限制访问应用的私有目录。
+在您的应用之外显示 file:// URI 会触发 FileUriExposedException。如果您需要将文件共享到自己的应用之外，请实现 FileProvider。
+系统禁止链接到非 NDK 库。
+如需查看 Android 7.0（API 级别 24）中引入的变更的详尽列表，请参阅相应平台版本的行为变更页面。
+如要继续，请按照下一部分中的说明操作。
+迁移到 Android 8（API 级别 26）
+以下注意事项适用于以 Android 8.0 及更高版本为目标平台的应用：
+后台执行限制
+系统会限制不在前台运行的应用获取服务。
+现在，如果应用在 startService() 被禁止时尝试调用它，startService() 会抛出异常。
+如需启动前台服务，应用必须使用 startForeground() 和 startForegroundService()。
+仔细查看对 JobScheduler API 所做的变更；这些变更记录在 Android 8.0（API 级别 26）“行为变更”页面中。
+Firebase Cloud Messaging 要求使用 Google Play 服务 SDK 的 10.2.1 版或更高版本。
+使用 Firebase Cloud Messaging 时，消息的传递会受到后台执行限制的约束。如果收到消息后需要执行后台工作（如执行后台数据同步），您的应用应使用 Firebase Job Dispatcher 或 JobIntentService 调度作业。如需了解详情，请参阅 Firebase Cloud Messaging 文档。
+隐式广播
+隐式广播的使用会受到限制。如需了解如何处理后台事件，请参阅 JobScheduler API 的文档。
+对于在后台访问位置信息的限制
+在后台运行的应用对位置数据的访问权限会受到限制。
+在有 Google Play 服务的设备上，请使用一体化位置信息提供程序定期获取位置信息更新。
+通知渠道
+您应该为每个渠道定义通知中断属性。
+您必须为渠道分配通知，才会显示通知。
+这个平台版本支持 NotificationCompat.Builder。
+隐私权
+为每个应用签名密钥指定 ANDROID_ID。
+如需查看 Android 8.0（API 级别 26）所推出的变更的详尽列表，请参阅相应平台版本的行为变更页面。
+从 Android 8 (API 26) 迁移到 Android 9 (API 28)
+电源管理
+应用待机分桶会根据应用互动度施加新的后台限制，例如延迟作业、警报和高优先级消息配额
+省电模式改进增加了对处于应用待机模式的应用的限制
+前台服务权限
+需要请求常规权限 FOREGROUND_SERVICE（不是运行时权限）
+隐私权相关变更
+限制了在后台对传感器的访问权限
+限制了对通话记录的访问权限（现在位于 CALL_LOG 权限组中）
+限制了对电话号码的访问权限（需要 READ_CALL_LOG 权限）
+限制了对 WLAN 信息的访问权限
+如需查看 Android 9.0（API 级别 28）所推出的变更的详尽列表，请参阅行为变更。
+从 Android 9（API 级别 28）迁移到 Android 10（API 级别 29）
+包含全屏 intent 的通知
+需要请求常规权限 USE_FULL_SCREEN_INTENT（不是运行时权限）
+支持可折叠设备和大屏幕设备
+现在，可以有多个 Activity 同时处于“已恢复”状态，但实际只有一个 Activity 拥有焦点。
+此更改会影响 onResume() 和 onPause() 的行为。
+新增了生命周期概念“在最顶层处于已恢复状态”，可通过订阅 onTopResumedActivityChanged() 进行检测。
+只有一个 Activity 可以“在最顶层处于已恢复状态”。
+当 resizeableActivity 设为 false 时，应用可以另外指定 minAspectRatio，以便在宽高比较小的屏幕上自动为应用添加黑边。
+隐私权相关变更
+分区存储
+外部存储空间访问权限仅限于访问应用专属目录，以及该应用所创建的特定类型的媒体文件。
+限制了应用在后台运行时对位置信息的访问权限，需要获得 ACCESS_BACKGROUND_LOCATION 权限后才能访问。
+限制了对不可重置的标识符（例如 IMEI 和序列号）的访问权限。
+限制了对身体活动信息（例如用户的步数）的访问权限，需要获得 ACTIVITY_RECOGNITION 权限后才能访问。
+限制了对某些电话、蓝牙和 WLAN API 的访问权限，需要获得 ACCESS_FINE_LOCATION 权限后才能访问。
+限制了对 WLAN 设置的访问权限
+应用无法再直接启用或停用 WLAN，需要使用设置面板来进行该设置。
+限制了发起 Wi-Fi 网络连接的操作，要求使用 WifiNetworkSpecifier 或 WifiNetworkSuggestion 来建立连接。
+从 Android 10（API 级别 29）迁移到 Android 11（API 级别 30）
+隐私权
+强制执行分区存储：应用应使用分区存储模式，将应用专有的文件、媒体文件以及其他类型的文件保存到其专属的位置，并通过这些位置访问这些文件。
+自动重置权限：如果用户几个月未与应用互动，系统会自动重置应用的敏感权限。
+此设置不会影响大多数应用。如果您的应用主要在后台运行，无需用户与之互动，您可以考虑请求用户停用自动重置功能。
+后台位置信息访问权限：应用必须针对前台位置信息和后台位置信息分开请求获取权限。
+用户只能在应用设置中授予后台位置信息权限，而不是通过运行时权限对话框授予该权限。
+软件包可见性：当应用查询设备上已安装式应用和服务的列表时，系统会过滤返回的列表。
+如果您使用文字转语音或 语音识别服务，则需在清单文件中为这些服务添加查询元素。
+安全
+压缩的 `resource.arsc` 文件不再受支持
+现在需要使用 APK 签名方案 v2。
+为实现向后兼容性，开发者还应继续使用 APK 签名方案 v1 签名。
+限制非 SDK 接口。对于以目标 API 级别 30 为目标的应用，建议不要使用非 SDK 接口，因为其中一些接口现已被屏蔽。如需查看已屏蔽的非 SDK 接口的完整列表，请参阅目前在 Android 11 中被屏蔽的非 SDK 接口。
+如需查看 Android 11（API 级别 30）所推出的变更的详尽列表，请参阅行为变更页面。
+按照上一部分中的说明继续更新到 API 31。
+对应用进行现代化改造
+更新应用的目标 API 级别时，不妨考虑采用最新的平台功能翻新应用，为用户提供愉悦的体验。
+考虑使用 Beta 版 CameraX 充分发挥相机功能。
+使用 Jetpack 组件可以帮助您遵循最佳做法、省去编写样板代码的工作并简化复杂任务，以便集中精力编写重要的代码。
+使用 Kotlin，通过更少的代码更快地编写出更优秀的应用。
+确保您遵循隐私保护要求和最佳做法。
+为您的应用添加深色主题支持。
+为您的应用添加手势导航支持。
+将您的应用从 Google Cloud Messaging (GCM) 迁移至最新版 Firebase Cloud Messaging。
+利用高级窗口管理。
+支持更大的宽高比（大于 16:9），以便利用硬件方面的最新发展成果。请确保您的应用可调整大小以填充可用的屏幕空间。只在万不得已时声明最大宽高比。如需详细了解最大宽高比，请参阅声明受限屏幕支持。
+添加多窗口模式支持，以帮助应用提高工作效率以及管理多个显示器。
+如果出色的最小化应用体验能够提升用户体验，则添加对画中画功能的支持。
+针对配备刘海屏的设备进行优化。
+请勿假定状态栏高度。而应使用 WindowInsets 和 View.OnApplyWindowInsetsListener。如需了解详情，请观看 droidcon NYC 2017 视频，其中有相关说明。
+不要假定应用会占据整个窗口，而应使用 View.getLocationInWindow() 来确认它的位置，切勿使用 View.getLocationOnScreen()。
+* 处理 MotionEvent 时，请使用 MotionEvent.getX() 和 MotionEvent.getY()（而非 MotionEvent.getRawX() 和 MotionEvent.getRawY()）。
+检查及更新您的 SDK 和库
+请确保您的第三方 SDK 依赖项支持 API 31：部分 SDK 提供方会在清单中发布这项信息；而对于其他 SDK 提供方，则需要再进行调查。如果您使用的 SDK 不支持 API 31，请与 SDK 提供方合作，优先解决该问题。
+另请注意，您的应用或游戏的 targetSdkVersion 可能会限制对私有 Android 平台库的访问；如需了解详情，请参阅 NDK 应用链接至平台库。
+您还应确认正在使用的 Android 支持库版本中存在哪些限制。与以往一样，您必须确保 Android 支持库的主要版本与您的应用的 compileSdkVersion 兼容。
+我们建议您选择不高于支持库主要版本的 targetSdkVersion。您最好更新至最新的兼容支持库，以便利用最新的兼容性功能和问题修复程序。
+测试应用
+适当更新应用的 API 级别和功能后，您应测试部分核心用例。下面仅列举部分建议，旨在引导您进行测试。我们建议您针对以下方面进行测试：
+您的应用已编译为 API 29，且没有出现错误或警告。
+您的应用对用户拒绝权限请求的情况已有应对策略，且会提示用户授予权限。为此，请执行以下操作：
+转到应用的“应用信息”屏幕，然后停用所有权限。
+打开应用，确保不会出现崩溃问题。
+执行核心用例测试，并确保系统会再次提示用户授予所需权限。
+低电耗模式可呈现预期效果，且不会出现错误。
+使用 adb，让测试设备在您的应用正在运行时进入低电耗模式。
+测试所有会触发 Firebase 云消息传递消息的用例。
+测试所有使用闹钟或作业的用例。
+消除后台服务的所有依赖项。
+将您的应用设为应用待机模式
+测试所有会触发 Firebase 云消息传递消息的用例。
+测试所有使用闹钟的用例。
+处理拍摄的新照片 / 视频
+确认您的应用能正确处理受限的
+ACTION_NEW_PICTURE 和 ACTION_NEW_VIDEO 广播（即移动至 JobScheduler 作业）。
+确保所有依赖于此类事件的重大用例都能正常运行。
+处理将文件共享给其他应用的操作
+- 测试所有将文件数据共享给任何其他应用（甚至是同一开发者推出的其他应用）的用例
+测试内容是否在其他应用中可见而不会触发崩溃。
+更多信息
+在 Google Play 管理中心内选择接收电子邮件，以便接收我们向您发送的 Android 和 Google Play 重要更新及公告，包括每月的合作伙伴简报。
+本页面上的内容和代码示例受内容许可部分所述许可的限制。Java 和 OpenJDK 是 Oracle 和/或其关联公司的注册商标。
+最后更新时间 (UTC)：2026-10-17。
+[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-10-17。"],[],[]]

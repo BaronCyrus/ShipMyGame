@@ -1,0 +1,80 @@
+Android requirements and compatibility • Introducing Android • 6000.0 • Unity Editor • Unity Docs
+Android requirements and compatibility
+Lists requirements for Android development in Unity and Unity feature compatibility on Android devices.
+Read time 5 minutes
+Last updated 3 days ago
+Before you begin to develop an Android application in Unity, check Unity’s requirements and compatibility information for Android to make sure you’re aware of any limitations for developing a Unity application for this platform.
+Android support
+Unity supports Android 6.0 (API level 23) and above. For more information, refer to AndroidSdkVersions.
+You can now target newer Android API levels in the following Unity versions:
+Unity 6000.0.18f1 and later versions support API level 35
+Unity 6000.0.46f1 and later versions support API level 36
+Graphics API support
+Android devices support Vulkan and OpenGL ES. This section contains information about the graphics APIs Unity supports for Android.
+Graphics API
+Support
+VulkanYes
+OpenGL ES 1.0No
+OpenGL ES 1.1No
+OpenGL ES 2.0No
+OpenGL ES 3.0Yes
+OpenGL ES 3.1Yes
+OpenGL ES 3.2Yes
+Render pipeline compatibility
+Not every render pipeline is compatible with Android due to hardware and graphics API limitations.
+Feature
+Built-in Render Pipeline
+Universal Render Pipeline
+High Definition Render Pipeline
+Custom Scriptable Render Pipeline
+AndroidYesYesNoYes
+Manifest element attributes
+This section contains compatibility information on Android App Manifest element attributes.
+For the <Activity> element, Unity only supports the
+singleTask
+launchMode.
+Emulator compatibility
+Unity doesn't support Android emulators. To test your application, you can:
+Test on an Android device.
+If you only need to test mobile input for your application, use Unity Remote.
+If you only need to test the appearance of an Android device, use the Device Simulator.
+Texture compression
+The standard texture compression formats on Android are Ericsson Texture Compression (ETC) and Adaptable Scalable Texture Compression (ASTC). To target the widest range of Android devices, use one of these texture compression formats. Unity's default texture compression format is ASTC. If an Android device doesn't support the texture compression format you use for a texture, Unity decompresses the texture at runtime. This increases memory usage and decreases rendering speed.
+A subset of Android devices support the DXT and PVRTC texture compression formats. These formats support textures with an alpha channel as well as high compression rates or high image quality. For digital distribution services that filter content based on texture compression format, it is best practice to create separate builds of your application for each texture compression format.
+There are two ways to change the default texture compression format for your application:
+In Android Player Settings with the Texture compression formats setting. For more information, refer to texture compression targeting.
+In Android build settings with the
+Texture Compression
+?
+setting. The default value for this is Use Player Settings.
+The value you set in build settings has priority over the one you set in Player Settings. Use it to change the texture compression format for a particular build.
+You can also customize the texture compression format for individual textures. The value you set for an individual texture overrides the default texture compression format value. For information on how to change the texture format of individual textures, see Texture Importer.
+Playing video files
+This section provides additional information for playing video files on Android:
+To play video files on Android, use the Video Player component. If your application tries to play a video file that the device doesn't support, Unity doesn't play the video.
+You can use any resolution or number of audio channels so long as the target device supports them. Note: Not all devices support resolutions greater than 640 × 360.
+Unity supports playback from uncompressed asset bundles. For Android Pie and above, Unity supports playback from compressed asset bundles.
+Support for native webM/VP8 transparency might vary with device and Android version. To ensure transparency works on any Android device, you must enable transcoding during the import process and enable Keep Alpha. This ensures Unity uses its internal transparency representation, which is fully supported across all Android devices.
+In Android versions prior to
+6.0.1
+, videos with transparency that have a higher resolution than the device support render pixels outside the supported resolution as white.
+Unity reports format compatibility issues in the
+adb logcat
+output and prefixes them with
+AndroidVideoMedia
+. This file might display other device-specific error messages near the video format issues Unity reports. These device-specific errors aren't visible to Unity and often explain what the compatibility issue is.
+16 KB memory page size support
+Unity supports devices with 16 KB memory page sizes, a feature introduced in Android 15. For more information about the feature, refer to the Android documentation on Support 16 KB page sizes.
+Unity applications built for devices with 4 KB memory page size might not work on devices with 16 KB memory page size. To ensure your application is compatible with the devices that use 16 KB memory page size, consider the following key points:
+Update Unity to 6000.0.38f1 or later version. Update the native plug-ins, rebuild, and resubmit your application to Google Play. The same application executable will be able to support devices with both 4 KB and 16 KB memory page sizes. For more information, refer to Android documentation on Build your app with support for 16 KB devices.
+If your project includes packages that contain native libraries, such as Burst, update them to their most recent patch versions compatible with your current Editor version.
+If your project contains a plug-in with a
+.so
+file that's aligned to 4 KB instead of 16 KB, the Unity Editor displays a warning during the build process.
+If your application uses third-party plug-ins or SDKs that link to native libraries, contact the plug-in creators to confirm that their native libraries are compatible with 16 KB page sizes. Update the relevant SDKs and resubmit your application.
+For guidelines on testing your application on devices with 16 KB memory page sizes, refer to the Android documentation on Enable 16 KB mode on a device using developer options.
+Report a problem with this page
+Feedback
+Back to top
+​
+​

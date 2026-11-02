@@ -1,0 +1,328 @@
+# TapTap Agents
+> 面向 AI 编程助手（Claude Code / Codex / Cursor / Cindy / Workbuddy 等）的 TapTap 接入说明。
+> 本文件为纯文本，可直接被 agent 读取；人类可读版本见 https://developer.taptap.cn/agents
+> 最后更新：2026-10-16
+## 这份文件怎么用
+你是一个 AI 助手，正在帮用户做一款游戏并发布到 TapTap。
+本文件和网页版 `/agents` 共用同一套骨架，章节一一对应。人类看网页知道「会发生什么」，
+你读本文件知道「执行什么」。当用户说「看一下 developer.taptap.cn/agents」，指的就是同一份内容。
+执行前先确认自己处在本文件的哪一段，不要跳步。每一段末尾有「确认点」，那是可以往下走的信号。
+## 0. 先判断用户处在哪个阶段
+| 用户状态 | 你该做的 |
+| --- | --- |
+| 只有一个想法 | 跳到 §2 怎么开始 |
+| 已经有一版能玩的游戏 | 先确认形态，再跳到 §4 接入平台能力（可选） |
+| 游戏做完了，要发布 | 跳到 §5 怎么上架 |
+| 已经上线 | 跳到 §6 上架之后 |
+判断不了时，问用户一句话：「现在游戏能打开、能玩一局了吗？」按回答分流。
+---
+## 1. 开工前的一次性准备
+### 先确认运行环境是否支持 CLI
+动手前先验证，不要假设环境可用：
+```bash
+taptap-cli --version
+```
+能打印版本号说明可用。以下情况会拦住安装，不要反复重试：
+- 公司内网限制 npm 源
+- 受限设备（无终端权限、无法全局安装）
+- 部分在线 IDE / 云端容器
+**装不上就改用本地 Agent。** 这种情况下不要硬走 CLI，改为让用户把他的本地 AI 助手
+（Claude Code / Codex / Cursor 等）读本文件，由它按同一套流程带用户做。
+CLI 只是执行手段之一，不是前置条件——本文档的流程对两种方式都成立。
+### 安装（环境确认可用后再执行）
+装一次 CLI 和 Skills，之后你可以直接调用 TapTap 的能力。
+```bash
+npm i -g @taptap/cli --registry=https://registry.npmjs.org/
+taptap-cli auth login
+npx skills add taptap/cli
+```
+装完后先读能力清单，再决定怎么做：
+```bash
+taptap-cli skills list
+taptap-cli skills read taptap-cli
+```
+**本文件描述的是一份稳定骨架，不是能力清单。** 具体支持哪些命令，以 `taptap-cli skills list`
+的实际输出为准。本文件与它的输出冲突时，以 `skills list` 为准。
+---
+## 2. 怎么开始
+### 目标
+把用户的想法变成一版**能在本地打开、能玩通一局**的游戏。这一阶段不碰上架、不碰 SDK。
+### 执行
+**不要限定用户的开始方式。** 用户可以从一个想法、一个热梗、一段参考视频、
+一个已有的半成品开始，也可以只说"我想做个游戏"。你的任务是把它收敛成可执行的第一版。
+**但你必须先追问，再动手写代码。** 至少在下面几件事上问到明确答案，缺哪件问哪件：
+1. 玩法：玩家在做什么
+2. 目标玩家：谁会玩、在什么场景下玩
+3. 第一版范围：只做哪个核心循环
+4. 运行形态：网页 / PC / Android / TapTap 制造
+5. 胜负条件：什么时候算赢、什么时候算输，一局多久
+6. 操作方式：键盘 / 鼠标 / 触屏，用几个键
+7. 第一版明确不做什么：把范围钉死
+用户说不清时，给两三个具体选项让他挑，不要让他从零描述。
+不要跳过追问直接开工——第一版的方向错了，后面每一步都要返工。
+### 技术选型建议
+- 目标是快速验证玩法时，用纯 HTML + JS 单文件，不用构建工具，双击就能打开
+- 目标是上架 TapTap 制造或 H5 时，按对应形态的官方模板起步
+- 不要在第一版引入引擎之外的依赖（后端、数据库、账号系统）
+### 确认点：什么叫「能玩通」
+**自测是这一段最关键的一步。** 你自己跑通不代表用户能玩，必须让用户在真机上自己试。
+四条都满足才算过，不满足就继续做这一版，不要往下走：
+- 打开就能玩，不需要注册，不需要先读说明
+- 有完整循环：开始 → 玩 → 结束 → 能再来一局
+- 白屏、卡死、按钮无响应这类问题在真机上不出现
+- 用户自己连玩三局，中途没有想关掉
+用户说「差不多能玩了」时，逐条对照上面四条确认，不要凭印象往下走。
+---
+## 3. 开发建议
+用 AI 做游戏，卡住的地方通常不在写代码，而在范围失控和技术栈选错。
+### 第一步：先定死技术栈和产物
+这是本段最重要的一条。动手写代码前，先和用户把这两件事写进项目说明：
+| 要定的 | 取值示例 |
+| --- | --- |
+| 技术栈 | 纯 H5 / Unity / Cocos / Godot / TapTap 制造 |
+| 最终产物 | APK 包 / PC 包 / H5 站点 / 制造版本 |
+定下来之后，后续每一次改动都对着它走。**不要中途漂移。**
+### 第二步：按技术栈选方案，不同方案不能混用
+| 用户打算怎么做 | 对应方案 | 产物形态 |
+| --- | --- | --- |
+| 在 TapTap 制造里做 | 用制造本地插件开发 | 制造版本 |
+| 用 Unity / Cocos / Godot 等引擎 | 按引擎的开发流程做 | APK 或 PC 包 |
+| 直接写网页 | 纯 H5 开发 | H5 站点（部署在平台域名下运行） |
+**禁止混淆**：引擎方案和 H5 方案的 API、构建方式、调试手段都不一样。
+- 每次动手前先确认当前需求属于哪一套，再决定读哪份文档
+- 如果你发现自己在引用另一套方案的做法（例如给 Unity 项目找 H5 的接口），停下来纠正
+- 用户说「我看别人是这么写的」时，先确认对方用的是不是同一套技术栈
+### 做
+- 第一版只留一个玩法、一个场景、一个循环。用户多提的想法先记下来，放到第二版
+- 先能玩通，再谈好看。美术风格留给第二版
+- 每次改动之前，先说明准备动哪些文件，等用户确认
+- 每完成一小段就交给用户试玩一次。「改好了」和「真的能玩」是两件事
+- 一次处理一个需求。用户一次提五个时，先确认顺序，逐个做
+### 先别做
+用户没有明确要求时，不要主动引入这些：
+- 账号系统、排行榜、云存档 —— 等有人玩了再回来接，那时才知道该接哪个
+- 多语言、多平台打包 —— 跑通一个平台就够了
+- 包体和性能优化 —— 卡顿到影响玩法再处理
+- 自研联网和支付 —— 平台有现成的能力，见 §4
+### 什么时候该回头接平台能力
+出现以下信号，主动提醒用户进入 §4：
+| 信号 | 推荐能力 |
+| --- | --- |
+| 玩家隔天不回来 | TapTap 登录 + TapDB，先定位流失在哪一步 |
+| 玩家进度会很长 | 云存档 |
+| 玩法有明确的成就节点 | 成就系统 |
+| 玩法本身有可比性 | 排行榜 |
+---
+## 4. 接入平台能力
+**这些能力不影响能不能上架。** 按需要接，一次接一个。用户没提就不要主动接。
+### 先分清游戏形态，再选文档（最容易错的一步）
+不同形态的接入方式**完全不同**，文档也不通用。接错文档是返工最常见的原因。
+| 游戏形态 | 是什么 | 该读哪份文档 |
+| --- | --- | --- |
+| Tap 小游戏 | **WebGL 跑的 Tap 小游戏，不是 H5，也不是网页游戏。** Unity / Cocos 导出版本，或微信、抖音小游戏迁移；经 TapTap 打包工具出 zip | https://developer.taptap.cn/minigameapidoc/ |
+| H5 游戏 | 以 H5 形式打包，**部署在平台域名下运行**，与 Tap 小游戏不是同一形态 | https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/mcp-setup/ |
+| APK / PC 包 | 原生客户端包体 | https://developer.taptap.cn/docs/sdk/ |
+| TapTap 制造 | 在制造里完成，不用手动打包 | 制造本地插件（入口以 TapTap 制造控制台为准） |
+**禁止交叉引用：**
+- Tap 小游戏不要拿 APK 的 SDK 文档来接入
+- H5 是另一类形态，走小游戏体系下的 MCP，不走 APK 那套 SDK
+- 制造版本用制造本地插件，不要去找 APK 的上传接口
+- 动手前先说明你准备读哪一份文档，读错档立即纠正
+### Tap 小游戏的文档索引
+- 登录管理：https://developer.taptap.cn/minigameapidoc/dev/tutorial/open-capabilities/login-management/
+- 云存档：https://developer.taptap.cn/minigameapidoc/dev/tutorial/open-capabilities/cloud-save-tutorial/
+- 排行榜：https://developer.taptap.cn/minigameapidoc/dev/tutorial/open-capabilities/leaderboard-tutorial/
+- 分享：https://developer.taptap.cn/minigameapidoc/dev/tutorial/open-capabilities/share/
+- 分包与 Wasm：https://developer.taptap.cn/minigameapidoc/dev/tutorial/performance/launch/wasm-subpackage/
+- 调试与真机预览：https://developer.taptap.cn/minigameapidoc/dev/dev-support/debugging/
+- MCP 接入配置：https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/mcp-setup/
+- 广告接入：https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/ad-integration-guide/
+### APK / PC 的能力对照与文档
+| 能力 | 解决什么问题 | 什么时候接 | 文档 |
+| --- | --- | --- | --- |
+| TapTap 登录 | 玩家不用再注册一个账号 | 有进度、存档或社交需求时 | https://developer.taptap.cn/docs/sdk/taptap-login/features/ |
+| TapDB 数据分析 | 知道玩家在哪一步流失 | 上线前接，第一天就能看 | https://developer.taptap.cn/docs/sdk/tapdb/features/ |
+| 云存档 | 换设备能接着玩 | 玩家会有长进度时 | https://developer.taptap.cn/docs/sdk/tap-cloudsave/features/ |
+| 成就系统 | 给玩家持续挑战和收集的目标 | 玩法有明确成就节点时 | https://developer.taptap.cn/docs/sdk/achievement/features/ |
+| 排行榜 | 让玩家看到排名和竞争 | 玩法本身有可比性时 | https://developer.taptap.cn/docs/sdk/leaderboard/features/ |
+| 礼包系统 | 做活动、发福利 | 有运营计划时 | https://developer.taptap.cn/docs/sdk/tds-gift/features/ |
+包体上传不属于游戏服务 SDK。准备自测或发布时，按对应形态走
+[上传 APK](https://developer.taptap.cn/docs/sdk/apk-upload/guide/) 或 CLI 的包体管理流程。
+### 能力对应的功能介绍文档
+下表与首页 https://developer.taptap.cn/ 生态能力区块是同一份口径。用户问「这个能力去哪看介绍」时照此回答，不要自己编链接：
+| 能力 | 功能介绍 |
+| --- | --- |
+| 云存档 | https://developer.taptap.cn/docs/sdk/tap-cloudsave/features/ |
+| 变现能力（广告与内购集成） | https://developer.taptap.cn/docs/sdk/tap-iap/overview/ |
+| 游戏成就 | https://developer.taptap.cn/docs/sdk/achievement/features/ |
+| 排行榜 | https://developer.taptap.cn/docs/sdk/leaderboard/features/ |
+| TapTap 登录 | https://developer.taptap.cn/docs/sdk/taptap-login/features/ |
+| 内嵌动态 | https://developer.taptap.cn/docs/sdk/embedded-moments/features |
+### 已接入能力的最佳案例
+用户问「有没有先例」「别人接了效果怎么样」时，直接引用这几条，不要自己编数据：
+- **心动的公寓** —— 全套游戏服务 · 上架变现：AI 制作的作品，上线 2 周获得 160+ 条真实玩家评价。
+- **翡翠经营模拟器** —— TapTap 制造 · 一键发布：个人开发者从零制作，上线 3 个月累计热度 100 万+。
+- **心动小镇** —— 登录 · 更新唤起 · 礼包 · 社区：独家发行，登录、礼包与社区互动组合使用，上线两周下载 1438 万+。
+### 执行要求
+- 一次只接一个能力。同时接多个时，出问题无法定位来源
+- 以开发者文档的最新版本为准，不要照抄网上旧版示例
+- 客户端只放 appId 这类公开标识，密钥不写进前端代码
+- 接入前先列出要改的文件和位置，等用户确认再动手
+### 确认点
+在真实设备上跑通一次完整的用户路径（登录、存档或数据上报），再把结果给用户。
+---
+## 5. 怎么上架
+四种形态都走这条链路：手游（Android / iOS）、PC 游戏、网页（H5）游戏、TapTap 制造游戏。
+AI 做出来的游戏同样可以上架，只要内容符合平台规范。
+### 先用 CLI 走完上架
+- CLI 使用文档：https://developer.taptap.cn/v3/cli/
+- 命令参考：https://developer.taptap.cn/v3/cli/command-reference.md
+- 创建游戏：https://developer.taptap.cn/v3/cli/skills/taptap-publish-game.md
+- 包体管理与自测：https://developer.taptap.cn/v3/cli/skills/taptap-package-management.md
+- 资料编辑与版本发布：https://developer.taptap.cn/v3/cli/skills/taptap-app-edit.md
+- 测试计划：https://developer.taptap.cn/v3/cli/skills/taptap-test-plan.md
+- 上架资质：https://developer.taptap.cn/v3/cli/skills/taptap-qualification.md
+### 六步，顺序不要调
+| 步骤 | 做什么 | 命令 | 做完的验收标准 |
+| --- | --- | --- | --- |
+| 1. 建游戏 | 填最小必填信息，生成草稿 | `taptap-cli app create-app` | 控制台能看到该游戏，状态为草稿 |
+| 2. 传包体 | 上传对应形态的包体 | `taptap-cli upload` | 校验通过，能生成测试二维码 |
+| 3. 先自测 | 扫码在自己手机上完整玩一遍 | — | 连玩三局没问题，没有卡顿、白屏和死路 |
+| 4. 再补资料 | 图标、截图、简介 | `taptap-cli app prepareChanges` | 扫码进去看到的就是最终版本 |
+| 5. 给玩家开测试 | 开测试计划，让真实玩家玩几轮 | 见测试计划文档 | 跑完几轮，玩法稳定，无重大 bug |
+| 6. 正式上线 | 确认稳定后提交审核并上线 | `taptap-cli app submit-app-review` | 对外可见，玩家能直接下载或游玩 |
+**顺序不可调换**的两处：
+- **自测在补资料之前**。包体先跑通，再去准备图标截图——否则包体有问题时，你做的资料要重来
+- **测试在正式上线之前**。不要拿没被真实玩家验证过的版本去提审上线
+### 创建游戏：先预览，再执行
+```bash
+# 预览，不会真的创建
+taptap-cli app create-app \
+--dev-id \
+--data '{"title":"<游戏名>","category":"<类型>","package_type":"apk"}' \
+--idempotency-key <唯一键> \
+--dry-run
+# 用户确认后，用同样的数据和幂等键执行
+taptap-cli app create-app \
+--dev-id \
+--data '{"title":"<游戏名>","category":"<类型>","package_type":"apk"}' \
+--idempotency-key <唯一键> \
+--yes
+```
+`package_type` 按用户实际形态选择。四种形态各对应一个取值，不要猜测，先查：
+```bash
+taptap-cli schema app create-app
+```
+### 先定位上下文，再操作
+不知道 developerId 或 appId 时，先查，不要假设：
+```bash
+taptap-cli developer +list
+taptap-cli app +list --dev-id --kw <关键词>
+taptap-cli app +select --dev-id --app-id
+```
+### 提交前自查
+- 游戏能打开，玩得下去，没有卡死和白屏
+- 图标、截图与游戏实际内容一致
+- 没有未成年人不宜内容，没有未授权的素材和音乐
+- 需要版号或备案的形态，资质已补齐（`taptap-cli skills read taptap-qualification`）
+### 提审和上线不是即时的
+- 提交后进入人工审核，时长以控制台显示为准。不要向用户承诺时间
+- 被驳回时先看驳回原因，改完再提交，不要原样反复提交
+- 上线是独立动作，审核通过 ≠ 已上线
+---
+## 6. 上架之后
+上线只是开始。三件事要持续做，缺一件都会让游戏慢慢没人玩。
+### 一、读玩家评价，修问题，和玩家互动
+- 把评价区的差评逐条看一遍，找出重复出现的那几个问题
+- 能修的排进下一版；修完在评价区回复，让玩家看到你确实改了
+- 在社区和评论区跟玩家互动，回复提问、认领 bug —— 这是最省力的口碑积累
+- 不要只回好评。差评下面的回复，其他玩家也会看到
+### 二、看游戏数据，及时优化商店素材
+- 重点看商店页曝光到下载的转化；转化低说明图标、截图或简介没打动玩家
+- 图标和首图对转化影响最大，先换它们
+- 商店素材改完不需要重新提审整包，改完提交即可
+- 数据没变化时，做一次小的内容更新比反复改图标更容易重新拿到曝光
+用 `taptap-cli skills read taptap-dashboard-stats` 查询。
+### 三、看玩家游玩时间，找流失点
+- 看玩家平均玩多久，掉得最快的是第几分钟
+- 如果在某个关卡或某个操作上集中流失，多半是难度或引导出了问题
+- 把「第几分钟流失最多」和「玩家在评价里抱怨什么」对照着看，两边指向同一处就是真问题
+### 该更新还是该做下一款
+| 观察到 | 建议 |
+| --- | --- |
+| 玩家在同一处反复失败或退出 | 修，这是明确的卡点 |
+| 好几个玩家提同一个建议 | 做，这是真实的信号 |
+| 数据没变化，也没人提 | 先别动，把精力放到下一款 |
+数字不好看是正常的，先看趋势和卡点，不要下结论。
+---
+## 7. 边界与安全
+### 能力范围
+- CLI 覆盖创建游戏、资料素材、包体、资质、测试计划与数据表现
+- **具体支持范围以 `taptap-cli skills list` 的实际输出为准**，不要凭本文件推断
+- Tap 小游戏上传目前在控制台完成，不走 CLI 上传命令
+- 需要版号或备案的形态，资质没补齐不能上线
+- 环境不支持 CLI 时（内网受限、在线 IDE 等），改走本地 Agent，不要反复重试安装
+### 文档不能交叉引用
+- Tap 小游戏（WebGL）只用小游戏文档（`developer.taptap.cn/minigameapidoc/`）
+- H5 是另一类形态，用小游戏体系下的 MCP 配置，不用 APK 的 SDK
+- APK / PC 用游戏服务文档（`developer.taptap.cn/docs/sdk/`）
+- 制造版本用制造本地插件
+- 制造本地插件的入口以 TapTap 制造控制台为准，不要凭猜测引用其他文档
+### 必须先问人再做的动作
+以下动作执行前必须单独向用户说明并获得确认，不得批量连续执行：
+- 提交审核、撤销审核、上线、下线
+- 删除游戏、删除包体、清空草稿
+- 修改开发者账号权限、增加协作者
+- 任何涉及付费、用户数据或对外发布的动作
+### 通用要求
+- 执行任何写操作前，先说明准备做什么，等用户确认
+- 不确定用哪个命令时，先 `taptap-cli --help` 或 `taptap-cli schema ` 查参数，不要猜
+- 不要承诺超出上述范围的能力
+---
+## 8. 文档索引
+### 给 AI 助手的入口
+- [本文件（agents.md）](https://developer.taptap.cn/agents.md) —— 先读这个
+- [开发者文档索引](https://developer.taptap.cn/docs/llms.txt) —— 全部接口文档
+### CLI 与 Skills
+- [CLI 使用文档](https://developer.taptap.cn/v3/cli/)
+- [命令参考](https://developer.taptap.cn/v3/cli/command-reference.md)
+- [AI 能力参考](https://developer.taptap.cn/v3/cli/skill-reference.md)
+- [入口与路由](https://developer.taptap.cn/v3/cli/skills/taptap-cli.md)
+- [身份与上下文定位](https://developer.taptap.cn/v3/cli/skills/taptap-identity.md)
+- [创建游戏](https://developer.taptap.cn/v3/cli/skills/taptap-publish-game.md)
+- [资料编辑与版本发布](https://developer.taptap.cn/v3/cli/skills/taptap-app-edit.md)
+- [上架资质](https://developer.taptap.cn/v3/cli/skills/taptap-qualification.md)
+- [包体管理与自测](https://developer.taptap.cn/v3/cli/skills/taptap-package-management.md)
+- [测试计划](https://developer.taptap.cn/v3/cli/skills/taptap-test-plan.md)
+- [数据表现](https://developer.taptap.cn/v3/cli/skills/taptap-dashboard-stats.md)
+- [图片素材库](https://developer.taptap.cn/v3/cli/skills/taptap-asset-library.md)
+### 小游戏开发
+- [Tap 小游戏开发指南](https://developer.taptap.cn/minigameapidoc/)
+- [小游戏 MCP 接入配置](https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/mcp-setup/)
+### 游戏服务 SDK
+- [TapTap 登录](https://developer.taptap.cn/docs/sdk/taptap-login/features/)
+- [数据分析 TapDB](https://developer.taptap.cn/docs/sdk/tapdb/features/)
+- [云存档](https://developer.taptap.cn/docs/sdk/tap-cloudsave/features/)
+- [成就系统](https://developer.taptap.cn/docs/sdk/achievement/features/)
+- [排行榜](https://developer.taptap.cn/docs/sdk/leaderboard/features/)
+- [礼包系统](https://developer.taptap.cn/docs/sdk/tds-gift/features/)
+- [TapLink](https://developer.taptap.cn/docs/sdk/taplink/features/)
+### 上架与包体
+- [上传 APK](https://developer.taptap.cn/docs/sdk/apk-upload/guide/)
+### 控制台与社区
+- [开发者中心首页](https://developer.taptap.cn/)
+- [游戏商店](https://developer.taptap.cn/store)
+- [游戏服务](https://developer.taptap.cn/service)
+- [开发者文档](https://developer.taptap.cn/docs/)
+- [开发者论坛](https://www.taptap.cn/forum/g28)
+- [海外版开发者中心](https://developer.taptap.io/)
+---
+## 常见问题
+**Q：AI 做的游戏能上架吗？**
+A：能。内容符合平台规范，按 Android / PC / 网页 / TapTap 制造任意形态发布都可以。
+**Q：必须写代码吗？**
+A：不必须。可以用 CLI，也可以全程在控制台网页操作。
+**Q：要多久能上线？**
+A：取决于审核。自测确认后提交审核，通过并执行上线动作后才会对外可见。
+**Q：需要版号吗？**
+A：视游戏形态与发行地区而定，以资质审核要求为准。用 `taptap-cli skills read taptap-qualification` 查看资质缺口。

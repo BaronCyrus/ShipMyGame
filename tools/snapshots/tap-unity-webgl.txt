@@ -1,0 +1,65 @@
+Unity WebGL适配方案 | 小游戏开发者文档
+开发小游戏
+游戏引擎
+Unity 引擎适配
+Unity WebGL适配方案
+# Unity WebGL适配方案
+# 一、概述
+欢迎采用我们的Unity WebGL小游戏适配解决方案，旨在减少将Unity游戏移植到 TapTap 平台所需的工作量和技术门槛。利用WebAssembly技术，无需更换Unity引擎和重写核心代码，帮助开发者轻松实现游戏从原平台到 TapTap 小游戏的迁移。开发者可以高效地将游戏适配至 TapTap ，同时保持游戏的核心体验不变。
+# 方案特点
+继续使用原有的引擎工具链和技术栈，无需为了适配进行额外的更改
+游戏的核心逻辑不需要重写，支持大部分第三方插件
+通过转换工具和 TapTap 小游戏的运行环境来确保适配的兼容性和游戏内容的高度还原
+TapTap 小游戏平台提供的各种能力，如广告、支付、分享等功能，可以通过C# SDK方便快捷地集成到游戏中
+# 二、技术原理
+# WebGL 简介
+WebGL（Web Graphics Library）是一种能够将 JavsScript 和 OpenGL ES 结合在一起的一种 3D 绘图标准。能够通过 HTML5 的 Canvas 来和 DOM API 相结合来完成图形渲染，而且不需要安装任何插件就可以在浏览器中运行。
+# Unity WebGL
+Unity 主要利用 WebGL 技术，能够将游戏工程代码和资源内容使用 WebGL 选项构建，构建出可以在浏览器中运行的Web应用程序，这些程序可以使用HTML5、JavaScript以及WebGL技术在网页中进行呈现。
+# 技术概述
+要能够在浏览器中运行 WebGL 应用程序，所有代码都需要是浏览器可以支持的标准语言。Unity 使用 Emscripten (opens new window) 编译器工具链将 Unity 引擎导出的代码（用 C 和 C++ 编写）编译成 WebAssembly（wasm），并结合 JavaScript 代码来执行。
+对于一个基于 Unity 引擎编写的游戏工程，游戏代码（C# 脚本）最终会被编译为 DLL 文件，Unity 利用其 IL2CPP (opens new window) 技术，将 DLL 文件转换为 C++ 源文件，然后使用 Emscripten 编译工具链将 C++ 代码编译并转换为 wasm 文件，转换得到的 wasm 代码文件能够直接在浏览器中执行。
+# 技术限制
+并非所有Unity功能都可用于WebGL方案，主要是由于一些技术的限制：
+不支持多线程：由于JavaScript中缺少线程支持，因此不支持线程。在 Unity 内部使用线程来加速性能以及在脚本代码和托管的 dll 中使用线程都是不受支持的。实质上不支持 System.Threading 命名空间中的任何内容。
+无法断点调试：无法在 Visual Studio 等IDE中直接调试运行 WebGL 应用程序。
+WebGL 图形 API 等效于 OpenGL ES 2.0 和 3.0，存在一些限制。请参阅：WebGL 图形 (opens new window)。
+# 平台适配
+Unity的BuildTarget支持WebGL平台，WebGL导出包是基于WebAssembly技术运行在浏览器环境。 为了能让导出包运行在Tap小游戏环境，我们提供了以下支持：
+开发阶段：提供平台能力的C# SDK帮助开发者快速对接平台能力
+导出阶段：转换打包工具，进行Unity WebGL胶水层适配，直接转换成小游戏包
+运行阶段，提供WebAssembly基础能力
+# 运行环境
+Android下基于v8引擎及内部渲染引擎；
+iOS下基于WKWebView运行环境，即跟微信一样的高性能模式运行；
+两种系统环境下，wasm 执行都是 JIT 代码。但由于底层虚拟机差异过大以及自身不断迭代，难以横向对比。
+# 三、接入流程
+# 安装 TapTap小游戏 插件
+下载最新版 TapTap小游戏 插件
+版本号 地址
+latest https://github.com/taptap/minigame-sdk-unity.git
+2.0.6 （不再支持）
+2.0.5 （不再支持）
+建议使用Unity 2022+版本，团结引擎 1.2.0+版本
+# 方式一：GitHub URL导入（2.0.7版本开始支持）
+从2.0.7版本开始，支持了github url导入的方式，操作步骤：
+打开unity packager manager
+选择"Add package form git URL"
+输入Git URL @https://github.com/taptap/minigame-sdk-unity.git并等待unity导入
+SDK导入成功
+# 方式二：本地导入（需要先从github上下载SDK的zip包）
+打开 Unity / Tuanjie，导航到 Window > Package Manager。
+点击左上角的 + 图标，选择 Add package from disk...。
+选择本包内的package.json导入。
+导入成功后菜单栏中出现 "TapTap 小游戏"。
+注意：TapTap小游戏插件 无法与wx sdk、minihost sdk插件兼容，需要在Package Manager中手动卸载wx sdk和minihost sdk。
+# 导出 TapTap小游戏
+点击菜单栏中的 “TapTap 小游戏 > 构建” ，弹出构建工具面板
+在面板中填写必要信息和配置，设置导出路径，完成后点击“生成 TapTap 小游戏”
+等待构建完成后，打开导出路径文件夹，其中 game.zip 和 game_wasm_split.zip 是 TapTap 小游戏压缩包，可上传至 TapTap 平台。
+上一页
+«
+UnityDemo
+下一页
+Unity多人联机
+»

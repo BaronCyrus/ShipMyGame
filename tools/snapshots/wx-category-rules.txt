@@ -1,0 +1,27 @@
+# 类目设置
+## 1. 办结时限
+设置后直接生效
+## 2. 注意事项
+1. 一级类目，不支持修改，且小游戏账号只有“游戏”这个类目（注册时勾选），无法更换或删除，如选择错误只能重新注册
+2. 二级类目，小游戏申请时填写，发布前都可以修改（文化互动类目除外），发布后不可修改
+3. 三级类目，可随时在资质管理中修改，修改后需通过资质审核，并发布新版本才会正式生效
+4. 个人主体，暂不支持选择文化互动、角色类和牌类三种类目
+![](https://mmgame.qpic.cn/image/54f0b4de67eb04a0c2eec44a2abbe0b3f96c37523b1a02023e72e59602ec140e/0)
+![](https://mmgame.qpic.cn/image/65903258bad8fc875e432c642d3a5ccf37c95b903f383fd669665de1c021d9ed/0)
+![](https://mmgame.qpic.cn/image/2870b89f71577897ee7f151f345f0a1479e3d688296528d2d0397c4f5eac8518/0)
+注意：二级类目-文化互动选择后无法更改为其它类目，请谨慎选择
+## 3. 操作流程
+### step1：首页，点击小程序类目“去补充”
+![](https://mmgame.qpic.cn/image/11027de3a6ad4c42550a3f3489fd1d0b88e2a42e3a36acb764fa9c763ad96d85/0)
+### step2：点击“添加类目”，并使用管理员微信扫码验证
+![](https://mmgame.qpic.cn/image/bc3f4fda24e1d893144cdff65823bd16dd02f50254677ac23285a7605850a980/0)
+![](https://mmgame.qpic.cn/image/9e485f85a155aa3bf5c0a3390893668c1aa2b89f144a2a78c2413c63f6d868dd/0)
+### step3：“服务类目”依据自身情况选择二级类目（角色、休闲、动作…）
+![](https://mmgame.qpic.cn/image/2870b89f71577897ee7f151f345f0a1479e3d688296528d2d0397c4f5eac8518/0)
+注意：如二级游戏类目与实际游戏内容不符，将会在提审版本时驳回，请谨慎选择
+### step4：设置成功
+![](https://mmgame.qpic.cn/image/7dc8d8a9d4ed8ae14cb462ffc99b4b9fff9bc2a64489e2054ab688e6234885db/0)
+![](https://mmgame.qpic.cn/image/dd5759505c3f02b244099f801aa358581baa7fe9dd3f5579cac8767dec05bb49/0)
+## 特殊说明
+文化互动类目是一个非常特殊的类目，详见[小游戏“文化互动”类目说明](https://developers.weixin.qq.com/community/develop/doc/00004c601d84888f3508f86555b008)
+注意：该类目仅可在首次选择类目时选择，且选择后无法更改为其它类目。同时，该类目不开放小程序迁移和虚拟支付功能。

@@ -1,0 +1,2 @@
+2.1.31
+Module that build miniprogram project for web or app extracted from WeChatDevtools.

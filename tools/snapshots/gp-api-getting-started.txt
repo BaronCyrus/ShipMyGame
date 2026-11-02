@@ -1,0 +1,93 @@
+开始使用 | Google Play Developer API | Google for Developers
+跳至主要内容
+Play Developer API
+/
+English
+Deutsch
+Español
+Español – América Latina
+Français
+Indonesia
+Italiano
+Polski
+Português – Brasil
+Tiếng Việt
+Türkçe
+Русский
+עברית
+العربيّة
+فارسی
+हिंदी
+বাংলা
+ภาษาไทย
+中文 – 简体
+中文 – 繁體
+日本語
+한국어
+登录
+首页
+产品
+Google Play Developer API
+开始使用
+使用集合让一切井井有条
+根据您的偏好保存内容并对其进行分类。
+注意：现在，您无需再将开发者账号关联到 Google Cloud 项目，即可访问 Google Play Developer API。
+开始发起 API 调用之前，您需要先为自己的 Google Play 开发者账号设置 API 访问权限。这需要同时在 Google Play 管理中心和 Google Cloud 控制台中进行设置。以下操作说明介绍了开始使用 Google Play Developer API 所需的步骤。
+创建 Google Cloud 项目。
+为 Google Cloud 项目启用 Google Play Developer API。
+设置一个具有相应 Google Play 管理中心权限的服务账号，以便访问 Google Play Developer API。
+创建 Google Cloud 项目
+如果您已有要使用的 Google Cloud 项目，则可以跳过此步骤。
+在 Google Cloud 控制台中创建项目。
+如需进一步了解 Google Cloud 项目，请参阅创建和管理项目。
+启用 Google Play Developer API
+设置完 Google Cloud 项目后，您需要为此项目启用 Google Play Developer API。
+若要启用 Google Play Developer API，请执行以下操作：
+前往 Google Cloud 控制台中的 Google Play Developer API 页面。
+点击启用。
+配置 OAuth 和服务账号
+您需要使用 OAuth 客户端或服务账号来配置对 Google Play Developer API 的访问权限。在大多数情况下，您都应当使用服务账号来访问此 API。
+服务账号必须在安全的环境（例如您的服务器）中使用。您需要妥善管理服务账号凭证，避免将其泄露给任何无权使用该 API 的人员。
+如果您需要代表个人用户访问该 API，您应当使用 OAuth 客户端 ID。例如，如果您的网站需要代表用户从网页客户端访问 Google Play Developer API，那么您可以使用客户端 ID。系统会使用用户的 Google 账号（而非服务账号）进行身份验证。这样，您就可以代表用户进行 API 调用，而不会影响服务账号凭证的安全。
+服务账号：由安全的软件服务来访问该 API（最常见的方式）
+OAuth 客户端：由用户访问该 API
+使用服务账号
+您可以通过 Google Play 管理中心创建服务账号。
+在 Google Cloud 控制台中，前往服务账号。
+点击创建服务账号，然后按相应步骤操作。
+前往 Google Play 管理中心的用户和权限页面。
+点击邀请新用户。
+在邮箱字段中输入服务账号所用的邮箱，并授予执行相关操作所需的权限。
+如需使用 Google Play 结算服务 API，您必须授予以下权限：
+查看财务数据、订单以及用户取消订阅时填写的调查问卷回复
+管理订单和订阅
+点击邀请用户。
+此时，您应当能够通过服务账号访问 Google Play Developer API。如需了解详情，请参阅针对服务器对服务器应用使用 OAuth 2.0。
+使用 OAuth 客户端
+借助 OAuth 客户端，您可以允许用户使用自己的凭据通过该 API 执行操作。用户可执行的操作仅限于通过 Google Play 管理中心的用户和权限页面所允许的操作。
+在创建 OAuth 客户端之前，您需要为产品配置品牌信息。如需了解详情，请参阅设置 OAuth 权限请求页面。
+在 Google Cloud 控制台中，前往 OAuth 权限请求页面。
+按照相应步骤创建 OAuth 权限请求页面。
+如需创建 OAuth 客户端，请执行以下操作：
+在 Google Cloud 控制台中，前往凭据。
+依次点击“创建凭据”>“OAuth 客户端 ID”。
+选择应用类型，然后按照说明操作。
+其他信息
+如果您要开始在 Google Play 上使用 API，不妨参考以下实用的提示和技巧。
+获取开发者 ID
+有些 API 需要您提供 Google Play 管理中心的开发者 ID。这是系统在创建您的 Google Play 开发者账号时分配给您的一个长编号。您可以在 Google Play 管理中心内几乎任何页面（例如 API 权限页面）的网址中找到此开发者 ID。
+以 Google Play 管理中心的以下网址为例：
+https://play.google.com/console/developers/1234567890123456789/api-access
+在以上网址中，开发者 ID 为 1234567890123456789。
+注意：当应用从一个 Google Play 开发者账号转移到另一个 Google Play 开发者账号时，与该应用关联的开发者 ID 会发生变化。这意味着，在完成转移后，如果要对该应用进行 API 调用，您必须使用新 Google Play 开发者账号对应的开发者 ID。
+专用 API
+Google Play Developer API 包含多个专用 API，可让您对自己的应用执行特定类型的分析：
+Reply to Reviews API
+允许您查看用户对您应用的反馈并回复相应反馈。
+Voided Purchases API
+允许您在用户的购买已作废后，撤销其对相关应用内商品的访问权限。
+客户端库
+我们已提供客户端库，供您以编程方式访问 REST API。如需了解详情，请参阅客户端库和代码示例。
+如未另行说明，那么本页面中的内容已根据知识共享署名 4.0 许可获得了许可，并且代码示例已根据 Apache 2.0 许可获得了许可。有关详情，请参阅 Google 开发者网站政策。Java 是 Oracle 和/或其关联公司的注册商标。
+最后更新时间 (UTC)：2026-10-18。
+[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-10-18。"],[],["To access the Google Play Developer API, begin by creating a Google Cloud Project and enabling the Google Play Developer API within it. Then, configure access via a service account for secure server-side access, or an OAuth client for individual user access. For service accounts, create one in Google Cloud Console and invite it as a user in Google Play Console, granting necessary permissions. For OAuth clients, create an OAuth consent screen and then an OAuth client ID. Finally, you can retrieve your unique developer id from the Google Play Console URL.\n"]]

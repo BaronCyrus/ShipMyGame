@@ -1,0 +1,87 @@
+TapTap CLI 使用文档 · TapTap 开发者中心
+taptap-cli 是连接本地环境与 TapTap 开发者中心的命令行工具。你可以直接运行命令，也可以配合 AI 助手使用，用自然语言描述想完成的事情。
+例如，检查游戏上线前还缺哪些资料、上传新版本安装包、查看玩家评价，或准备一篇版本更新帖子。涉及发布和提交审核等操作时，你可以先核对内容，再确认执行。
+安装
+npm i -g @taptap/cli --registry=https://registry.npmjs.org/
+安装完成后，你可以直接在终端运行 CLI 命令；如果不熟悉命令，也可以继续配置 AI 协助使用。
+验证安装情况：
+taptap-cli version
+认证
+登录以将 CLI 连接到你的 TapTap 开发者账号：
+taptap-cli auth login
+运行命令后打开 CLI 返回的 TapTap 登录链接完成授权。登录后，CLI 会在本地安全保存凭据，供后续创建游戏、上传素材和发布运营流程使用。
+安装 AI Skills
+AI 能力说明（Skill）随 CLI 一起提供，与当前 CLI 版本严格对应；CLI 更新时会一并同步。
+查看已同步的 Skill：
+taptap-cli skills list
+更新 CLI
+将全局安装的 TapTap CLI 更新到当前默认版本：
+taptap-cli update
+更新通过官方 npm registry 完成，需要能够访问 npm registry，并具备全局 npm 包写入权限。
+更新会一并同步与 CLI 版本匹配的 AI 能力说明（Skill）；需要强制重新同步时用 taptap-cli update --force。
+你可以做什么
+创建游戏、维护资料、管理测试、查看数据，或发布社区内容。选择一项，了解具体用法。
+创建游戏
+创建游戏草稿，继续准备资料、素材、安装包和上架资质。
+资料编辑与版本发布
+修改游戏介绍、图标和截图，检查提审条件，提交审核并安排上线。
+包体管理与自测
+查看各平台安装包和版本状态，获取可用的自测入口。
+测试计划
+创建和管理测试计划、招募、测试资格及激活码。
+上架资质
+查看预约、测试或上线所需的资质，补充材料并跟进审核。
+数据表现
+查看下载、转化、销售、评价和论坛活跃等数据。
+玩家评价
+按评分、关键词和时间查找玩家评价，查看评价正文及已有回复。
+论坛帖子与回复
+查看论坛帖子与讨论，上传图片或视频，准备帖子草稿并发布或回复。
+素材库
+按用途查找图片素材，上传图片与视频，并查看视频处理状态。
+你可以这么问
+可以直接向 AI 助手描述你想完成的事情。下面是一些例子。
+我想新增一个游戏，需要准备哪些信息？
+准备基本信息，创建游戏草稿。
+这个游戏现在还缺哪些内容，什么时候可以提交审核？
+查看缺失资料，准备提交审核。
+我想开一场 CBT 或 OBT，需要先确认哪些条件？
+查询测试计划，准备 CBT 或 OBT。
+这个游戏最近的数据表现怎么样？
+查看下载、评分和论坛数据趋势。
+这个游戏最近的玩家评价都在说什么？
+查找评价，了解玩家反馈的问题。
+帮我把这次版本更新整理成帖子，先给我看草稿。
+准备帖子草稿，预览后发布。
+查看这个游戏论坛的最新讨论，帮我准备一条回复。
+查看帖子和评论，参与讨论。
+帮我上传游戏宣传视频，并查看处理状态。
+查找素材、上传图片和视频。
+常用命令
+从查询厂商和游戏开始，了解如何上传文件、完善资料并提交审核。
+查询你有权访问的厂商和游戏，获取后续命令需要的厂商 ID 与游戏 ID。
+taptap-cli developer +listtaptap-cli app +list --dev-id <developerId> --kw <keyword>
+开始业务调用前，先查看顶层帮助和目标业务域；再用 schema <service> <method> 核对参数、风险等级与返回结构。
+taptap-cli --helptaptap-cli app --helptaptap-cli schema app create-app
+使用 --dry-run 预览创建信息，确认后以相同数据和幂等键执行创建。创建成功后，继续补充资料、包体和资质，再提交审核。
+taptap-cli app create-app --dev-id <developerId> --data '{"title":"<gameName>","category":"adventure","developer_role":"developer","package_type":"apk"}' --idempotency-key <create-key> --dry-runtaptap-cli app create-app --dev-id <developerId> --data @create-app.json --idempotency-key <create-key> --yes
+本地文件上传属于写操作。先用 --dry-run 预览，确认后再用 --yes 上传；图片成功后会自动收录到素材库，后续工具才能引用这些素材继续补资料。
+taptap-cli upload ./icon.png --app-id <appId> --dev-id <developerId> --dry-runtaptap-cli upload ./icon.png --app-id <appId> --dev-id <developerId> --yes
+读取当前游戏资料和草稿状态，检查图标、截图、包体、资质和提审前缺口，决定下一步要补哪些内容。
+taptap-cli app analyze-app-status --dev-id <developerId> --app-id <appId>
+准备提交审核时，生成资料快照。后续预检和正式提交使用返回的 review_fingerprint 与相同的 release_schedule。
+taptap-cli app prepare-review-snapshot --dev-id <developerId> --app-id <appId> --data '{"release_schedule":{"kind":"immediate"}}'
+预检不会正式提交审核，请求中复用上一步的指纹与上线方式。结果区分通过、内容未通过和暂时无法检查；暂时无法检查表示本次未得出结论，可以稍后重试，也可以在核对提审条件后继续提交。
+taptap-cli app precheck-app-review --dev-id <developerId> --app-id <appId> --data @review-precheck.json
+核对预检提示、协议要求和上线方式后，使用 --yes 正式提交。提交后可查询审核状态；预检通过不代表正式审核一定通过。
+taptap-cli app submit-app-review --dev-id <developerId> --app-id <appId> --data @review-submit.json --idempotency-key <submit-key> --yes
+下一步
+命令参考
+查看全局参数、认证、AI 能力说明、命令树、错误说明和上传命令。
+AI 能力参考
+按业务模块浏览当前开放的 AI 能力。
+命令行工具（CLI）入口与路由
+了解上下文发现、路由和 CLI 使用顺序。
+创建游戏
+查看创建草稿、确认字段和后续发布准备。
+☰本页目录

@@ -1,0 +1,10 @@
+v11.6.0
+2026-10-13T22:38:17Z
+## Plugin :
+- **Breaking change: Updated the minimum supported Unity version to Unity 2022 LTS (2022.3).**
+- Updated the GMA iOS SDK dependency version to ~> 13.11.
+- Updated the GMA Android SDK dependency version to 25.5.0.
+- Updated the GMA Android Next-Gen SDK dependency version to 1.5.0.
+- Updated the min Android API level to 24.
+- Added support for Unity External Dependency Manager (`com.unity.external-dependency-manager@2.1.0`).
+- Added support for Picture-in-Picture ads.

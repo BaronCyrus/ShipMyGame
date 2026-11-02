@@ -1,0 +1,104 @@
+Method: edits.commit | Google Play Developer API | Google for Developers
+跳至主要内容
+Play Developer API
+/
+English
+Deutsch
+Español
+Español – América Latina
+Français
+Indonesia
+Italiano
+Polski
+Português – Brasil
+Tiếng Việt
+Türkçe
+Русский
+עברית
+العربيّة
+فارسی
+हिंदी
+বাংলা
+ภาษาไทย
+中文 – 简体
+中文 – 繁體
+日本語
+한국어
+登录
+Google 会使用 AI 技术将内容翻译成您偏好的语言。AI 翻译可能包含错误。
+首页
+产品
+Google Play Developer API
+参考文档
+Method: edits.commit
+使用集合让一切井井有条
+根据您的偏好保存内容并对其进行分类。
+HTTP 请求
+路径参数
+查询参数
+请求正文
+响应正文
+ChangesInReviewBehaviorType
+审核错误消息示例中的更改
+授权范围
+试试看！
+提交应用编辑会话。
+HTTP 请求
+POST https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{packageName}/edits/{editId}:commit
+网址采用 gRPC 转码语法。
+路径参数
+参数
+packageName
+string
+应用的软件包名称。
+editId
+string
+编辑会话的标识符。
+查询参数
+参数
+changesNotSentForReview
+boolean
+如果发生拒绝，该参数将确保在通过 Google Play 管理中心界面明确送审之前，不会对相应编辑会话中的更改进行审核。这些更改会被合并到所有尚未送审的其他更改中。
+changesInReviewBehavior
+enum (ChangesInReviewBehaviorType)
+可选。指定在当前有更改正在审核时，API 应如何运行。如果未设置此值，则默认值为“CANCEL_IN_REVIEW_AND_SUBMIT”，这会取消正在审核的更改，然后发送所有更改以供发布。
+请求正文
+请求正文必须为空。
+响应正文
+如果成功，则响应正文包含一个 AppEdit 实例。
+ChangesInReviewBehaviorType
+定义了在更改已在审核中时提交新编辑会产生的行为。
+枚举
+CHANGES_IN_REVIEW_BEHAVIOR_TYPE_UNSPECIFIED
+默认值为 CANCEL_IN_REVIEW_AND_SUBMIT。
+CANCEL_IN_REVIEW_AND_SUBMIT
+如果已有更改在审核中，系统会先取消该审核，然后将所有更改送审。
+ERROR_IF_IN_REVIEW
+如果存在正在审核的更改，则此方法会返回错误。请参阅发生这种情况时返回的错误消息示例。请注意，此操作不会使相应修改失效。如果没有正在审核的更改，系统会继续执行此操作，并将新更改送审以供发布。
+“正在审核中的更改”错误消息示例
+如果发送的请求将查询参数 changesInReviewBehavior 设置为 ERROR_IF_IN_REVIEW，并且您的应用已提交更改以供审核，则系统会返回 400 HTTP 响应，其中包含以下详细信息：
+{
+"error": {
+"code": 400,
+"message": "You already have changes in review. Cancel this review or wait for it to complete before you try again. See https://developers.google.com/android-publisher/api-ref/rest/v3/applications.tracks.releases",
+"status": "FAILED_PRECONDITION",
+"details": [
+{
+"@type": "type.googleapis.com/google.rpc.ErrorInfo",
+"reason": "CHANGES_ALREADY_IN_REVIEW",
+"domain": "googleapis.com",
+"metadata": {
+"editId": "123456790",
+"method": "edits.commit",
+"service": "androidpublisher.googleapis.com"
+}
+}
+]
+}
+}
+授权范围
+需要以下 OAuth 作用域：
+https://www.googleapis.com/auth/androidpublisher
+如未另行说明，那么本页面中的内容已根据知识共享署名 4.0 许可获得了许可，并且代码示例已根据 Apache 2.0 许可获得了许可。有关详情，请参阅 Google 开发者网站政策。Java 是 Oracle 和/或其关联公司的注册商标。
+最后更新时间 (UTC)：2026-03-21。
+[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-03-21。"],[],["This content details the process of committing an app edit via a POST HTTP request to the Google Android Publisher API. The request URL includes `packageName` and `editId` as path parameters. The `changesNotSentForReview` boolean query parameter allows delaying review submission. The request body must be empty, and a successful response returns an `AppEdit` instance. This action requires the `https://www.googleapis.com/auth/androidpublisher` OAuth scope for authorization. The API uses gRPC Transcoding syntax.\n"]]

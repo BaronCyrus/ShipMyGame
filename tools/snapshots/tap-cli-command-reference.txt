@@ -1,0 +1,176 @@
+# TapTap CLI 命令参考
+命令、参数和环境变量以当前 `taptap-cli` 的 help 输出和源码实现为准。
+- 网页版: /v3/cli/#command-reference
+- Markdown: /v3/cli/command-reference.md
+## 常用参数
+这些参数会按命令类型出现，并非每个命令都接受全部参数。动态 service 命令默认输出 JSON，并支持 `--format json|pretty`；复杂内容统一放进 `--data` JSON。
+### 参数
+| 参数 | 说明 | 示例 |
+| --- | --- | --- |
+| --format | 动态 service 命令支持 `json` / `pretty`。其它 shortcut 是否支持额外格式，以该命令的 `--help` 为准。 | taptap-cli app analyze-app-status --dev-id --app-id --format pretty |
+| --dev-id, --app-id | 指定开发者主体和游戏上下文。缺少上下文时会返回“缺少上下文”错误码 `context_missing`；先完成开发者 / 游戏定位后再重试。 | taptap-cli app +list --dev-id --kw |
+| --page, --page-size | 对声明分页的列表命令指定页码和每页数量；具体分页参数以目标命令的 `--help` 和 schema 为准。 | taptap-cli test-plan list-qualified-users --dev-id --app-id --data '{"test_plan_id":""}' --page 1 --page-size 20 |
+| --page-all, --page-limit, --page-delay | 对明确支持连续分页的只读命令自动拉取后续页。`--page-limit` 限制最多页数，`--page-delay` 控制请求间隔；不能用于写操作。 | taptap-cli app +list --dev-id --page-all --page-size 50 |
+| --fields, --jq | `--jq` 只在目标命令帮助明确列出时可用，用于筛选 JSON 结果。不要假设所有动态命令都支持 `--fields` 或 `--jq`。 | taptap-cli app list-app-versions --dev-id --app-id --jq '.data.result' |
+| --yes, --dry-run | 高风险写入默认不会直接执行；`--dry-run` 只预览将调用的能力和参数，确认后用 `--yes` 真正提交。 | taptap-cli app submit-app-review --dev-id --app-id --data @review-submit.json --idempotency-key --dry-run |
+| --no-wait, --device-code | 登录时不等待链接授权完成。Agent 使用 `--no-wait --json` 获取登录链接和续跑参数；之后按返回的 resume 参数继续轮询授权结果。 | taptap-cli auth login --no-wait |
+| --idempotency-key | 为支持该能力的写请求传入 1–255 个非空白字符的防重复提交键；CLI 会通过 `Idempotency-Key` 请求头原样转发。 | |
+| --version, -v | 输出当前 CLI 版本并退出。 | taptap-cli --version |
+| --help, -h | 输出当前命令帮助。无参数时显示顶层帮助。 | taptap-cli --help |
+## 身份认证
+认证命令负责登录、检查当前连接的服务地址，以及清除本地凭证。登录完成后，访问凭证会保存在本地。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli auth login | 运行命令后打开 CLI 返回的 TapTap 登录链接完成授权，并把访问凭证保存到本地配置。 | |
+| taptap-cli auth status | 查看当前服务地址、本地登录凭证是否存在、服务是否可访问，以及配置文件路径。 | |
+| taptap-cli auth logout | 清除本地登录凭证；已选择的开发者和游戏上下文会保留。 | |
+## AI 能力说明
+`skills` 是给 AI 助手和自动化脚本看的能力说明书。本页展示核心业务 Skill；工具型 Skill 仍以当前安装 CLI 的 `skills list` 为准。普通开发者查命令时优先看 `--help` 和 `schema`。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli skills list | 列出当前 CLI 随包提供的全部 Skill，包括核心业务 Skill 和工具型 Skill；本页只展示核心业务 Skill。 | |
+| taptap-cli skills read | 查看某一份 AI 能力说明的完整内容，例如 `taptap-cli`、`taptap-app-edit`。 | |
+接入 AI 助手或自动化流程时，可以先读取 `taptap-cli` 总说明；要处理创建游戏场景时，再读取 `taptap-publish-game` 这份具体能力说明。
+```bash
+taptap-cli skills list
+taptap-cli skills read taptap-cli
+```
+## 开发者与游戏定位
+创建游戏、补资料、上传包体、提交审核之前，先把开发者和应用上下文找准。CLI 这组命令就是干这个的。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli overview [--dev-id ] | 一次查看登录态、可见厂商、游戏样例、推荐问题和下一步。它只返回样例；需要完整游戏列表时再使用 `app +list --page-all`。 | |
+| taptap-cli developer +list | 列出当前账号下可访问的开发者主体。 | |
+| taptap-cli developer +enter --dev-id | 校验开发者是否可见，将其设为当前 CLI 上下文，并输出推荐问题和下一步命令；不会切换网页状态。 | |
+| taptap-cli developer +suggest --dev-id | 只输出开发者级推荐问题，不切换上下文展示。 | |
+| taptap-cli app +list --dev-id --kw | 在开发者下按关键字列出游戏；多结果时由调用方选择目标，不自动猜测。 | |
+| taptap-cli app +select --dev-id --app-id | 校验游戏属于目标开发者，并将开发者和游戏设为当前 CLI 上下文；显式参数始终优先于已保存上下文。 | |
+```bash
+taptap-cli overview
+taptap-cli app +list --dev-id --kw
+taptap-cli app +select --dev-id --app-id
+```
+## 命令发现与执行
+通过顶层帮助、业务域帮助和 `schema` 发现当前能力，再使用 ` ` 执行业务动作。`aliases` 用来查看稳定快捷命令，`completion` 用来生成终端自动补全脚本。
+### 命令树
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli --help | 列出当前 CLI 的业务域、workflow shortcut 和管理命令。 | |
+| taptap-cli <业务域> --help | 列出该业务域当前启用的方法。具体参数、风险和返回结构继续使用 `schema <业务域> <动作>` 查看。 | |
+| taptap-cli <业务域> <动作> [--参数] | 按命令树执行具体业务动作。参数以随包说明为准；运行 `taptap-cli <业务域> <动作> --help` 可查看当前命令接受哪些参数，复杂 JSON 使用 `--data`。 | |
+| taptap-cli <快捷命令> [--参数] | 执行明确收录的快捷命令，例如 `game:create`、`audit:submit`、`packages:overview`。快捷命令映射到标准命令路径，并遵守相同的风险和确认规则。 | taptap-cli game:create --dev-id --data @create-app.json --idempotency-key --dry-run |
+| taptap-cli aliases | 列出当前可用快捷命令，以及它们对应的标准命令路径。 | taptap-cli aliases |
+| taptap-cli schema <业务域> <动作> | 离线读取随包方法 schema，包括输入、输出、风险等级和执行提示。 | taptap-cli schema app prepare-review-snapshot |
+| taptap-cli completion zsh\|bash\|fish\|powershell | 从随包命令树生成终端自动补全脚本，补全命令、业务域、动作名和全局参数。 | taptap-cli completion zsh > ~/.zfunc/_taptap-cli |
+```bash
+taptap-cli --help
+taptap-cli app --help
+taptap-cli schema app prepare-review-snapshot
+taptap-cli app analyze-app-status --dev-id --app-id
+taptap-cli aliases
+taptap-cli skills list
+```
+### 提审命令流程
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli app prepare-review-snapshot | 用户明确提出提审后，生成资料与风险复核快照，保存 `review_fingerprint` 和最终上线方式。 | taptap-cli app prepare-review-snapshot --dev-id --app-id --data @review-schedule.json |
+| taptap-cli app precheck-app-review | 使用相同复核指纹和上线方式执行预检，不会正式提交审核。 | taptap-cli app precheck-app-review --dev-id --app-id --data @review-precheck.json |
+| taptap-cli app submit-app-review --yes | 预检完成后展示最终影响、协议和阻塞项并取得单独确认，再使用相同复核指纹和上线方式正式提交。 | taptap-cli app submit-app-review --dev-id --app-id --data @review-submit.json --idempotency-key --yes |
+### 常用参数
+| 参数 | 说明 | 示例 |
+| --- | --- | --- |
+| --dev-id | 指定开发者主体。多数业务能力都需要。 | |
+| --app-id | 指定游戏上下文。应用资料、包体、审核相关能力通常都需要。 | |
+| --data '' | 显式传入 JSON 参数；其中字段会作为业务参数提交给命令。 | |
+| --locale <语言环境> | 指定语言环境，例如中文或英文。 | |
+## 上传命令
+按用途选择图片和视频上传命令；游戏素材库、游戏资料与论坛内容使用不同的上传入口。APK、PC 包和 H5 zip 使用独立上传命令。它们都是写操作：先用 `--dry-run` 预览，确认后追加 `--yes`。Tap 小游戏上传需前往开发者中心。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli upload --dev-id --app-id --idempotency-key --yes | 上传图片并自动收录进素材库。 | |
+| taptap-cli upload-video --dev-id --app-id --yes | 上传资料视频；可选 `--scene trailer\|gameplay_demo_video`。 | |
+| taptap-cli asset-library +upload-video --dev-id --app-id --yes | 上传视频并收录到游戏素材库；上传后可继续查询处理状态。 | |
+| taptap-cli community-management +upload-image --dev-id --app-id --yes | 上传论坛帖子或回复的配图，不会自动发布内容。 | |
+| taptap-cli community-management +upload-video --dev-id --app-id --yes | 上传论坛帖子视频；论坛视频与素材库视频不能混用。 | |
+| taptap-cli upload-apk --dev-id --app-id --yes | 上传 Android APK 包。 | |
+| taptap-cli upload-pc-package --dev-id --app-id --yes | 上传 Windows / PC 包。不指定分支时会根据游戏配置选择；旧版默认包使用 `0`，已开通分支包的游戏使用 `1`（游戏本体）或 `2`（启动器）。 | |
+| taptap-cli upload-h5-package --dev-id --app-id --yes | 上传 H5 zip 并创建 H5 版本；支持 `--screen-orientation 0\|1`。 | |
+| taptap-cli package-management get-package-overview --data '{"package_type":"mini_app"}' | 读取 Tap 小游戏包体状态。需要上传时，只使用本次结果返回的非空 `page_path` 前往开发者中心；不自行拼接页面 URL。 | |
+```bash
+taptap-cli upload ./icon.png --dev-id --app-id --idempotency-key --dry-run
+taptap-cli upload-video ./trailer.mp4 --dev-id --app-id --scene trailer --yes
+taptap-cli package-management get-package-overview --dev-id --app-id --data '{"package_type":"mini_app"}'
+```
+## 本地物料盘点
+`materials +inspect` 只读扫描本地目录或压缩包并分类物料。它不上传、不写资料字段、不绑定包体；后续按单文件类型使用对应上传命令。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli materials +inspect | 输出文件清单、识别类型、未知项和交接建议；不产生任何远端写入。 | |
+图片、视频、APK、Windows 和 H5 使用各自的上传 shortcut。上传成功不等于资料字段已写入或主包体已绑定；Tap 小游戏转开发者中心。
+```bash
+taptap-cli materials +inspect /path/to/materials
+taptap-cli materials +inspect ./release-assets.zip --format pretty
+```
+## 更新 CLI
+`update` 会把全局安装的 `@taptap/cli` 更新到官方 npm registry 当前提供的默认版本，并一并同步与 CLI 版本匹配的 AI 能力说明（Skill）。执行更新需要能够访问 npm registry，并具备修改全局 npm 包的权限。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli update | 更新到官方 npm registry 当前提供的默认版本。 | |
+| taptap-cli update --force | 即使已经是最新版本也强制重装，并重新同步 AI 能力说明。 | |
+| taptap-cli update --skills-layout suite | 以聚合布局安装：只装一个总入口 `taptap-suite`，而不是散装的 `taptap-*`；不能与 `--check` 同时使用。 | |
+| taptap-cli update --check | 只检查是否有可用更新，不安装新版本。 | |
+| taptap-cli update --check --json | 以结构化数据（JSON）返回待执行命令、包名和软件源信息，适合 AI 助手或脚本预检。 | |
+```bash
+taptap-cli version
+taptap-cli update --check
+taptap-cli update
+```
+## 安装 AI 能力说明
+AI 能力说明（Skill）随 CLI 一起提供，与当前 CLI 版本严格对应；CLI 更新时会一并同步。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli skills list | 查看当前 CLI 已同步的核心业务与工具型 Skill。 | |
+## 返回与错误说明
+JSON 使用 `ok` 和退出码判断成功或失败。成功数据放在 `data`；失败信息放在 `error.type` 与 `error.subtype`，必要时还会带 `error.hint`。退出码是命令结束时返回给脚本的数字。
+### 冻结字段
+| 参数 | 说明 | 示例 |
+| --- | --- | --- |
+| ok（是否成功） | `true` 表示成功，`false` 表示失败。脚本判断成败时看这个字段和退出码，不要靠返回内容里是否有 `data` 判断。 | |
+| error.type / error.subtype（错误分类） | `type` 是 9 类稳定错误分类，`subtype` 是更具体的稳定原因。恢复提示放在 `error.hint`，参数错误还可能包含 `error.param` / `error.params`。
+validation: 参数或命令用法不合法
+authentication: 未登录、凭证缺失或已过期
+authorization: 当前账号缺少权限或 scope
+config: 本地配置缺失或未绑定
+network: DNS、超时、拒绝连接或传输失败
+api: TapTap API 返回业务或服务端错误
+policy: 内容安全或安全挑战阻断
+internal: CLI 内部契约或解码错误
+confirmation: 高风险动作缺少 `--yes`，subtype 为 `confirmation_required` | |
+| exit code（退出码） | 退出码对应关系如下：
+0: 成功
+1: API / 通用业务错误
+2: 参数校验失败
+3: 认证、授权或本地配置失败
+4: 网络错误
+5: CLI 内部错误
+6: 内容安全或安全策略阻断
+10: 高风险操作需要 `--yes` 确认 | |
+## 诊断与版本
+快速确认当前安装的 CLI 版本、脚本兼容版本和发布渠道。CLI 版本表示安装的软件版本；脚本兼容版本表示 JSON 返回格式、错误分类和命令含义是否仍与自动化脚本兼容。普通使用只需关注 CLI 版本，编写脚本或接入自动化流程时再关注脚本兼容版本。
+### 命令
+| 命令 | 说明 | 示例 |
+| --- | --- | --- |
+| taptap-cli version | 输出当前安装的 CLI 版本。 | |
+| taptap-cli version --format json | 输出 CLI 版本和脚本兼容版本。只有 JSON 返回格式、错误分类或命令含义发生不兼容变化时，脚本兼容版本的主版本号才会变化。 | |
+| taptap-cli --version | 与 `taptap-cli version` 等效的全局版本入口。 | |
+| taptap-cli doctor [--offline] [--json] | 检查本地配置、凭证、服务健康状态、协议版本和认证身份；`--offline` 只检查本地状态。 | |
+| taptap-cli status / auth status | `status` 检查服务元数据和能力目录；`auth status` 查看当前服务地址、登录凭证、开发者 / 游戏上下文和配置路径。 | |
+| taptap-cli task +list\|+get\|+resume\|+cancel | 查看、恢复或停止本地跟踪的长耗时上传任务。 | |
+| taptap-cli event list\|schema\|consume\|status\|stop | 发现事件类型、查看事件 schema、消费实时事件，并管理本机事件总线进程。 | |

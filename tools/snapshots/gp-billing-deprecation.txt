@@ -1,0 +1,80 @@
+Google Play 结算库版本废弃 | Play Billing | Android Developers
+跳至主要内容
+/
+English
+Deutsch
+Español – América Latina
+Français
+Indonesia
+Italiano
+Polski
+Português – Brasil
+Tiếng Việt
+Türkçe
+Русский
+עברית
+العربيّة
+فارسی
+हिंदी
+বাংলা
+ภาษาไทย
+中文 – 简体
+中文 – 繁體
+日本語
+한국어
+Android Studio
+登录
+Google Play
+Play Monetization
+Reminder: By Aug 31, 2026, all new apps and updates to existing apps must use Billing Library version 8 or later. If you need more time to update your app, you can request an extension until Nov 1, 2026. Learn about Play Billing Library version deprecation.
+Google 会使用 AI 技术将内容翻译成您偏好的语言。AI 翻译可能包含错误。
+Android Developers
+Google Play
+Play Monetization
+发送反馈
+Google Play 结算库版本废弃
+使用集合让一切井井有条
+根据您的偏好保存内容并对其进行分类。
+所有版本的 Google Play 结算库都遵循两年的废弃周期。Google 在 2019 年 Google I/O 大会和 Google Play 结算库版本 3 博文中宣布了此弃用周期。
+本页面回答了关于 Google Play 结算库版本弃用和迁移到更高版本的常见问题。
+使用 Play 结算库 Android 技能，自动升级到最新版本。
+如需从 Android CLI 安装技能，请运行以下命令：
+android skills add play-billing-library-version-upgrade
+如需激活该技能，请尝试以下提示：
+Help me upgrade my Play Billing Library implementation.
+不同版本的支持时间表
+下表显示了每个 Google Play 结算库版本的弃用和延期截止日期。
+版本
+新应用和更新的截止期限
+延期截止日期
+5
+2024 年 8 月 31 日
+2024 年 11 月 1 日
+6
+2025 年 8 月 31 日
+2025 年 11 月 1 日
+7
+2026 年 8 月 31 日
+2026 年 11 月 1 日
+8
+2027 年 8 月 31 日
+2027 年 11 月 1 日
+9
+2028 年 8 月 31 日
+2028 年 11 月 1 日
+如何查找哪些 APK 使用了已弃用的 Play 结算库版本？
+检查 build.gradle 文件。应用必须使用表中受支持的版本。这些依赖项仅会出现在需要 com.android.vending.BILLING 权限的 APK 中。
+您是否需要更新无人维护的 APK？
+我们建议您更新维护的 APK。未维护的 APK 不需要更新；现有应用仍可正常运行，但新应用和更新必须使用受支持的版本。
+如果您已将应用更新到受支持的版本，该如何解决弃用警告？
+确保您的 AndroidManifest.xml 文件包含 com.google.android.play.billingclient.version。如果缺少该属性，请检查清单合并是否移除了该属性。
+如何从较低版本的 Google Play 结算库进行升级？
+将您版本中的依赖项更新为使用表中受支持的版本。如需了解各版本之间有哪些变化，请参阅版本说明。
+如需进行迁移，请参阅版本 9 迁移指南。
+在哪里可以找到延期表单，以便在延期截止日期之前继续向用户分发应用？
+如果您的应用使用的是不受支持的 Google Play 结算库版本，您会在 Google Play 管理中心内收到警告。在政策状态页面上，打开警告的详情页面，然后打开延期表单。
+发送反馈
+本页面上的内容和代码示例受内容许可部分所述许可的限制。Java 和 OpenJDK 是 Oracle 和/或其关联公司的注册商标。
+最后更新时间 (UTC)：2026-10-24。
+需要向我们提供更多信息？
+[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-10-24。"],[],[]]
