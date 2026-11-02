@@ -96,3 +96,14 @@ Agent 在真实发布中发现后台和 skill 不一致时，会记在你工程�
 ## License
 
 [MIT](LICENSE)
+
+## 支持作者
+
+ShipMyGame 免费开源，赞赏全凭心意。如果它帮你把游戏顺利送进了审核，欢迎扫码支持，让这份上架手册持续跟上各个平台的变化。
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/assets/sponsor-wechat.png" width="200" alt="微信赞赏码"><br><b>微信赞赏</b></td>
+    <td align="center"><img src="docs/assets/sponsor-alipay.png" width="200" alt="支付宝收款码"><br><b>支付宝</b></td>
+  </tr>
+</table>
