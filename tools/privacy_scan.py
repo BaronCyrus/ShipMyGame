@@ -23,7 +23,7 @@ PATTERNS = {
     "home-path": r"/(?:Users|home)/[A-Za-z0-9._-]+/",
     "mounted-volume": r"/Volumes/[A-Za-z0-9._-]+/",
     "windows-user-path": r"[A-Za-z]:\\\\Users\\\\[^\\\\\s]+",
-    "token-like": r"\b(?:ghp|gho|github_pat|sk|AKIA)[-_A-Za-z0-9]{16,}\b",
+    "token-like": r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16})\b",
 }
 ALLOW = [
     r"noreply@anthropic\.com", r"[\w.+-]+@users\.noreply\.github\.com", r"@example\.(com|org)",
@@ -32,6 +32,7 @@ ALLOW = [
 ]
 # Lines that quote Google's public AdMob test IDs (ca-app-pub-3940256099942544/<unit>) are not account data.
 LINE_ALLOW = [r"ca-app-pub-3940256099942544", r"3940256099942544"]
+SECRET_SHAPED = {"wechat-appid", "google-oauth-client", "cert-fingerprint", "token-like"}
 SKIP_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".zip", ".ttf", ".otf", ".mp4", ".pdf", ".docx", ".keystore"}
 
 
@@ -65,13 +66,15 @@ def main():
     for path in files(a.paths):
         if os.path.splitext(path)[1].lower() in SKIP_EXT or not os.path.isfile(path):
             continue
-        if os.path.normpath(path).startswith(os.path.join("tools", "snapshots")):
-            continue  # copies of official pages
+        # copies of official pages: only secret-shaped values matter there (numbers and addresses are the pages' own)
+        snapshot = os.path.normpath(path).startswith(os.path.join("tools", "snapshots"))
         text = open(path, encoding="utf-8", errors="ignore").read()
         for n, line in enumerate(text.splitlines(), 1):
             public_test_ids = any(re.search(la, line) for la in LINE_ALLOW)
             for name, pat in PATTERNS.items():
                 if name == "long-numeric-id" and public_test_ids:
+                    continue
+                if snapshot and name not in SECRET_SHAPED:
                     continue
                 for m in re.finditer(pat, line):
                     if any(re.search(al, m.group(0)) for al in ALLOW):

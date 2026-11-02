@@ -23,6 +23,15 @@ from html.parser import HTMLParser
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SNAP = os.path.join(ROOT, "snapshots")
 UA = "Mozilla/5.0 (compatible; ShipMyGame-doc-watch; +https://github.com/BaronCyrus/ShipMyGame)"
+# Official pages quote IDs that GitHub secret scanning flags (e.g. the WeChat Unity plugin's AppID in the Unity QA
+# page). They carry no rule, so snapshots keep a stable placeholder instead of the value.
+REDACT = [
+    (re.compile(r"\bwx[0-9a-f]{16}\b"), "wx<appid>"),
+    (re.compile(r"AIza[0-9A-Za-z_-]{35}"), "<google-api-key>"),
+    (re.compile(r"\b(?:ghp|gho|ghu|ghs|github_pat)_[A-Za-z0-9_]{20,}"), "<github-token>"),
+    (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "<aws-key>"),
+    (re.compile(r"\bsk-[A-Za-z0-9_-]{20,}"), "<api-key>"),
+]
 BLOCK = {"p", "br", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "div", "section", "article", "pre", "table", "dt", "dd"}
 
 
@@ -67,6 +76,8 @@ def normalize(text, ignore):
     lines = []
     for line in text.splitlines():
         line = re.sub(r"\s+", " ", html.unescape(line)).strip()
+        for pattern, placeholder in REDACT:
+            line = pattern.sub(placeholder, line)
         if line and not any(re.search(p, line) for p in ignore):
             lines.append(line)
     return "\n".join(lines) + "\n"
