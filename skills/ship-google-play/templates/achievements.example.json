@@ -1,0 +1,14 @@
+{
+  "achievements": [
+    {"key": "first_win", "name": "First Win", "description": "Win your first game.", "steps": 0, "points": 5, "state": "Revealed"},
+    {"key": "ten_wins", "name": "Ten Wins", "description": "Win 10 games.", "steps": 10, "points": 10, "state": "Revealed"},
+    {"key": "veteran", "name": "Veteran", "description": "Win 100 games.", "steps": 100, "points": 50, "state": "Revealed"}
+  ],
+  "localizations": {
+    "zh-CN": [
+      {"name": "首胜", "description": "赢下第一局。"},
+      {"name": "十胜", "description": "累计赢下 10 局。"},
+      {"name": "老手", "description": "累计赢下 100 局。"}
+    ]
+  }
+}

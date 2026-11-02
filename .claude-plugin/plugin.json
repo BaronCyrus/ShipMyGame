@@ -1,0 +1,10 @@
+{
+  "name": "ship-my-game",
+  "version": "0.1.0",
+  "description": "把 Unity 游戏发布到 Google Play、微信小游戏、TapTap 小游戏：从注册开发者账号到提交审核，全部来自真实上架实测。",
+  "author": { "name": "ShipMyGame contributors" },
+  "homepage": "https://github.com/BaronCyrus/ShipMyGame",
+  "repository": "https://github.com/BaronCyrus/ShipMyGame",
+  "license": "MIT",
+  "keywords": ["unity", "publishing", "google-play", "wechat-minigame", "taptap", "game"]
+}

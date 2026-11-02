@@ -1,0 +1,15 @@
+{
+  "name": "shipmygame",
+  "owner": { "name": "ShipMyGame contributors" },
+  "metadata": {
+    "description": "Unity 游戏上架技能：Google Play、微信小游戏、TapTap 小游戏，从注册到提审。"
+  },
+  "plugins": [
+    {
+      "name": "ship-my-game",
+      "source": "./",
+      "description": "把 Unity 游戏发布到 Google Play、微信小游戏、TapTap 小游戏：从注册开发者账号到提交审核。",
+      "category": "productivity"
+    }
+  ]
+}

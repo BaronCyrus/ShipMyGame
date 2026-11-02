@@ -1,0 +1,9 @@
+{
+  "appid": "<MiniApp ID：小游戏管理 → 开放能力 → 小游戏基本信息>",
+  "version": "1.0.0",
+  "orientation": "Portrait",
+  "dst": "Builds/taptap",
+  "cjkFont": "Assets/Fonts/CJKSubset.ttf",
+  "cjkFamily": "CJK Subset",
+  "latinFonts": ["Assets/Fonts/<游戏用的拉丁字体>.ttf"]
+}

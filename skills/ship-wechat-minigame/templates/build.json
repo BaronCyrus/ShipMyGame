@@ -1,0 +1,9 @@
+{
+  "appid": "<小游戏 AppID：开发管理 → 开发设置 → 开发者ID>",
+  "projectName": "<游戏名，纯中文>",
+  "orientation": "Portrait",
+  "dst": "Builds/wechat",
+  "cjkFont": "Assets/Fonts/CJKSubset.ttf",
+  "cjkFamily": "CJK Subset",
+  "latinFonts": ["Assets/Fonts/<游戏用的拉丁字体>.ttf"]
+}

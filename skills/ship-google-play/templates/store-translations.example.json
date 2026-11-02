@@ -1,0 +1,20 @@
+{
+  "app": "<游戏名>",
+  "note": "Store listing translations. Each entry: Play Console language code, app name (max 30), short description (max 80), full description (max 4000). Use the text exactly as written.",
+  "translations": [
+    {
+      "languageCode": "es-419",
+      "language": "Spanish (Latin America)",
+      "appName": "<≤30 字符>",
+      "shortDescription": "<≤80 字符>",
+      "fullDescription": "<≤4000 字符>"
+    },
+    {
+      "languageCode": "zh-TW",
+      "language": "Chinese (Traditional)",
+      "appName": "<≤30 字符>",
+      "shortDescription": "<≤80 字符>",
+      "fullDescription": "<≤4000 字符>"
+    }
+  ]
+}

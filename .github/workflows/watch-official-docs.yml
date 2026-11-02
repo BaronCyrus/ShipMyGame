@@ -1,0 +1,43 @@
+name: 官方文档巡检
+
+on:
+  schedule:
+    - cron: "0 1 * * 1"   # 每周一 09:00（北京时间）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: watch-official-docs
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: 抓取并比对官方来源
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/watch_sources.py --report watch-report.md
+
+      - name: 保存新快照
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/snapshots
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: 刷新官方来源快照"
+            git push
+          fi
+
+      - name: 有变化时开 Issue
+        if: hashFiles('watch-report.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create docs-changed --color FBCA04 --description "官方来源有变化，需要核对 skill" --force
+          gh issue create --title "官方来源有更新（$(date -u +%F)）" --body-file watch-report.md --label docs-changed

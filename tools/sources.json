@@ -1,0 +1,683 @@
+[
+  {
+    "id": "gp-testing-requirements",
+    "channel": "google-play",
+    "url": "https://support.google.com/googleplay/android-developer/answer/14151465?hl=zh-Hans",
+    "note": "个人账号新应用的封闭测试门槛（12 名测试人员连续 14 天）、正式版权限申请问卷的三部分、审核时长和被要求继续测试的原因",
+    "affects": [
+      "skills/ship-google-play/SKILL.md",
+      "skills/ship-google-play/references/review.md",
+      "skills/ship-google-play/templates/production-access-answers.md",
+      "skills/ship-google-play/templates/testers-recruitment.md"
+    ],
+    "type": "page"
+  },
+  {
+    "id": "gp-target-sdk",
+    "channel": "google-play",
+    "url": "https://developer.android.com/google/play/requirements/target-sdk",
+    "note": "新应用和更新的 targetSdk 下限及截止日期（现为 36，2026-08-31 起；延期到 2026-11-01）；决定 ShipAndroidBuild.cs 的 MinTargetSdk",
+    "affects": [
+      "skills/ship-google-play/scripts/ShipAndroidBuild.cs",
+      "skills/ship-google-play/references/build.md",
+      "skills/ship-google-play/SKILL.md"
+    ],
+    "type": "page"
+  },
+  {
+    "id": "gp-16kb-pages",
+    "channel": "google-play",
+    "url": "https://developer.android.com/guide/practices/page-sizes",
+    "note": "16 KB 内存页的 Play 截止日期（页面现写 2027-02-01 起不支持的更新不能发布）和检查命令（zipalign、bundletool、llvm-objdump）",
+    "affects": [
+      "skills/ship-google-play/references/build.md",
+      "skills/ship-google-play/references/troubleshooting.md",
+      "skills/ship-google-play/SKILL.md"
+    ],
+    "type": "page"
+  },
+  {
+    "id": "gpgs-unity-plugin",
+    "channel": "google-play",
+    "type": "github-release",
+    "repo": "playgameservices/play-games-plugin-for-unity",
+    "note": "Play 游戏服务 Unity 插件版本（现 v2.3.0）、minSdk、接口变化；决定 ShipPgsSetup.cs 反射调用和 ShipPlayGames.cs 的接口",
+    "affects": [
+      "skills/ship-google-play/scripts/ShipPgsSetup.cs",
+      "skills/ship-google-play/scripts/ShipPlayGames.cs",
+      "skills/ship-google-play/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "admob-unity-plugin",
+    "channel": "google-play",
+    "type": "github-release",
+    "repo": "googleads/googleads-mobile-unity",
+    "note": "Google Mobile Ads Unity 插件版本（现 v11.6.0：最低 Unity 2022.3、minSdk 24）、EDM 方案、弃用接口；决定 ShipAds.cs",
+    "affects": [
+      "skills/ship-google-play/scripts/ShipAds.cs",
+      "skills/ship-google-play/references/capabilities.md",
+      "skills/ship-google-play/references/build.md"
+    ]
+  },
+  {
+    "id": "gp-tech-quality",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/answer/17492799?hl=zh-Hans",
+    "note": "Play 技术质量要求：现行的 16 KB、64 位、vitals 阈值；2027-02 起的内存阈值和 DEX 优化（游戏 DEX > 50 MB）；2027-04 零点按登录恢复（游戏暂豁免）",
+    "affects": [
+      "skills/ship-google-play/SKILL.md",
+      "skills/ship-google-play/references/build.md"
+    ]
+  },
+  {
+    "id": "gp-policy-announcements",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/announcements/13412212",
+    "note": "Play 政策公告列表（最近一期 2026-10-29）：新的权限声明、交易者身份等要求和整改期限",
+    "affects": [
+      "skills/ship-google-play/references/console.md",
+      "skills/ship-google-play/references/onboarding.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "gp-trader-status",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/answer/17594752?hl=zh-Hans",
+    "note": "交易者身份声明：新账号创建时声明、已有账号 2027-02-01 截止；声明为交易者的个人账号公开电话和地址（2027-03-01 起）；声明入口路径",
+    "affects": [
+      "skills/ship-google-play/references/onboarding.md",
+      "skills/ship-google-play/references/console.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "gp-account-public-info",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/answer/13628312?hl=zh-Hans",
+    "note": "注册所需信息和在 Google Play 上公开显示的开发者信息（个人：法定全名、国家、开发者邮箱，创收后完整地址；组织另加电话）；D-U-N-S",
+    "affects": [
+      "skills/ship-google-play/references/onboarding.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "gp-device-verification",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/answer/14316361?hl=zh-Hans",
+    "note": "个人账号的 Android 实体设备验证步骤和设备要求（未 root、Android 10+）",
+    "affects": [
+      "skills/ship-google-play/references/onboarding.md"
+    ]
+  },
+  {
+    "id": "gp-app-signing",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9842756?hl=zh-Hans",
+    "note": "Play 应用签名和量子就绪型混合签名：要向 API 提供方登记哪些密钥指纹（现为三把）、应用签名页的导航路径",
+    "affects": [
+      "skills/ship-google-play/references/capabilities.md",
+      "skills/ship-google-play/references/console.md",
+      "skills/ship-google-play/references/build.md"
+    ]
+  },
+  {
+    "id": "gp-api-getting-started",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://developers.google.com/android-publisher/getting_started",
+    "note": "Developer API 服务账号接入流程（是否又需要关联 Cloud 项目、在「用户和权限」邀请）",
+    "affects": [
+      "skills/ship-google-play/references/automation.md"
+    ]
+  },
+  {
+    "id": "gp-api-edits-commit",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://developers.google.com/android-publisher/api-ref/rest/v3/edits/commit",
+    "note": "edits.commit 的 changesNotSentForReview 含义和 changesInReviewBehavior 默认值（默认会取消正在审核的变更）；决定 play_upload.py 的提交参数",
+    "affects": [
+      "skills/ship-google-play/scripts/play_upload.py",
+      "skills/ship-google-play/references/automation.md"
+    ]
+  },
+  {
+    "id": "gpgs-quality-checklist",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://developer.android.com/games/pgs/quality",
+    "note": "PGS 质量清单的 Required 项（现为至少 10 个可见成就、4 个一小时内可达成）",
+    "affects": [
+      "skills/ship-google-play/references/capabilities.md",
+      "skills/ship-google-play/scripts/pgs_achievements_zip.py",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "admob-test-ads",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://developers.google.com/admob/unity/test-ads",
+    "note": "AdMob 官方测试广告单元 ID 表（ShipAds.cs 的测试常量）",
+    "affects": [
+      "skills/ship-google-play/scripts/ShipAds.cs",
+      "skills/ship-google-play/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "admob-app-verification",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/admob/answer/14538460?hl=zh-Hans",
+    "note": "新应用必须用 app-ads.txt 验证后才进入应用就绪审核",
+    "affects": [
+      "skills/ship-google-play/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "gp-billing-deprecation",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://developer.android.com/google/play/billing/deprecation-faq",
+    "note": "Play 结算库各版本的截止日期（PBL 7 已过期）；决定 Unity IAP 的最低版本",
+    "affects": [
+      "skills/ship-google-play/references/capabilities.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "unity-android-requirements",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://docs.unity3d.com/6000.0/Documentation/Manual/android-requirements-and-compatibility.html",
+    "note": "Unity 6000.0 各补丁版本支持的目标 API（46f1+ 支持 36）和 16 KB 说明；同名 2022.3 页面规则相同",
+    "affects": [
+      "skills/ship-google-play/references/build.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "play-in-app-review-unity",
+    "channel": "google-play",
+    "type": "github-release",
+    "repo": "google/play-in-app-reviews-unity",
+    "note": "应用内评价 Unity 包版本（现 1.8.4）；决定 ShipPlayReview.cs 的评价接口",
+    "affects": [
+      "skills/ship-google-play/scripts/ShipPlayReview.cs",
+      "skills/ship-google-play/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "play-in-app-update-unity",
+    "channel": "google-play",
+    "type": "github-release",
+    "repo": "google/play-in-app-updates-unity",
+    "note": "应用内更新 Unity 包版本（现 1.8.5）；决定 ShipPlayReview.cs 的更新接口",
+    "affects": [
+      "skills/ship-google-play/scripts/ShipPlayReview.cs",
+      "skills/ship-google-play/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "wx-unity-sdk-tags",
+    "channel": "wechat",
+    "type": "gitee-commits",
+    "repo": "wechat-minigame/minigame-tuanjie-transform-sdk",
+    "note": "微信 Unity 转换 SDK 有新提交（每个版本是一个同名分支，默认分支的提交是 Auto-publish release）；新版本要确认 fetch_wxsdk.sh 固定的 v0.1.34 和 6 处补丁是否仍需要",
+    "affects": [
+      "skills/ship-wechat-minigame/scripts/fetch_wxsdk.sh",
+      "skills/ship-wechat-minigame/references/build.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-miniprogram-ci",
+    "channel": "wechat",
+    "type": "npm",
+    "package": "miniprogram-ci",
+    "note": "miniprogram-ci 版本（文档和脚本锁定 2.1.31）；大版本变化时核对 wx_ci.js 的参数和 --pt miniGame",
+    "affects": [
+      "skills/ship-wechat-minigame/references/automation.md",
+      "skills/ship-wechat-minigame/scripts/wx_ci.js"
+    ]
+  },
+  {
+    "id": "wx-unity-sdk-changelog",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://raw.githubusercontent.com/wechat-miniprogram/minigame-tuanjie-transform-sdk/main/CHANGELOG.md",
+    "note": "稳定版版本号和更新内容；Unity 6 是否从「预览版本不建议上线使用」转为正式支持；UnityPlugin 版本是否随 SDK 变化（决定「不要点插件有更新」的规则）",
+    "affects": [
+      "skills/ship-wechat-minigame/SKILL.md",
+      "skills/ship-wechat-minigame/references/build.md",
+      "skills/ship-wechat-minigame/scripts/fetch_wxsdk.sh"
+    ]
+  },
+  {
+    "id": "wx-unity-sdk-prerelease-changelog",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://raw.githubusercontent.com/wechat-miniprogram/minigame-tuanjie-transform-sdk/pre-release/CHANGELOG.md",
+    "note": "预览版（v0.1.35 起换成 WX-WASM-SDK-V3）何时转正、目录和配置怎么迁移；转正时要重验 11 处补丁和 ShipWeChatBuild.cs 用到的 WXConvertCore 接口",
+    "affects": [
+      "skills/ship-wechat-minigame/scripts/fetch_wxsdk.sh",
+      "skills/ship-wechat-minigame/scripts/ShipWeChatBuild.cs",
+      "skills/ship-wechat-minigame/references/build.md"
+    ]
+  },
+  {
+    "id": "wx-unity-engine-versions",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/UnityVersion.md",
+    "note": "官方推荐引擎版本表（目前 Unity 2018～2022 和团结引擎，没有 Unity 6）；决定「工程要求」里新项目选 2022.3 / 团结、Unity 6 只算预览的规则",
+    "affects": [
+      "skills/ship-wechat-minigame/SKILL.md",
+      "skills/ship-wechat-minigame/references/build.md",
+      "skills/ship-my-game/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-unity-transform",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/Transform.md",
+    "note": "导出面板字段、首包资源加载方式、快适配开通路径（能力地图-生产提效包-快适配）、要求 Stable 版开发者工具、「请不要使用真机调试」",
+    "affects": [
+      "skills/ship-wechat-minigame/references/build.md",
+      "skills/ship-wechat-minigame/references/onboarding.md"
+    ]
+  },
+  {
+    "id": "wx-unity-qa",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/DevelopmentQAList.md",
+    "note": "Unity 常见问题：存储上限（Storage 10MB、文件 200MB）、订阅消息要在 Touch 回调里调用、插件报错（Layout permission deny、待审核确认）、压缩选项",
+    "affects": [
+      "skills/ship-wechat-minigame/references/troubleshooting.md",
+      "skills/ship-wechat-minigame/references/capabilities.md",
+      "skills/ship-wechat-minigame/references/build.md"
+    ]
+  },
+  {
+    "id": "wx-ci-doc",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.md",
+    "note": "上传密钥的后台路径（管理-开发管理-开发设置-小程序代码上传）、IP 白名单、项目类型 miniGame、upload/preview 参数、robot 1～30",
+    "affects": [
+      "skills/ship-wechat-minigame/references/automation.md",
+      "skills/ship-wechat-minigame/scripts/wx_ci.js"
+    ]
+  },
+  {
+    "id": "wx-ops-rules",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/product/index.md",
+    "note": "小游戏运营规范：广告不得遮挡开始/继续游戏或诱导误点（3.2.10）、禁止诱导分享（2.5.1）、未及时变更备案（2.5.35）、类目和抄袭规则（3.1）；决定提审前自查和被拒处理",
+    "affects": [
+      "skills/ship-wechat-minigame/references/review.md",
+      "skills/ship-wechat-minigame/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "wx-code-package-limits",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/base-ability/code-package.md",
+    "note": "代码包上限（总包 30M、主包 4M、分包不限）和开发版/体验版/正式版的定义；决定「工程要求」的包体阈值",
+    "affects": [
+      "skills/ship-wechat-minigame/SKILL.md",
+      "skills/ship-wechat-minigame/references/build.md"
+    ]
+  },
+  {
+    "id": "wx-privacy-guide",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/open-ability/privacy.md",
+    "note": "需要声明的隐私接口清单（好友关系、剪贴板、昵称头像…）、错误码 104/112/1025/1026、隐私指引的后台路径、隐私弹窗组件一经启用无法关闭",
+    "affects": [
+      "skills/ship-wechat-minigame/references/console.md",
+      "skills/ship-wechat-minigame/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "wx-ad-conditions",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/ad.md",
+    "note": "流量主开通条件（累计 UV > 500 等三选一、次日刷新）和开通入口；决定「上线后才能接真实广告」的顺序",
+    "affects": [
+      "skills/ship-wechat-minigame/references/capabilities.md",
+      "skills/ship-wechat-minigame/SKILL.md",
+      "skills/ship-my-game/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-rewarded-video-ad",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/rewarded-video-ad.md",
+    "note": "激励视频只按 isEnded 发奖、失败后先 load 再 show、1004 兜底分享页（基础库 3.7.7）",
+    "affects": [
+      "skills/ship-wechat-minigame/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "wx-onboarding-guide",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/index.md",
+    "note": "发布流程、可并行的环节、IAA 游戏总时效（13～37 个工作日）、发布前必须完成版本审核和备案",
+    "affects": [
+      "skills/ship-wechat-minigame/SKILL.md",
+      "skills/ship-wechat-minigame/references/filing.md",
+      "skills/ship-my-game/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-minigame-filing",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/nrjs.md",
+    "note": "小游戏备案：提交路径、锁名锁主体规则、审核状态、平台 1～2 + 主管部门 10～20 个工作日、常见驳回原因",
+    "affects": [
+      "skills/ship-wechat-minigame/references/filing.md",
+      "skills/ship-wechat-minigame/references/listing.md"
+    ]
+  },
+  {
+    "id": "wx-icp-filing",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/product/record/guidelines.md",
+    "note": "小程序备案（ICP）：个人主体材料、人脸核身、12381 短信 24 小时内核验、通管局 1～20 个工作日",
+    "affects": [
+      "skills/ship-wechat-minigame/references/filing.md"
+    ]
+  },
+  {
+    "id": "wx-version-review",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/bbsh.md",
+    "note": "提审表单字段（引擎、隐私指引、适龄提示、版本说明、苹果开发者账号必填）、审核 1 个自然日、加急条件、备案完成后才能发布",
+    "affects": [
+      "skills/ship-wechat-minigame/references/review.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-category-rules",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/type.md",
+    "note": "个人主体不能选文化互动、角色、牌类；二级类目发布后锁定",
+    "affects": [
+      "skills/ship-wechat-minigame/references/onboarding.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-age-rating",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/slts.md",
+    "note": "适龄提示入口（设置 → 基础设置 → 基本信息 → 适龄提示）、8+/12+/16+ 标准、平台在启动页《健康游戏忠告》旁展示",
+    "affects": [
+      "skills/ship-wechat-minigame/references/console.md"
+    ]
+  },
+  {
+    "id": "wx-realname",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/zxbsm.md",
+    "note": "不开通虚拟支付时平台统一接入中宣部实名系统、开发者无需操作；决定「纯广告游戏不接实名和防沉迷」",
+    "affects": [
+      "skills/ship-wechat-minigame/references/console.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-unity-sdk-tags",
+    "channel": "taptap",
+    "type": "github-tags",
+    "repo": "taptap/minigame-sdk-unity",
+    "note": "TapTap 小游戏 Unity SDK 版本（当前 2.0.21）；新版本要确认 fetch_tapsdk.sh 的 4 处 Unity 6 补丁是否仍需要、默认 tag 是否更新",
+    "affects": [
+      "skills/ship-taptap-minigame/scripts/fetch_tapsdk.sh",
+      "skills/ship-taptap-minigame/references/build.md",
+      "skills/ship-taptap-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-cli",
+    "channel": "taptap",
+    "type": "npm",
+    "package": "@taptap/cli",
+    "note": "TapTap CLI 版本（按日期发版）：小游戏包上传、创建开发版本、提审命令和最低客户端版本",
+    "affects": [
+      "skills/ship-taptap-minigame/references/automation.md"
+    ]
+  },
+  {
+    "id": "tap-cli-docs",
+    "channel": "taptap",
+    "url": "https://developer.taptap.cn/v3/cli/",
+    "note": "TapTap CLI 安装、登录和能力范围",
+    "affects": [
+      "skills/ship-taptap-minigame/references/automation.md"
+    ]
+  },
+  {
+    "id": "tap-unity-sdk-releases",
+    "channel": "taptap",
+    "type": "github-release",
+    "repo": "taptap/minigame-sdk-unity",
+    "note": "SDK 发布说明：是否修复 Unity 6000.x 的 framework 改写（fetch is not a function、JS_Sound_Create_With_Buffer、wasm-preloadAssets），决定 Unity 6 路线还是不是实验性；README 分享示例是否更新",
+    "affects": [
+      "skills/ship-taptap-minigame/references/troubleshooting.md",
+      "skills/ship-taptap-minigame/scripts/ShipTapBuild.cs",
+      "skills/ship-taptap-minigame/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "tap-unity-webgl",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/unity-webGL/",
+    "note": "官方建议的引擎版本（Unity 2022+、团结引擎 1.2.0+）、SDK 安装方式、导出产物 game.zip / game_wasm_split.zip",
+    "affects": [
+      "skills/ship-taptap-minigame/SKILL.md",
+      "skills/ship-taptap-minigame/references/build.md"
+    ]
+  },
+  {
+    "id": "tap-engine-suggestions",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/engine-suggestions/",
+    "note": "推荐引擎版本表（有没有加 Unity 6）、不支持的功能（多线程、System.Net、原生插件、FMOD）、包体与 wasm 阈值",
+    "affects": [
+      "skills/ship-taptap-minigame/SKILL.md",
+      "skills/ship-taptap-minigame/references/build.md"
+    ]
+  },
+  {
+    "id": "tap-creation-improvement",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/guide/creation-improvement/",
+    "note": "创建游戏（游玩提供方式「小游戏」）、发布状态、首包大小、版本号 V x.y.z 规则、防沉迷由平台负责、审核时长 1～3 天 / 1 天",
+    "affects": [
+      "skills/ship-taptap-minigame/SKILL.md",
+      "skills/ship-taptap-minigame/references/onboarding.md",
+      "skills/ship-taptap-minigame/references/build.md",
+      "skills/ship-taptap-minigame/references/review.md"
+    ]
+  },
+  {
+    "id": "tap-registration",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/guide/registration-login/",
+    "note": "注册开发者与认证开发者的区别（注册开发者不能提审）、个人认证材料、审核时长、厂商名称规范",
+    "affects": [
+      "skills/ship-taptap-minigame/references/onboarding.md",
+      "skills/ship-taptap-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-pre-filing",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/guide/pre-filing/",
+    "note": "小游戏前置备案的表单模块、负责人要求、电子化核验、约 20 个工作日、工信部短信 24 小时核验",
+    "affects": [
+      "skills/ship-taptap-minigame/references/filing.md",
+      "skills/ship-taptap-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-version-publish",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/guide/game-publish/version/",
+    "note": "提审入口（包体管理「提审」→ 未发布版本 → 提交审核）和各审核状态能做的操作",
+    "affects": [
+      "skills/ship-taptap-minigame/references/review.md",
+      "skills/ship-taptap-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-material-minigame",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/guide/game-publish/material/",
+    "note": "小游戏宣发物料指引：宣传图、截图 2 MB，录屏 500 MB mp4（比后台页面更严）",
+    "affects": [
+      "skills/ship-taptap-minigame/references/listing.md"
+    ]
+  },
+  {
+    "id": "tap-store-material",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/docs/store/release/publish/material/",
+    "note": "通用《游戏物料要求》（页面版本 v4）：图标、截图比例、实机录屏、宣传图 16:9 / 1:1 的尺寸和体积",
+    "affects": [
+      "skills/ship-taptap-minigame/references/listing.md"
+    ]
+  },
+  {
+    "id": "tap-review-standards",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/tap-operation/operation-standards/review-standards/",
+    "note": "小游戏审核规范：5.2.2 包体 20 MB、5.2.4 必须接 TapTap 登录、1.3.x 广告、3.x 素材、8.x 隐私",
+    "affects": [
+      "skills/ship-taptap-minigame/SKILL.md",
+      "skills/ship-taptap-minigame/references/listing.md",
+      "skills/ship-taptap-minigame/references/build.md",
+      "skills/ship-taptap-minigame/references/review.md"
+    ]
+  },
+  {
+    "id": "tap-behavior-standards",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/tap-operation/operation-standards/behavior-standards/",
+    "note": "启动页适龄标识、隐私政策按钮不小于 40×40 像素、账号注销入口、广告时长占比：决定 ShipCompliance 的界面要求",
+    "affects": [
+      "skills/ship-taptap-minigame/references/build.md",
+      "skills/ship-taptap-minigame/scripts/ShipCompliance.cs",
+      "skills/ship-taptap-minigame/templates/compliance.zh-Hans.txt"
+    ]
+  },
+  {
+    "id": "tap-ad-policy",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/tap-operation/operation-standards/minigame-ad-policy/",
+    "note": "首次启动 60 秒 / 120 秒内的广告限制，激励视频和横幅的展示规范",
+    "affects": [
+      "skills/ship-taptap-minigame/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "tap-iaa",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/monetization/IAA-game/",
+    "note": "Tap 小游戏广告只能走 Dirichlet（TapADN）、零分成、接入步骤；决定「个人能否靠广告赚钱」的说法",
+    "affects": [
+      "skills/ship-taptap-minigame/references/capabilities.md",
+      "skills/ship-taptap-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-leaderboard-tutorial",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/dev/tutorial/open-capabilities/leaderboard-tutorial/",
+    "note": "排行榜后台入口、测试白名单、好友榜要声明好友关系（1025/104/103）",
+    "affects": [
+      "skills/ship-taptap-minigame/references/capabilities.md"
+    ]
+  },
+  {
+    "id": "tap-achievement-features",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/docs/sdk/achievement/features/",
+    "note": "成就 ID 规则、至少 5 个才能发布、测试人员上限、发布后不可改的字段、白金成就门槛",
+    "affects": [
+      "skills/ship-taptap-minigame/references/capabilities.md",
+      "skills/ship-taptap-minigame/references/review.md"
+    ]
+  },
+  {
+    "id": "tap-cli-command-reference",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/v3/cli/command-reference.md",
+    "note": "CLI 命令参考：是否仍写「Tap 小游戏上传需前往开发者中心」（与实测冲突）、登录方式、退出码",
+    "affects": [
+      "skills/ship-taptap-minigame/references/automation.md",
+      "skills/ship-taptap-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "tap-agents-md",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/agents.md",
+    "note": "TapTap 给 AI agent 的接入说明：CLI 覆盖范围、必须先问人的动作、小游戏上传是否仍在控制台",
+    "affects": [
+      "skills/ship-taptap-minigame/references/automation.md",
+      "skills/ship-taptap-minigame/references/review.md"
+    ]
+  },
+  {
+    "id": "tap-mcp-setup",
+    "channel": "taptap",
+    "type": "page",
+    "url": "https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/mcp-setup/",
+    "note": "官方 MCP 是否开始支持 Unity 小游戏（目前写「仅支持 H5 小游戏」）",
+    "affects": [
+      "skills/ship-taptap-minigame/references/automation.md"
+    ]
+  }
+]
