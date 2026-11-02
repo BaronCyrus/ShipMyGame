@@ -11,7 +11,7 @@ description: TapTap 小游戏发布：把 Unity 游戏导出成 TapTap 小游戏
 
 **开工前先告诉用户三件事**，并写进进度档案：
 
-1. **引擎**：官方建议 Unity 2022+ 或团结引擎 1.2.0+，没有声明支持 Unity 6。本仓库作者用 Unity 6000.6 导出的包连续 3 版没通过包体准入测试（安卓 0/5）`[实测-失败]`。默认走 Unity 2022.3 LTS 或团结引擎 [官方](https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/engine-suggestions/)，这条路本仓库还没实测。
+1. **引擎**：官方建议 Unity 2022+ 或团结引擎 1.2.0+，没有声明支持 Unity 6 [官方](https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/engine-suggestions/)。本仓库用 Unity 6000.6 实测：前 4 版逐个暴露问题、都没过包体准入测试，第 5 版（1.0.7）通过 `[实测]`。修法已全部写进 `scripts/ShipTapBuild.cs`，另有一条游戏代码规则：TapTap 构建里不能调用 `WeChatWASM.WX`。2022.3 / 团结引擎这条官方路线本仓库还没实测。
 2. **个人、没有版号**：只能以「开放试玩」上线，不能内购 `[实测]`；上线前必须做完前置备案，全程约 20 个工作日 [官方](https://developer.taptap.cn/minigameapidoc/quick-start/guide/pre-filing/)。
 3. **广告**：Unity 小游戏只能接 TapADN（Dirichlet）[官方](https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/ad-integration-guide/)。Dirichlet 结算要增值税专用发票，个人基本拿不到钱。这一条出自 Dirichlet 协议，只当线索，详见 [capabilities.md](references/capabilities.md)。
 
@@ -34,7 +34,8 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 
 | 项 | 要求 | 依据 |
 |---|---|---|
-| 引擎 | Unity 2022.3 LTS 或团结引擎 1.2.0+（官方原文「建议使用 Unity 2022+ 版本，团结引擎 1.2.0+ 版本」）。Unity 6000.x 是实验性路线：仓库脚本只带到第 2 版（1.0.4）的补丁，这一版本身就没过准入测试 | [官方](https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/unity-webGL/)；Unity 6 `[实测-失败]` |
+| 引擎 | Unity 6000.x：用本仓库脚本的全部补丁，1.0.7 实测通过准入测试。或官方建议的 Unity 2022.3 LTS / 团结引擎 1.2.0+（官方原文「建议使用 Unity 2022+ 版本，团结引擎 1.2.0+ 版本」），本仓库未实测 | Unity 6 `[实测]`；[官方](https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/unity-webGL/) |
+| 微信适配层 | TapTap 构建里不调用 `WeChatWASM.WX` 的任何接口：存档、窗口信息、胶囊按钮改用 `TapTapMiniGame.Tap` 的同名接口。调用了会在第一帧崩溃黑屏，见 troubleshooting.md 2.3 | `[实测]` 1.0.6 失败、1.0.7 修好 |
 | 平台模块 | WebGL Build Support | — |
 | SDK | `com.taptap.minigame` 2.0.21，用 `scripts/fetch_tapsdk.sh` 嵌进 `Packages/`；不能和微信小游戏 SDK 在同一个工程里，TapTap 渠道单开 git 分支或工作区 | `[实测]` |
 | 图形 | WebGL 2；Linear 色彩空间只能配 WebGL 2 | [官方](https://github.com/taptap/minigame-sdk-unity) |
@@ -65,7 +66,7 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 
 ### P2 改工程并导出 game.zip
 
-1. 按「工程要求」定下引擎版本，写进进度档案。用户坚持用 Unity 6 时，先讲清风险，再读 [troubleshooting.md](references/troubleshooting.md) 的「Unity 6 路线」一节。
+1. 按「工程要求」定下引擎版本，写进进度档案。Unity 6 工程照常往下走：补丁由脚本自动打；另外在代码里搜 `WeChatWASM.WX`，TapTap 构建里一处都不能留（见 [build.md](references/build.md) 第 4 节）。
 2. 在单独的 git 分支或工作区里运行 `bash <本 skill 目录>/scripts/fetch_tapsdk.sh <工程目录>`，并把 `Packages/com.taptap.minigame/` 加进 `.gitignore` `[实测]`。
 3. 复制下面三个文件，并替换文案里的全部 `{{占位符}}`：
    - `scripts/ShipTapBuild.cs` 放到 `Assets/Editor/`；
@@ -74,10 +75,12 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 
    然后在启动流程里接好：同意弹窗 → 同意后 TapTap 登录；启动页放适龄标识和隐私政策按钮。代码见 [build.md](references/build.md) `[实测：编译通过，未上真机]`。
 4. 用 [`../ship-my-game/scripts/make_cjk_font.py`](../ship-my-game/scripts/make_cjk_font.py) 生成中文字体子集，扫描范围要包括 `Assets/Resources/ShipCompliance/` `[实测]`。
-5. 照 `templates/build.json` 写 `publish/taptap/build.json`，版本号要比上一次上传的高。然后运行 `../ship-my-game/scripts/unity_build.sh <工程目录> WebGL ShipTapBuild.Export taptap` `[实测：Unity 6000.6 的空工程导出成功；2022.3 未实测]`。
+5. 照 `templates/build.json` 写 `publish/taptap/build.json`，版本号要比上一次上传的高。然后运行 `../ship-my-game/scripts/unity_build.sh <工程目录> WebGL ShipTapBuild.Export taptap` `[实测：同一套补丁的 Unity 6000.6 游戏通过准入测试；空工程导出成功；2022.3 未实测]`。
+6. 上传前本机预检：`node scripts/tap_boot_test.js <dst>/minigame`。它在 node 里把包启动到 `main()`，能提前发现链接失败、启动顺序和 SystemInfo 问题；第一帧之后的问题看不到 `[实测]`。
 
 完成标准：
 - 日志里有 `[Ship] taptap export=SUCCEED`。
+- 预检输出 `main() ran after the data package`，退出码 0。
 - `<dst>/game.zip` 存在且不超过 20 MB；超了就按 build.md 的「包体大小」一节处理。
 - 本次版本号已记进进度档案。
 
@@ -87,7 +90,7 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
    - 首选 TapTap CLI：先 `upload-mini-app-package`，再 `submit-mini-app-package`，见 [automation.md](references/automation.md)。上传步骤 `[实测]` 成功。
    - 备选网页：「包体管理 →「上传包体」」两步抽屉，见 [console.md](references/console.md)。超过 10 MB 的文件用[本机中转](../ship-my-game/references/uploads.md) `[实测]`。
 2. 创建开发版本（网页抽屉第 2 步的「提交」，或 CLI 的 `submit-mini-app-package --yes`）之前，先告诉用户版本号和改了什么，用户同意再执行。被你的权限系统拦下时，停在那个按钮上，请用户点 `[实测]`。
-3. 提交后会自动跑「包体准入测试」，10 分钟内出结果。不要一直刷新：7 分钟后再看「包体管理」里那一行的「包体准入测试」列，失败时「消息中心」也会通知 `[实测]`。
+3. 提交后会自动跑「包体准入测试」。用 CLI 建的开发版本一开始显示「测试异常」（提示请重新测试），在「包体管理」那一行点「重新测试」才会开始 `[实测]`。失败一般 10 分钟内出结果；能启动的版本还要跑满约 10 分钟的性能测试，等得更久。不要一直刷新，隔几分钟看一次那一行的「包体准入测试」列；失败时「消息中心」也会通知 `[实测]`。
 4. 点「查看报告」：安卓 5 台，通过线 80%；iOS 那 1 台显示的「通过」只是占位，不代表游戏在 iOS 上能运行 `[实测]`。
 5. 没通过：请用户同意后下载失败设备的日志，按 troubleshooting.md 排查，修好后换一个更高的版本号重新上传 `[实测]`。
 6. 通过后点该版本的「自测」，把二维码发给用户，请他用最新版 TapTap 扫码，在真机上把游戏玩一遍 `[实测：二维码；真机结果本仓库未记录]`。

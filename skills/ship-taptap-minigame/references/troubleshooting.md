@@ -25,69 +25,65 @@
 
 **修好后**：换一个更高的版本号，重新构建、上传、提交。准入测试每次都会换设备，不要只针对报告里的几台机型调 `[实测]`。
 
-## 2. Unity 6 路线（实验性，尚未通过准入）
+## 2. Unity 6 路线：5 次上传后通过准入测试
 
-**结论**：Unity 6000.6 加 SDK 2.0.21，连续 3 版准入测试安卓都是 0/5 `[实测-失败]`。
+**结论**：Unity 6000.6 加 SDK 2.0.21 的包，前 4 版各暴露一个问题、都没过包体准入测试，第 5 版（1.0.7，2026-11-03）通过 `[实测]`。修法分三层，都已进仓库：
+- 编译和链接：`scripts/fetch_tapsdk.sh` 的 4 处补丁（2.1）。
+- 运行：`scripts/ShipTapBuild.cs` 对导出物的补丁（2.2），就是 1.0.7 用的那一套；另外关掉 WebAssembly 2023（2.4）。
+- 游戏代码：TapTap 构建里不调用 `WeChatWASM.WX`（2.3）。
 
-**根因**：SDK 的转换工具只改写了 Unity 6000.6 框架代码（`webgl.wasm.framework.unityweb.js`）的一部分，编译、链接、运行三层都要补。
+**根因**：SDK 的转换工具只改写了 Unity 6000.x 框架代码（`webgl.wasm.framework.unityweb.js`）的一部分；微信的转换工具会做的几处，TapTap 的漏了，而两家共用同一个 UnityPlugin。
 
-**仓库现状**：`scripts/fetch_tapsdk.sh` 带编译和链接层的补丁；`scripts/ShipTapBuild.cs` 只带到 1.0.4 那一版的运行补丁，1.0.4 本身没通过。下面的内容是给坚持用 Unity 6 的人的线索。默认请用官方支持的 Unity 2022.3 LTS 或团结引擎（见 [build.md](build.md) 第 1 节）。
-
-### 2.1 编译和链接阶段（已在 `fetch_tapsdk.sh` 里）`[实测]`
+### 2.1 编译和链接阶段（`fetch_tapsdk.sh` 自动处理）`[实测]`
 
 | 现象 | 原因 | 解决 |
 |---|---|---|
-| 首次构建一分钟内失败，报 CS1061：`BuildProfile` 没有 `miniGameSettings` | SDK 的调试工具 `TapMiniGameConfigHelper.cs` 用了只有团结引擎 1.5+ 才有的接口，却用 `UNITY_6000_0_OR_NEWER` 判断版本 | 改成 `TUANJIE_1_5_OR_NEWER`（脚本补丁 1） |
+| 首次构建一分钟内失败，报 CS1061：`BuildProfile` 没有 `miniGameSettings` | SDK 的调试工具 `TapMiniGameConfigHelper.cs` 用了只有团结引擎 1.5+ 才有的接口，却用 `UNITY_6000_0_OR_NEWER` 判断版本 | 改成 `TUANJIE_1_5_OR_NEWER`（补丁 1） |
 | 链接失败，报 `writeStackCookie`、`checkStackCookie` | Unity 6 用的新版 Emscripten 不认这两个导出 | 从 `EXPORTED_RUNTIME_METHODS` 删掉（补丁 2） |
-| 插件写资源包时找不到 `Module.FS`；音频读不到 HEAP | 6000.x 默认不再把 FS 和 HEAP 视图挂到 Module 上 | 导出 `FS`、`HEAP8`、`HEAPU8`、`HEAP16`、`HEAPU16`、`HEAP32`、`HEAPF32`（补丁 3） |
+| 插件写资源包时找不到 `Module.FS`；音频读不到 HEAP | 6000.x 默认不再把 FS 和 HEAP 视图挂到 Module 上 | 导出 `FS` 和各个 HEAP 视图（补丁 3） |
 | 引擎代码被链接器剪掉；JS 调 `_malloc` 失败 | SDK 只在 2021.2.5 下导出 `_main`，而且追加的位置落进了错误的参数 | 在 `EXPORTED_FUNCTIONS` 前面插入 `_main,_malloc,_free`（补丁 4） |
 
-### 2.2 运行阶段：三次上传的经过
+### 2.2 运行阶段：5 次上传的经过 `[实测]`
 
-| 版本 | 做了什么 | 准入结果 | 日志里的根因 |
+| 版本 | 新增的修改 | 准入结果 | 日志里的原因 |
 |---|---|---|---|
-| 1.0.3 | 只把 `Module.dynCall_vi/vii/viii/viiiii` 挂出来（SDK 的音频结束回调要用） | `[实测-失败]` 安卓 0/5「黑白屏」 | `wasm streaming compile failed: TypeError: fetch is not a function` → `both async and sync fetching of the wasm failed` → `Cannot read properties of undefined (reading 'createDataFile')`。TapTap 安卓的 `game.js` 把全局 `fetch` 置空了，而 6000.6 的 `createWasm` 只有在 `Module.instantiateWasm` 存在时才不走 fetch |
-| 1.0.4（**`ShipTapBuild.cs` 里就是这一版**） | 增加：在 `unity-namespace.js` 里给安卓注入 `instantiateWasm`，用包内路径调 `WebAssembly.instantiate`；插件会把它拷进 Module | `[实测-失败]` 安卓 0/5：4 台「黑白屏」，1 台「小游戏加载失败」 | wasm 能从包内路径编译了，但链接失败：`LinkError: WebAssembly.instantiate(): Import #… module="env" function="JS_Sound_Create_With_Buffer": function import requires a callable`。插件还报 `reading 'createDataFile' of undefined`：插件读的是 `unityNamespace.FS`，但没人给它赋值 |
-| 1.0.5（补丁不在仓库里） | 再补 8 处，见下 | `[实测-失败]` 安卓 0/5，换了一批设备，全部「小游戏加载失败」（60 秒内没加载完），性能测试没跑 | 见 2.3 |
+| 1.0.3 | 把 `Module.dynCall_vi/vii/viii/viiiii` 挂出来（SDK 的音频结束回调要用） | 安卓 0/5「黑白屏」 | `fetch is not a function` → `both async and sync fetching of the wasm failed`：TapTap 安卓的 `game.js` 把 `fetch` 置空了，而 6000.x 的 `createWasm` 只在有 `Module.instantiateWasm` 时才不走 fetch |
+| 1.0.4 | 在 `unity-namespace.js` 里给安卓注入 `instantiateWasm`，用包内路径调 `WebAssembly.instantiate` | 安卓 0/5 | wasm 能编译了，但链接失败：`Import … JS_Sound_Create_With_Buffer: function import requires a callable`；插件还报 `reading 'createDataFile' of undefined` |
+| 1.0.5 | `unityNamespace.FS` / `IDBFS`；`callMain` 结束后调 `Module.calledMainCb`；SDK 缺的 `TJWASMSDK` 导入补占位函数；MEMFS 写入的 `HEAP8` 判空；跳过复制粘贴初始化和 Safari 的 WebGL2 检查；`crypto` 和 `alert` 兜底 | 安卓 0/5「小游戏加载失败」（启动后约 60 秒内没加载完） | 插件写完资源包会移除运行依赖 `"wasm-preloadAssets"`，但 6000.x 从没添加过它，计数变成 -1，`main()` 抢在资源前面运行，Unity 没能启动（`still waiting runDependencies, ids=[]`） |
+| 1.0.6 | `createWasm()` 前 `addRunDependency("wasm-preloadAssets")`；`Module.SystemInfo` 改从 `unityNamespace.UnityLoader.SystemInfo` 读；画布没有 id 时，Unity 的画布选择器改用 `"canvas"` | 安卓 0/5 | 引擎这次启动了（建好 WebGL 2.0 上下文，`callMain` 约 0.5 秒），但第一帧报 `null function or function signature mismatch`，位置在 `WXSDKManagerHandler.Inited`。见 2.3 |
+| 1.0.7 | 游戏代码：TapTap 构建里的存档和界面适配改用 `TapTapMiniGame.Tap` 的接口 | **通过** | — |
 
-1.0.5 在 framework 里加的 8 处（都没能让它通过）`[实测-失败]`：
-1. 把 `FS`、`IDBFS` 也赋给 `GameGlobal.unityNamespace.FS` 和 `GameGlobal.unityNamespace.IDBFS`。插件写资源包、挂载 `/idbfs` 存档目录都要用它们。
-2. `callMain` 的 finally 里设置 `Module.calledMainCb`。插件靠这个回调知道 main 已经运行；微信的转换工具会加，TapTap 的漏了。
-3. SDK 缺失的 `window.TJWASMSDK._xxx` 导入一律补占位函数（返回 0，只警告一次），共 32 处。6000.6 新增、SDK 里真正缺的是 `JS_Sound_Create_With_Buffer` 和 `JS_MobileKeyboard_GetIgnoreBlurEvent`。
-4. MEMFS 写入时给 `HEAP8` 加判空：资源包可能在 wasm 内存就绪之前写入。
-5. `JS_Init_CopyPaste` 在 TapTap 宿主下直接返回（小游戏画布没有 id）。
-6. `GL.createContext` 里针对 Safari 的 WebGL2 检查，在 TapTap 宿主下跳过。
-7. 没有 `crypto.getRandomValues` 时用 `Math.random` 兜底。
-8. 没有 `alert` 时改用 `console.error`。
+`ShipTapBuild.cs` 的运行补丁 = 1.0.5、1.0.6 两列的全部内容，加上 1.0.3、1.0.4 的两项。每个锚点都要求恰好出现一次，找不到就让构建失败，避免 SDK 或 Unity 升级后补丁悄悄失效。
 
-另外：安卓加载器改成先调用 `wasmInstantiated()` 通知插件，再调用 `receiveInstance`；每个替换锚点都断言「恰好出现一次」，避免 SDK 升级后补丁悄悄失效。
+### 2.3 第一帧黑屏：微信适配层的陷阱（1.0.6）`[实测]`
 
-### 2.3 1.0.5 的根因和 1.0.6 计划
+- SDK 初始化完成后，JS 的 `send()` 会把「Inited」消息依次发给 `TapSDKManagerHandler` 和 `WXSDKManagerHandler`。
+- 游戏在启动回调里调用了 `WeChatWASM.WX` 的存档和窗口信息接口，这一调用就创建了微信的那个处理器；第二条「Inited」随即调用它从没设置过的回调。
+- 导出时关掉了空值检查（`ExplicitlyThrownExceptionsOnly`），空委托直接让 wasm 崩溃，画面停在第一帧。
+- 解决：TapTap 构建里改用 `TapTapMiniGame.Tap` 的同名接口（`StorageGetStringSync`、`StorageSetStringSync`、`GetWindowInfo`、`GetMenuButtonBoundingClientRect` 等），见 [build.md](build.md) 第 4 节。广告代码如果还走 `WX`，在填广告位 ID 之前改掉。
 
-以下是实测分析，还没验证：
-- **根因**：插件在处理完资源包（`processRawData`）后，会移除运行依赖 `"wasm-preloadAssets"`，但 6000.6 的框架从来没有添加过这个依赖，计数被减成 -1。实际结果有两种说法：Unity 永远不启动；或者 `main()` 抢在资源包写进 FS 之前运行，约 30 秒后插件报 `still waiting runDependencies`。两种说法都是 Unity 没正常起来。
-- **1.0.6 计划**（还没上传测试）：
-  1. 在 framework 的 `return createWasm();` 前面加 `addRunDependency("wasm-preloadAssets")`。
-  2. 补上 `Module.SystemInfo`：插件把它放在 `unityNamespace.UnityLoader.SystemInfo`，框架里拿不到。
-  3. 修掉画布没有 id 时 `jsCanvasSelector` 抛错的问题。
+### 2.4 WebAssembly 2023 要关掉 `[实测]`
 
-### 2.4 上传前先在本机预检
+本机和真机跑通过的所有微信、TapTap 包，「WebAssembly 2023」和 BigInt 都是关的（`ProjectSettings.asset` 里 `webWasm2023: 0`、`webGLWebAssemblyBigInt: 0`）。Unity 6000.6 新建的工程默认开启 WebAssembly 2023，64 位整数会改用 BigInt 传给 JS，本机预检里 `main()` 报 `Cannot convert a BigInt value to a number`（`fd_seek`）。开着它时框架里也没有 `dynCalls` 表。两个构建脚本都会自动关掉这两项，日志里有 `[Ship] turned off PlayerSettings.WebGL.wasm2023`；关掉后本机预检的结果和通过准入测试的 1.0.7 完全一致。
 
-用 node 写一个启动模拟脚本，能在上传前复现链接错误和运行依赖问题 `[实测]`。做法：
-- 给 `GameGlobal`、`tj` 等全局对象打桩；
-- 用导出物里真实的 wasm 和数据包；
-- 执行包里真实的 `unity-namespace.js` 和打过补丁的 framework；
-- 提供一个没有 id 的 canvas；
-- 依次模拟写入资源包、挂载 idbfs、进入 main。
+### 2.5 上传前先在本机预检：`scripts/tap_boot_test.js` `[实测]`
 
-每次上传前跑一遍，比等 10 分钟的准入测试快得多。注意桩写得不对也会制造假错误：实测在 `InitWebGLPlayer` 里出现过内存越界，初步怀疑是桩的问题。这个脚本不在仓库里。
+```bash
+node <skill>/scripts/tap_boot_test.js <dst>/minigame
+```
 
-### 2.5 坚持走 Unity 6 时的建议
+它在 node 里给小游戏的全局对象打桩，用导出物里真实的 wasm、数据包和 `unity-namespace.js`，按插件的顺序写资源包、挂载 `/idbfs`、进入 `main()`。
 
-1. 每次只改一处，构建前跑本机预检，预检过了再上传。
-2. 记好每版的补丁清单和准入结果，写进进度档案。
-3. 让用户知道这条路可能要好几轮，每轮约 30 分钟加上等用户点「提交」的时间。实测从开始到第三次失败用了大半天。
-4. 走通以后，把补丁改进 `ShipTapBuild.cs`，并把这一节改成 `[实测]`（见 MAINTAINING.md）。
+- 正常：依次输出 `wasm linked`、`data package: … files written`、`/idbfs mounted`、`main() ran after the data package`，退出码 0。`main()` 里报 `Program terminated with exit(0)` 也算正常（node 里没有主循环）。
+- 退出码：1 链接失败，2 框架抛错，3 超时，4 `receiveInstance` 抛错，5 `main()` 抢在资源包前面。设 `TAP_TRACE=1` 会打印 `main()` 出错前最后调用的 JS 接口。
+- 它在 1.0.4 上复现了链接失败，在 1.0.6 上传前抓到了 `SystemInfo` 和画布选择器两个问题。
+- 它跑不到第一帧，所以 2.3 那类问题看不出来，最后还是以准入测试为准。
+
+### 2.6 准入测试怎么等
+
+- 失败一般 10 分钟内出结果；能启动的版本还要跑满约 10 分钟的性能测试，等得更久 `[实测]`。
+- 用 CLI 建的开发版本一开始显示「测试异常」（提示请重新测试），在「包体管理」那一行点「重新测试」才开始 `[实测]`。
+- 报告里的设备每次都会换，不要只针对某几台机型调。
 
 ## 3. 构建
 
@@ -100,7 +96,7 @@
 | `No MiniApp ID` / `Set version` | `publish/taptap/build.json` 缺字段 | 补上 `appid` 和 `version` |
 | 中文显示成方块或空白 | WebGL 没有系统字体；字体子集漏扫了文案 | 重新运行 `make_cjk_font.py`，扫描范围要包括全部中文文案 `[实测]` |
 | 游戏没有声音 | 场景里没有 `AudioListener` | 见 [project-check.md](../../ship-my-game/references/project-check.md) `[实测]` |
-| `game.zip` 超过 20 MB | 资源或代码太大 | 见 [build.md](build.md) 第 6 节 |
+| `game.zip` 超过 20 MB | 资源或代码太大 | 见 [build.md](build.md) 第 7 节 |
 
 ## 4. 上传与后台
 
@@ -155,13 +151,12 @@
 ## 8. 还没确认的事
 
 把实际结果写进进度档案的「与 skill 不符」，回馈给本仓库。
-1. Unity 6000.x 能不能通过准入测试：1.0.6 的计划还没验证。
-2. 没接「添加到桌面」会不会卡审核。
-3. 用户不同意隐私政策就不登录，算不算「正确接入 TapTap 登录」（5.2.4）。
-4. 行为规范要求设置页提供账号注销入口；游戏没有自己的账号体系时，是否必须做。
-5. 没有软著、「软件著作权人」填本人姓名，备案会不会被退回。
-6. 备案时选了一个准入测试没通过的包体，有没有影响。
-7. iOS 从来没在真机上测过。准入报告里 iOS 的「通过」只是占位。
-8. 包体大小以 20 MB 还是 60 MB 为准：页面写 20 MB，接入指南写 60 MB。
-9. 前置备案没通过时，能不能先提交商店审核。
-10. CLI 的 `submit-mini-app-package` 建出的开发版本，准入测试和网页提交的有没有区别。
+1. 没接「添加到桌面」会不会卡审核。
+2. 用户不同意隐私政策就不登录，算不算「正确接入 TapTap 登录」（5.2.4）。
+3. 行为规范要求设置页提供账号注销入口；游戏没有自己的账号体系时，是否必须做。
+4. 没有软著、「软件著作权人」填本人姓名，备案会不会被退回。
+5. 备案时选了一个准入测试没通过的包体，有没有影响。
+6. iOS 从来没在真机上测过。准入报告里 iOS 的「通过」只是占位。
+7. 包体大小以 20 MB 还是 60 MB 为准：页面写 20 MB，接入指南写 60 MB。
+8. 前置备案没通过时，能不能先提交商店审核。
+9. Unity 2022.3 / 团结引擎这条官方路线，脚本能否直接编译和通过准入测试。

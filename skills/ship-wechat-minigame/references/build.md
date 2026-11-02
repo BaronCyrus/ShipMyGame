@@ -77,6 +77,7 @@ WXSDK_REPO=https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.
 
 脚本设置的内容：
 - PlayerSettings：托管代码裁剪 Medium、IL2CPP Release、异常支持 `ExplicitlyThrownExceptionsOnly`、`stripEngineCode`、关闭 Splash。
+- 关掉「WebAssembly 2023」和 BigInt（补丁对照表的 B6）。
 - SDK 配置：
   - `assetLoadType = 1`：首包资源放在小游戏包内，不需要 CDN 服务器。
   - `compressDataPackage = true`：Brotli 压缩。
@@ -210,6 +211,7 @@ python3 <ship-my-game 目录>/scripts/make_cjk_font.py --font NotoSansSC[wght].t
 | F5 | 手机上每次触摸都报 `Module._malloc is not a function`，SDK 的触摸、视频、socket JS 都要用到它 | `emscriptenArgs` 的 `,_main` 改成 `,_main,_malloc,_free` | fetch_wxsdk.sh |
 | F6 | 开发者工具报「app.json 或自定义编译条件错误」，卡在编译 `game.json` | 模板 `project.config.json` 的 `"currentL"` 改成 `"current"` | fetch_wxsdk.sh |
 | B0 | 黑屏，URP 着色器全部报「not supported on this GPU」 | `CompileOptions.Webgl2 = true`。不开时 SDK 选 GLES2 和 WebGL1 画布，而 Unity 6 已经没有 WebGL1 | ShipWeChatBuild（导出配置） |
+| B6 | Unity 6000.6 新建的工程默认开启 WebAssembly 2023，64 位整数改用 BigInt 传给 JS。同样的开启状态在 TapTap 包的本机预检里让 `main()` 报 `Cannot convert a BigInt value to a number`；微信上没有单独验证 | 关掉 `PlayerSettings.WebGL.wasm2023` 和 `webAssemblyBigInt`，和实测在真机跑通的工程保持一致（两项都是关的） | ShipWeChatBuild（导出配置） |
 | B1 | 音频、视频、输入法走了 Unity 自己的 Web Audio 路径，最后报 `alert is not defined` | 6000.x 生成的是 `var _JS_Sound_X=function(){...}` 写法，SDK 只替换 `function _JS_Sound_X(` 写法。改为把 `_JS_(Sound\|Video\|MobileKeyboard)_*` 都指向 `window.WXWASMSDK` | ShipWeChatBuild.PatchFramework |
 | B2 | `alert is not defined`，Unity 的致命错误弹窗 | 加 `alert` 垫片，改成输出到 console.error | ShipWeChatBuild.PatchFramework |
 | B3 | 导出 `ConnectToProfiler` 时报未定义 | 导出处先用 `typeof` 判断 | ShipWeChatBuild.PatchFramework |

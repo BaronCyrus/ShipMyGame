@@ -50,6 +50,7 @@ public static class ShipWeChatBuild
             PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
             PlayerSettings.stripEngineCode = true;
             PlayerSettings.SplashScreen.show = false;
+            DisableWasm2023();
 
             var conf = WXConvertCore.config.ProjectConf;
             conf.projectName = string.IsNullOrEmpty(cfg.projectName) ? PlayerSettings.productName : cfg.projectName;
@@ -136,6 +137,23 @@ public static class ShipWeChatBuild
         return sb.ToString();
     }
 #endif
+
+    /// <summary>
+    /// Every build that ran on WeChat and TapTap devices had WebAssembly 2023 and BigInt off; Unity 6000.x turns
+    /// WebAssembly 2023 on for new projects, which passes 64-bit integers as BigInt to glue code the mini-game SDKs do
+    /// not expect (main() threw "Cannot convert a BigInt value to a number" in fd_seek). Older Unity versions have
+    /// neither property, so they are set through reflection.
+    /// </summary>
+    static void DisableWasm2023()
+    {
+        foreach (var name in new[] { "wasm2023", "webAssemblyBigInt" })
+        {
+            var p = typeof(PlayerSettings.WebGL).GetProperty(name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            if (p == null || !p.CanWrite) continue;
+            if ((bool)p.GetValue(null)) Debug.Log("[Ship] turned off PlayerSettings.WebGL." + name);
+            p.SetValue(null, false);
+        }
+    }
 
     /// <summary>
     /// WebGL has no OS font fallback, so Chinese glyphs come from the bundled subset, listed in each Latin font's

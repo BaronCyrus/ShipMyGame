@@ -46,7 +46,7 @@
 没有服务器的单机游戏：不保存 code，登录只是为了把会话绑定到玩家的 TapTap 账号，成就和排行榜靠这个识别玩家 `[实测：设计]`。
 
 ```csharp
-// 用户同意隐私政策之后才调用（见 build.md 第 4 节）
+// 用户同意隐私政策之后才调用（见 build.md 第 5 节）
 Tap.InitSDK(_ =>
 {
     Tap.Login(new LoginOption

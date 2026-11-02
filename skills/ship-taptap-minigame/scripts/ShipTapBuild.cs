@@ -2,13 +2,18 @@
 // Needs the SDK in Packages/ (run fetch_tapsdk.sh first). Copy into Assets/Editor/, write publish/taptap/build.json
 // (see Config below), then:
 //   unity_build.sh <project> WebGL ShipTapBuild.Export taptap
+//   node tap_boot_test.js <dst>/minigame        (boot check in node before every upload)
 // Output: <dst>/game.zip (upload it in 商店 → 游戏包管理 → 小游戏管理 → 包体管理 → 上传包体, or with taptap-cli)
 // and game_wasm_split.zip.
 // Every upload needs a higher version than the last one, and the version you type in 包体管理 must match it.
+// Unity 6000.x: the framework patches below are the set a Unity 6000.6 game (SDK 2.0.21) shipped with when it passed
+// TapTap's 包体准入测试 on Android (version 1.0.7, 2026-11-03), after 1.0.3–1.0.6 failed one problem at a time.
+// That game also had to keep every WeChatWASM.WX call out of its TapTap build (see the TapTap skill's build notes).
 // Define SHIP_NO_TAPTAP (Player Settings → Scripting Define Symbols) on branches without the TapTap SDK.
 #if !SHIP_NO_TAPTAP
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using minihost.editor;
 using TapTapMiniGame;
 using UnityEditor;
@@ -49,6 +54,7 @@ public static class ShipTapBuild
             PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
             PlayerSettings.stripEngineCode = true;
             PlayerSettings.SplashScreen.show = false;
+            DisableWasm2023();
 
             var config = TapTapUtil.GetEditorConf();
             var conf = config.ProjectConf;
@@ -88,43 +94,119 @@ public static class ShipTapBuild
 
 #if UNITY_6000_0_OR_NEWER
     /// <summary>
-    /// The SDK's JS calls Module.dynCall_vi/vii/viii/viiiii (audio end, video, touch, sockets); 6000.x keeps them local.
-    /// A game whose framework has a dynCalls table gets them from it (verified). A framework without one (seen in a
-    /// near-empty project) routes them through getWasmTableEntry instead; that path is not yet verified on a device.
+    /// Fixes the converted framework for Unity 6000.x, which the TapTap converter only partly rewrites (the WeChat
+    /// converter does these, so the shared UnityPlugin expects them). Each line below was a device failure:
+    /// - the SDK's JS calls Module.dynCall_vi/vii/viii/viiiii (audio end, video, touch, sockets); 6000.x keeps them local;
+    /// - the plugin writes the data package through unityNamespace.FS and mounts /idbfs with unityNamespace.IDBFS
+    ///   ("reading 'createDataFile'" of undefined), and learns that main() ran from Module.calledMainCb;
+    /// - every JS_Sound/JS_MobileKeyboard import goes to TJWASMSDK, which lacks the ones 6000.x added, and an import
+    ///   that is not a function fails the wasm link ("function import requires a callable");
+    /// - the plugin removes run dependency "wasm-preloadAssets" once the data package is in FS but nothing adds it, so
+    ///   main() ran before the data arrived and Unity never started ("still waiting runDependencies");
+    /// - Module.SystemInfo comes from Unity's web loader, which a mini-game never runs (main() threw in HasWebGPU);
+    /// - the canvas has no id (Unity's "#"+id selector throws), its context fails the Safari WebGL check, and the
+    ///   runtime has no crypto or alert().
+    /// With WebAssembly 2023 on, the framework has no dynCalls table (DisableWasm2023 turns it off first; the
+    /// getWasmTableEntry route is only a fallback, unverified on devices). Anchors marked optional exist only when the
+    /// feature is linked; every other anchor must match exactly once, or the build stops instead of shipping a package
+    /// that cannot start.
     /// </summary>
     static void PatchFramework(string dst)
     {
         var path = Path.Combine(dst, "minigame", "webgl.wasm.framework.unityweb.js");
         var js = File.ReadAllText(path);
-        const string anchor = "dynCalls={};";
+
         const string table = "getWasmTableEntry=function getWasmTableEntry(funcPtr){";
-        if (js.IndexOf(anchor, StringComparison.Ordinal) >= 0)
+        if (js.Contains("dynCalls={};"))
+            js = Once(js, path, "dynCalls={};",
+                "dynCalls={};[\"vi\",\"vii\",\"viii\",\"viiiii\"].forEach(function(s){Module[\"dynCall_\"+s]=Module[\"dynCall_\"+s]||function(){return dynCalls[s].apply(null,arguments)}});");
+        else if (js.Contains(table))
         {
-            js = js.Replace(anchor, anchor + "[\"vi\",\"vii\",\"viii\",\"viiiii\"].forEach(function(s){Module[\"dynCall_\"+s]=Module[\"dynCall_\"+s]||function(){return dynCalls[s].apply(null,arguments)}});");
+            js = AfterStatement(js, table, "[\"vi\",\"vii\",\"viii\",\"viiiii\"].forEach(function(s){Module[\"dynCall_\"+s]=Module[\"dynCall_\"+s]||function(p){return getWasmTableEntry(p).apply(null,Array.prototype.slice.call(arguments,1))}});");
+            Debug.Log("[Ship] no dynCalls table (WebAssembly 2023 was on?): Module.dynCall_* routed through getWasmTableEntry");
         }
-        else if (js.IndexOf(table, StringComparison.Ordinal) >= 0)
+        else throw new Exception("Neither a dynCalls table nor getWasmTableEntry in " + path);
+
+        js = Once(js, path, "FS={root:null,", "FS=GameGlobal.unityNamespace.FS={root:null,");
+        js = Once(js, path, "IDBFS={dbs:{},", "IDBFS=GameGlobal.unityNamespace.IDBFS={dbs:{},");
+        js = Once(js, path, "if(buffer.buffer===HEAP8.buffer){canOwn=!1}",
+            "if(typeof HEAP8!=\"undefined\"&&HEAP8&&buffer.buffer===HEAP8.buffer){canOwn=!1}");
+        js = Once(js, path, "return createWasm();", "addRunDependency(\"wasm-preloadAssets\");return createWasm();");
+
+        int infos = 0;
+        js = Regex.Replace(js, @"Module\.SystemInfo(?![\w$])", m =>
         {
-            int i = js.IndexOf('{', js.IndexOf(table, StringComparison.Ordinal)), depth = 0;
-            do
-            {
-                if (js[i] == '{') depth++;
-                else if (js[i] == '}') depth--;
-                i++;
-            } while (depth > 0 && i < js.Length);
-            if (i < js.Length && js[i] == ';') i++;
-            js = js.Insert(i, "[\"vi\",\"vii\",\"viii\",\"viiiii\"].forEach(function(s){Module[\"dynCall_\"+s]=Module[\"dynCall_\"+s]||function(p){return getWasmTableEntry(p).apply(null,Array.prototype.slice.call(arguments,1))}});");
-            Debug.LogWarning("[Ship] no dynCalls table: Module.dynCall_* routed through getWasmTableEntry (check sound and touch on a device)");
-        }
-        else throw new Exception("Neither \"" + anchor + "\" nor getWasmTableEntry in " + path);
+            infos++;
+            return "(Module.SystemInfo||GameGlobal.unityNamespace.UnityLoader.SystemInfo)";
+        });
+        if (infos == 0) throw new Exception("No Module.SystemInfo in " + path);
+
+        js = Once(js, path,
+            "try{var ret=entryFunction(argc,argv);exitJS(ret,!0);return ret}catch(e){return handleException(e)}};",
+            "try{var ret=entryFunction(argc,argv);exitJS(ret,!0);return ret}catch(e){return handleException(e)}" +
+            "finally{if(!(typeof ABORT!=\"undefined\"&&ABORT)&&typeof Module.calledMainCb==\"function\")try{Module.calledMainCb()}catch(e){console.error(e)}}};");
+
+        int guarded = 0;
+        js = Regex.Replace(js, @"window\.TJWASMSDK\.(_\w+):", m =>
+        {
+            guarded++;
+            return $"(window.TJWASMSDK.{m.Groups[1].Value}||tapMissingImport(\"{m.Groups[1].Value}\")):";
+        });
+        if (guarded == 0) throw new Exception("No TJWASMSDK imports in " + path);
+
+        js = Optional(js, path, "_JS_Init_CopyPaste=function _JS_Init_CopyPaste2(){",
+            "_JS_Init_CopyPaste=function _JS_Init_CopyPaste2(){if(Module.IsTjHostGame)return;");
+        js = Once(js, path, "var canvasId=Module[\"canvas\"]?Module[\"canvas\"].id:\"unity-canvas\";",
+            "var canvasId=Module[\"canvas\"]?Module[\"canvas\"].id:\"unity-canvas\";if(Module.IsTjHostGame&&typeof canvasId!=\"string\")return\"canvas\";");
+        js = Once(js, path, "var gl=canvas.getContextSafariWebGL2Fixed(ver,attrs);",
+            "var gl=canvas.getContextSafariWebGL2Fixed(ver,attrs);if(Module.IsTjHostGame)return gl;");
+        js = Optional(js, path,
+            "initRandomFill=function initRandomFill(){return function(view){return crypto.getRandomValues(view)}};",
+            "initRandomFill=function initRandomFill(){if(typeof crypto==\"object\"&&crypto&&typeof crypto.getRandomValues==\"function\")return function(view){return crypto.getRandomValues(view)};" +
+            "return function(view){for(var i=0;i<view.length;i++)view[i]=Math.random()*256|0;return view}};");
+
+        const string strict = "\"use strict\";";
+        const string helpers = "var alert=typeof alert==\"function\"?alert:function(m){console.error(m)};" +
+            "function tapMissingImport(n){return function(){if(!tapMissingImport[n]){tapMissingImport[n]=1;console.warn(\"[Ship] TJWASMSDK lacks \"+n)}return 0}}";
+        js = js.StartsWith(strict, StringComparison.Ordinal) ? strict + helpers + js.Substring(strict.Length) : helpers + js;
         File.WriteAllText(path, js);
-        Debug.Log("[Ship] framework patched: " + path);
+        Debug.Log($"[Ship] framework patched, {guarded} TJWASMSDK imports guarded, {infos} SystemInfo reads: " + path);
+    }
+
+    static string Once(string js, string path, string anchor, string replacement)
+    {
+        int i = js.IndexOf(anchor, StringComparison.Ordinal);
+        if (i < 0 || js.IndexOf(anchor, i + 1, StringComparison.Ordinal) >= 0)
+            throw new Exception("Expected exactly one \"" + anchor + "\" in " + path);
+        return js.Substring(0, i) + replacement + js.Substring(i + anchor.Length);
+    }
+
+    static string Optional(string js, string path, string anchor, string replacement)
+    {
+        if (js.Contains(anchor)) return Once(js, path, anchor, replacement);
+        Debug.Log("[Ship] not linked in this build, skipped: " + anchor.Substring(0, Math.Min(40, anchor.Length)));
+        return js;
+    }
+
+    /// <summary>Inserts <paramref name="code"/> after the statement that starts at <paramref name="anchor"/> and ends with its block.</summary>
+    static string AfterStatement(string js, string anchor, string code)
+    {
+        int i = js.IndexOf('{', js.IndexOf(anchor, StringComparison.Ordinal)), depth = 0;
+        do
+        {
+            if (js[i] == '{') depth++;
+            else if (js[i] == '}') depth--;
+            i++;
+        } while (depth > 0 && i < js.Length);
+        if (i < js.Length && js[i] == ';') i++;
+        return js.Insert(i, code);
     }
 
     /// <summary>
-    /// TapTap's Android runtime removes fetch (game.js sets GameGlobal.fetch=void 0) and its WebAssembly.instantiate
-    /// takes a package path. 6000.x's createWasm falls back to fetch unless Module.instantiateWasm is set, which ends
-    /// in a black/white screen on every Android device of the 包体准入测试 ("fetch is not a function"). The plugin copies
-    /// unityNamespace.instantiateWasm into Module, so Android gets one here; iOS (WKWebView) loads as it is.
+    /// Gives TapTap's Android runtime a way to load the wasm. Its WebAssembly.instantiate takes a package path and its
+    /// game.js removes fetch; 6000.x's createWasm otherwise fetches build.wasm and fails ("fetch is not a function":
+    /// a black/white screen on every Android device of the 包体准入测试). createWasm takes Module.instantiateWasm first,
+    /// which the plugin fills from unityNamespace.instantiateWasm, so Android gets one here; iOS (WKWebView) loads as it is.
     /// </summary>
     static void PatchNamespace(string dst)
     {
@@ -138,14 +220,32 @@ public static class ShipTapBuild
             "var mod=this,ns=GameGlobal.unityNamespace,cfg=GameGlobal.managerConfig||{};" +
             "var wasm=typeof WXWebAssembly!==\"undefined\"?WXWebAssembly:WebAssembly;" +
             "var file=mod.wasmPath||\"wasmcode/\"+(ns.CODE_FILE_MD5||cfg.CODE_FILE_MD5)+\".\"+(ns.GAME_NAME||cfg.GAME_NAME)+\".wasm.code.unityweb.wasm.br\";" +
-            "wasm.instantiate(file,imports).then(function(r){receiveInstance(r.instance,r.module);" +
-            "try{if(typeof mod.wasmInstantiated===\"function\")mod.wasmInstantiated()}catch(e){console.warn(e)}}," +
+            "wasm.instantiate(file,imports).then(function(r){" +
+            "try{if(typeof mod.wasmInstantiated===\"function\")mod.wasmInstantiated()}catch(e){console.warn(e)}" +
+            "receiveInstance(r.instance,r.module)}," +
             "function(e){console.error(\"[Ship] wasm instantiate failed: \"+file,e)});return{}}})();";
         js = js.Replace(anchor, anchor + loader);
         File.WriteAllText(path, js);
         Debug.Log("[Ship] Android wasm loader added: " + path);
     }
 #endif
+
+    /// <summary>
+    /// Every build that ran on WeChat and TapTap devices had WebAssembly 2023 and BigInt off; Unity 6000.x turns
+    /// WebAssembly 2023 on for new projects, which passes 64-bit integers as BigInt to glue code the mini-game SDKs do
+    /// not expect (main() threw "Cannot convert a BigInt value to a number" in fd_seek). Older Unity versions have
+    /// neither property, so they are set through reflection.
+    /// </summary>
+    static void DisableWasm2023()
+    {
+        foreach (var name in new[] { "wasm2023", "webAssemblyBigInt" })
+        {
+            var p = typeof(PlayerSettings.WebGL).GetProperty(name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            if (p == null || !p.CanWrite) continue;
+            if ((bool)p.GetValue(null)) Debug.Log("[Ship] turned off PlayerSettings.WebGL." + name);
+            p.SetValue(null, false);
+        }
+    }
 
     /// <summary>WebGL has no OS font fallback; see ShipWeChatBuild.EnsureCjkFallback, which this mirrors.</summary>
     static void EnsureCjkFallback(Config cfg)
