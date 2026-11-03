@@ -1,0 +1,26 @@
+Supported platforms on each builder OS • Reference • Build Automation • Unity Docs
+Supported platforms on each builder OS
+Review supported platforms for each builder operating system in Unity Build Automation.
+Read time 1 minute
+Last updated 4 hours ago
+The following table lists builder operating systems and the target platforms they support:
+Platform
+Windows 11 22H2
+Windows 11 24H2
+macOS Sequoia
+macOS Tahoe
+iOS✓✓
+Android✓✓✓
+WebGL✓✓✓
+macOS✓✓
+UWP✓
+Windows Mono✓✓✓
+Windows IL2CPP✓
+Linux✓✓
+Xbox Series X|S✓
+PlayStation 5✓
+Report a problem with this page
+Feedback
+Back to top
+​
+​

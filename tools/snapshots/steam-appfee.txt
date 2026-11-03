@@ -1,0 +1,19 @@
+Steamworks 文献库 > 入门指南 > Steam Direct 费
+概览
+无论您是在完成 Steam Direct 注册流程，还是已经是资深的 Steamworks 开发者，您现在只需为每款希望在 Steam 上分销的新应用支付 100 美元（或等值）的费用。 详情如下：
+入驻 Steamworks
+您初次注册成为 Steamworks 开发者之时，须完成一系列数字文书。 该数字文书流程中的一步是支付 Steam Direct 费，您可以使用 Steam 在您所在国家/地区支持的任意支付方式完成付款。
+您会被转至 Steam 商店以完成交易，然后再转回 Steamworks 网站来继续填写文书。 参见登记筹备，了解更多信息。
+购买与激活应用额度
+Steamworks 开发者可以轻松购买额外的应用额度，用于为接下来要在 Steam 上发布的游戏做准备。
+Steam Direct 费可通过 Steam 在您的国家/地区中支持的任何支付方式来进行支付，但 Steam 钱包资金除外。 Steam Direct 费一经支付，付款者的 Steam 帐户上便会获得相应的应用额度。 只有 Steam Direct 费的付款者能够激活应用额度。
+注意：只有拥有 Steamworks 合作伙伴管理员权限的帐户才能支付 Steam Direct 费。
+如果您拥有购买 Steam 应用额度的必要权限，将会在 Steamworks 首页上看见一个绿色按钮。
+请查看规则及指引， 了解何种内容可通过 Steam 分销。 在决定是否继续进行分销时，请牢记这些准则。
+除了这些规则及指引外，您在 Steam 上发布的内容都必须一并遵守《Steam 分销协议》、《Steam 订户协议》、《Steam 在线行为准则》和《Steam 隐私政策》。
+返还 Steam Direct 费
+Steam Direct 费用不可退款。但是，当您的产品通过 Steam 商店或应用内购买获得的调整后总收入（Adjusted Gross Revenue）达到至少 1,000 美元后，该费用将会在之后向您支付的款项中予以返还。 返还的 Steam Direct 费将在您的月度报告中以单独一行条目显示。 如果已支付的费用遭到拒付、退款或被认定为欺诈，销售收入款项和返还的费用款项有可能会被扣留。
+Steam Direct 费的相关税费
+Valve 将根据国家/地区的特定要求对 Steam Direct 费收取增值税、商品及服务税或其他类似的消费税（如果有）。
+由于 Steam 商店中的所有款项（包括 Steam Direct 费）均由个人用户账户而非公司账户支付，因此 Steam Direct 费的发票也将开给在支付 Steam Direct 费时登录的个人用户。
+请注意，Valve 无法为同一笔交易开具两份发票；如果您代表他方（例如您的雇主）支付了 Steam Direct 费用，通常最简单的做法是向对方提交费用报销申请。 具体请咨询当地税务顾问。

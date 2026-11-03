@@ -1,0 +1,13 @@
+Steamworks 文献库 > 入门指南 > Onboarding - Identification Documents Best Practices
+此页面尚不支持您的偏好语言。
+本文献页当前不能以您的偏好语言显示，因此下方将显示英文版本。
+Getting documents correct the first time will help speed up the process of verifying your identity for setting up your Steamworks partner account.
+Here are some best practices to help guide you.
+Taking a good selfie
+Many of our identity validation steps involve sending us a photo of yourself holding your legal identity document. For this selfie to be valid, we need to be able to clearly see your whole face as well as the critical information that is visible in your document.
+Specifically:
+Show your full face, and you holding the same Identification document that you have previously provided
+Please remove hats, glasses, and other facial obstructions if those items are not visible in your identification document
+The ID itself must be clear and legible and all four corners and edges must be visible
+Please send the images as a JPEG / Image file
+Examples:

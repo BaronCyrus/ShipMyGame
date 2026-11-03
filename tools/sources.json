@@ -832,5 +832,148 @@
     "affects": [
       "skills/ship-my-game/references/payouts-china.md"
     ]
+  },
+  {
+    "id": "steam-direct",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/steamdirect",
+    "note": "Steam Direct 费（每个产品 100 美元，满 1000 美元返还，不能用 Steam 钱包）；银行、税务、身份审核 15～30 天；交费后 30 天才能发行；「即将推出」至少两周；构建审核 1～5 天",
+    "affects": [
+      "skills/ship-steam/SKILL.md",
+      "skills/ship-steam/references/onboarding.md"
+    ]
+  },
+  {
+    "id": "steam-onboarding",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/onboarding",
+    "note": "个人选 Sole Proprietorship；交费后的等待天数（现写 21 天，和 steam-direct 的 30 天不一致）；不接受的内容（含基于广告的商业模式）",
+    "affects": [
+      "skills/ship-steam/SKILL.md",
+      "skills/ship-steam/references/onboarding.md",
+      "skills/ship-steam/references/build.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-appfee",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/appfee",
+    "note": "每个新应用 100 美元（或等值），不退，调整后总收入满 1000 美元返还，不能用 Steam 钱包",
+    "affects": [
+      "skills/ship-steam/references/onboarding.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-onboarding-faq",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/faq",
+    "note": "法定名称规则（法定姓名、不用 DBA、不用英文以外的特殊字符）；税务问卷 5～10 分钟不能保存、名称和公司信息一致、审核 2～7 个工作日最长 30 天、只有情况变了才重做；外国 TIN 是享受协定待遇的前提",
+    "affects": [
+      "skills/ship-steam/references/onboarding.md",
+      "skills/ship-steam/references/payouts.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-payments-faq",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/finance/payments_salesreporting/faq",
+    "note": "只付美元、境外走 SWIFT；次月 30 日前付款；默认满 100 美元才付；15 日前改银行信息；FFB/FFC 账户不处理；中转行手续费",
+    "affects": [
+      "skills/ship-steam/references/payouts.md",
+      "skills/ship-steam/SKILL.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-id-documents",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/gettingstarted/documents",
+    "note": "身份验证的自拍要求：手持同一张证件、脸不遮挡、证件四角都在画面里",
+    "affects": [
+      "skills/ship-steam/references/payouts.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-coming-soon",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/store/coming_soon",
+    "note": "新产品发行前「即将推出」页面至少公开两周",
+    "affects": [
+      "skills/ship-steam/SKILL.md",
+      "skills/ship-steam/references/onboarding.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-releasing",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://partner.steamgames.com/doc/store/releasing",
+    "note": "商店页审核一般 3～5 个工作日、建议提前 7 天提交；先审商店页再审构建；「即将推出」满两周且构建审核通过后才能发行",
+    "affects": [
+      "skills/ship-steam/SKILL.md",
+      "skills/ship-steam/references/onboarding.md"
+    ],
+    "from": "^Steamworks 文献库 > ",
+    "to": "^Steamworks 是由 Valve 打造"
+  },
+  {
+    "id": "steam-subscriber-agreement",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://store.steampowered.com/subscriber_agreement/",
+    "note": "《Steam 订户协议》禁止用 IP 代理等方法掩饰居住地：建号和付注册费时不要开代理",
+    "affects": [
+      "skills/ship-steam/references/onboarding.md"
+    ]
+  },
+  {
+    "id": "unity-il2cpp-cross-compile",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://docs.unity.com/en-us/engine/6000.3/manual/programming-environment/scripting-backends/il2cpp/il2cpp-introduction",
+    "note": "IL2CPP 一般不支持交叉编译（Linux 除外）：在 Mac 上打不了 Windows IL2CPP，Steam 包用 Mono",
+    "affects": [
+      "skills/ship-steam/SKILL.md",
+      "skills/ship-steam/references/build.md",
+      "skills/ship-steam/scripts/ShipSteamBuild.cs"
+    ]
+  },
+  {
+    "id": "unity-build-automation-platforms",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://docs.unity.com/en-us/build-automation/reference/supported-platforms-on-each-builder-os",
+    "note": "Unity 云构建各构建机系统支持的平台：Windows IL2CPP 只能用 Windows 构建机",
+    "affects": [
+      "skills/ship-steam/references/build.md"
+    ]
+  },
+  {
+    "id": "unity-windows-requirements",
+    "channel": "steam",
+    "type": "page",
+    "url": "https://docs.unity.com/en-us/engine/6000.5/manual/platform-specific/windows/requirements-and-compatibility",
+    "note": "Windows IL2CPP 需要 Visual Studio（含 C++ 工具）和 Windows SDK",
+    "affects": [
+      "skills/ship-steam/references/build.md"
+    ]
   }
 ]

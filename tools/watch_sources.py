@@ -6,6 +6,8 @@ Reads tools/sources.json, keeps one normalized text snapshot per source in tools
 Markdown report (with diffs and the skill files each source affects) only when something changed. A source seen
 for the first time becomes the baseline without counting as a change. Standard library only (runs in CI as is).
 Source types: page (HTML → text), github-release, github-tags, github-commits, gitee-tags, gitee-commits, npm.
+Optional per source: ignore (regexes of lines to drop), from / to (regexes of the first kept line and of the first
+dropped line after it, for pages that wrap the article in long site navigation), min_chars.
 """
 import argparse
 import difflib
@@ -75,7 +77,7 @@ def get(url, headers=None):
     return raw.decode(charset, errors="replace")
 
 
-def normalize(text, ignore):
+def normalize(text, ignore, start=None, end=None):
     lines = []
     for line in text.splitlines():
         line = re.sub(r"\s+", " ", html.unescape(line)).strip()
@@ -83,6 +85,13 @@ def normalize(text, ignore):
             line = pattern.sub(placeholder, line)
         if line and not VOLATILE.fullmatch(line) and not any(re.search(p, line) for p in ignore):
             lines.append(line)
+    # A marker that no longer matches keeps the whole page, so a redesign shows up as a change instead of going quiet.
+    if start:
+        first = next((i for i, line in enumerate(lines) if re.search(start, line)), None)
+        lines = lines[first:] if first is not None else lines
+    if end:
+        stop = next((i for i, line in enumerate(lines) if re.search(end, line)), None)
+        lines = lines[:stop] if stop is not None else lines
     return "\n".join(lines) + "\n"
 
 
@@ -127,7 +136,7 @@ def main():
             continue
         path = os.path.join(SNAP, src["id"] + ".txt")
         try:
-            new = normalize(fetch(src), src.get("ignore", []))
+            new = normalize(fetch(src), src.get("ignore", []), src.get("from"), src.get("to"))
         except Exception as e:  # network hiccups must not fail the whole run
             failed.append((src, f"{type(e).__name__}: {e}"))
             continue
