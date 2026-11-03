@@ -178,3 +178,5 @@
 ## 流量主
 
 入口：「功能 → 流量主」。开通条件见 [capabilities.md](capabilities.md#广告流量主)。上线前点不开，这是正常的。
+
+开通后的财务资料和结算在「流量主 → 财务管理」，见 [payouts.md](payouts.md)。

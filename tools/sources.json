@@ -103,7 +103,8 @@
     "note": "注册所需信息和在 Google Play 上公开显示的开发者信息（个人：法定全名、国家、开发者邮箱，创收后完整地址；组织另加电话）；D-U-N-S",
     "affects": [
       "skills/ship-google-play/references/onboarding.md",
-      "skills/ship-google-play/SKILL.md"
+      "skills/ship-google-play/SKILL.md",
+      "skills/ship-google-play/references/payouts.md"
     ]
   },
   {
@@ -357,11 +358,12 @@
     "channel": "wechat",
     "type": "page",
     "url": "https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/ad.md",
-    "note": "流量主开通条件（累计 UV > 500 等三选一、次日刷新）和开通入口；决定「上线后才能接真实广告」的顺序",
+    "note": "开放文档的流量主开通条件和开通入口（页面现写累计 UV > 500 等三选一、次日刷新）；决定「上线后才能接真实广告」的顺序。微信广告帮助中心 docs/237 写 > 100，用户 2026-11-03 确认以 100 为准；帮助中心靠 JavaScript 显示，巡检抓不到。本页改成 100 时，删掉 capabilities.md 里「门槛数字各处不一样」那条",
     "affects": [
       "skills/ship-wechat-minigame/references/capabilities.md",
       "skills/ship-wechat-minigame/SKILL.md",
-      "skills/ship-my-game/SKILL.md"
+      "skills/ship-my-game/SKILL.md",
+      "skills/ship-wechat-minigame/references/troubleshooting.md"
     ]
   },
   {
@@ -624,7 +626,8 @@
     "note": "Tap 小游戏广告只能走 Dirichlet（TapADN）、零分成、接入步骤；决定「个人能否靠广告赚钱」的说法",
     "affects": [
       "skills/ship-taptap-minigame/references/capabilities.md",
-      "skills/ship-taptap-minigame/SKILL.md"
+      "skills/ship-taptap-minigame/SKILL.md",
+      "skills/ship-taptap-minigame/references/payouts.md"
     ]
   },
   {
@@ -678,6 +681,156 @@
     "note": "官方 MCP 是否开始支持 Unity 小游戏（目前写「仅支持 H5 小游戏」）",
     "affects": [
       "skills/ship-taptap-minigame/references/automation.md"
+    ]
+  },
+  {
+    "id": "admob-getting-paid",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/admob/answer/3001017?hl=zh-Hans",
+    "note": "AdMob 获得付款的步骤：到门槛后验证身份（45 天内交证件）和地址（PIN 码平邮 2～3 周、4 个月内输入），再选收款方式，每月 21 日左右付款",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "admob-payment-thresholds",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/admob/answer/2772208?hl=zh-Hans",
+    "note": "AdMob 各币种门槛表（美元：税务信息 $0、验证 $10、选收款方式 $10、起付 $100；没有人民币档）",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md",
+      "skills/ship-google-play/references/capabilities.md",
+      "skills/ship-my-game/SKILL.md"
+    ]
+  },
+  {
+    "id": "admob-payment-schedule",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/admob/answer/3289671?hl=zh-Hans",
+    "note": "AdMob 每月付款节奏（3 日定稿、20 日前改付款信息、21 日付款、电汇约 10 天到账）；页面现写 Hyperwallet 仅限美国，和 2025-10 中国可用的公告不一致",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md"
+    ]
+  },
+  {
+    "id": "admob-pin",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/admob/answer/2772302?hl=zh-Hans",
+    "note": "AdMob PIN 码：身份验证后才寄、约 3 周送达、4 个月内输入、输错 3 次失败、替代 PIN 码",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md",
+      "skills/ship-google-play/references/onboarding.md"
+    ]
+  },
+  {
+    "id": "admob-us-tax",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/admob/answer/2772513?hl=zh-Hans",
+    "note": "AdMob 美国税务信息的入口；要交的话 20 日前交才能收到当月付款",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md"
+    ]
+  },
+  {
+    "id": "adsense-payment-methods",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/adsense/answer/1714397?hl=zh-Hans",
+    "note": "按国家列的收款方式表（AdSense、AdMob 共用）：中国现为电汇和 PayPal Hyperwallet，没有支票和 EFT",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md"
+    ]
+  },
+  {
+    "id": "adsense-wire-transfer",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/adsense/answer/3372975?hl=zh-Hans",
+    "note": "电汇要填的字段（户名、银行名称、SWIFT-BIC、IBAN；选填中转银行和 FFC/FBO）",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md",
+      "skills/ship-my-game/references/payouts-china.md"
+    ]
+  },
+  {
+    "id": "gp-wire-transfer",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/googleplay/android-developer/answer/2700656?hl=zh-Hans",
+    "note": "Play 商家电汇：中国在可收电汇的国家列表里，美元付款，最低 100 美元，银行手续费通常 0～50 美元，建议开美元账户",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md",
+      "skills/ship-my-game/references/payouts-china.md",
+      "skills/ship-my-game/SKILL.md"
+    ]
+  },
+  {
+    "id": "gp-payout-schedule",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/paymentscenter/answer/7159355?hl=zh-Hans",
+    "note": "Play 每月 15 日起支付上月销售收入；电汇 5～7 个工作日到账",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md",
+      "skills/ship-google-play/SKILL.md"
+    ]
+  },
+  {
+    "id": "gp-bank-account",
+    "channel": "google-play",
+    "type": "page",
+    "url": "https://support.google.com/paymentscenter/answer/7161440?hl=zh-Hans",
+    "note": "商家银行账户要求和按国家的字段表（中国：美元电汇，字段含 IBAN）；存款测试只用于能用 EFT 的国家",
+    "affects": [
+      "skills/ship-google-play/references/payouts.md"
+    ]
+  },
+  {
+    "id": "wx-commercialization",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/commercialization/",
+    "note": "激励政策概要：IAA 现金分成 50%，现金半月结（16 日、1 日发起，约 13 天到账），结算入口「MP-流量主-财务管理」",
+    "affects": [
+      "skills/ship-wechat-minigame/references/payouts.md",
+      "skills/ship-wechat-minigame/references/capabilities.md",
+      "skills/ship-my-game/SKILL.md"
+    ]
+  },
+  {
+    "id": "cn-safe-personal-fx",
+    "channel": "china",
+    "type": "page",
+    "url": "http://m.safe.gov.cn/safe/2007/0105/5320.html",
+    "note": "《个人外汇管理办法实施细则》：个人结汇年度总额每人每年等值 5 万美元（第二条），超额的非经营性结汇要证明材料（第十条）",
+    "affects": [
+      "skills/ship-my-game/references/payouts-china.md"
+    ]
+  },
+  {
+    "id": "cn-safe-bop-individual",
+    "channel": "china",
+    "type": "page",
+    "url": "https://www.safe.gov.cn/henan/2019/0118/542.html",
+    "note": "国际收支申报：居民个人等值 5000 美元以下（含）的涉外收付款可以不申报",
+    "affects": [
+      "skills/ship-my-game/references/payouts-china.md"
+    ]
+  },
+  {
+    "id": "cn-iit-law",
+    "channel": "china",
+    "type": "page",
+    "url": "https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193028/content.html",
+    "note": "《个人所得税法》第十条、第十三条：没有扣缴义务人时自行申报及期限，境外所得在次年 3 月 1 日至 6 月 30 日申报",
+    "affects": [
+      "skills/ship-my-game/references/payouts-china.md"
     ]
   }
 ]

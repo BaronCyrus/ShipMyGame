@@ -1,6 +1,6 @@
 ---
 name: ship-taptap-minigame
-description: TapTap 小游戏发布：把 Unity 游戏导出成 TapTap 小游戏包，从认证开发者、创建游戏、上传包体并通过包体准入测试、前置备案、填商店资料，一直推进到提交审核。用户要发布、上架、提审到 TapTap 小游戏；要接 TapTap 小游戏的登录、成就、排行榜、云存档、分享、广告；或 TapTap 包体准入测试失败、前置备案卡住、审核被拒时使用。
+description: TapTap 小游戏发布：把 Unity 游戏导出成 TapTap 小游戏包，从认证开发者、创建游戏、上传包体并通过包体准入测试、前置备案、填商店资料，一直推进到提交审核。用户要发布、上架、提审到 TapTap 小游戏；要接 TapTap 小游戏的登录、成就、排行榜、云存档、分享、广告；问广告收入能不能结算；或 TapTap 包体准入测试失败、前置备案卡住、审核被拒时使用。
 ---
 
 # TapTap 小游戏：从认证开发者推到提审
@@ -13,7 +13,7 @@ description: TapTap 小游戏发布：把 Unity 游戏导出成 TapTap 小游戏
 
 1. **引擎**：官方建议 Unity 2022+ 或团结引擎 1.2.0+，没有声明支持 Unity 6 [官方](https://developer.taptap.cn/minigameapidoc/dev/engine/unity-adaptation/engine-suggestions/)。本仓库用 Unity 6000.6 实测：前 4 版逐个暴露问题、都没过包体准入测试，第 5 版（1.0.7）通过 `[实测]`。修法已全部写进 `scripts/ShipTapBuild.cs`，另有一条游戏代码规则：TapTap 构建里不能调用 `WeChatWASM.WX`。2022.3 / 团结引擎这条官方路线本仓库还没实测。
 2. **个人、没有版号**：只能以「开放试玩」上线，不能内购 `[实测]`；上线前必须做完前置备案，全程约 20 个工作日 [官方](https://developer.taptap.cn/minigameapidoc/quick-start/guide/pre-filing/)。
-3. **广告**：Unity 小游戏只能接 TapADN（Dirichlet）[官方](https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/ad-integration-guide/)。Dirichlet 结算要增值税专用发票，个人基本拿不到钱。这一条出自 Dirichlet 协议，只当线索，详见 [capabilities.md](references/capabilities.md)。
+3. **广告**：Unity 小游戏只能接 TapADN（Dirichlet）[官方](https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/ad-integration-guide/)。Dirichlet 的协议允许个人结算（个人累计不足 1000 元可暂不结算），但每次结算都要附等额的增值税专用发票；个人能不能代开、Dirichlet 认不认代开的票，**未确认**。详见 [payouts.md](references/payouts.md)。
 
 ## 本人事项
 
@@ -178,3 +178,4 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 - **等审核**：需要改资料时可以「撤销审核」，改完重新提交。
 - **审核失败**：在「版本审核记录」里看原因，改完再提交，不要原样重提。见 review.md。
 - **上线后**：游戏以「开放试玩」对玩家可见。发新版本的顺序是：上传更高版本号的包体 → 通过准入测试 → 在「版本管理」新建版本 → 选包体 → 提审（更新一般 1 天内出结果）[官方](https://developer.taptap.cn/minigameapidoc/quick-start/guide/creation-improvement/)。
+- **收款**：广告收入走 Dirichlet，个人能不能结算还没确认，接广告前先请用户问 Dirichlet 客服，见 [payouts.md](references/payouts.md)。

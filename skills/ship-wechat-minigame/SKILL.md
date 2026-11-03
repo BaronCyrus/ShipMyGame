@@ -1,6 +1,6 @@
 ---
 name: ship-wechat-minigame
-description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从注册小游戏账号推进到版本提审，主线是个人主体、纯广告变现。用户要发布、上架、提审到微信小游戏时使用；要接入微信小游戏的流量主广告、分享、排行榜、游戏圈、存档、安全区和胶囊按钮时使用；遇到微信小游戏黑屏、中文显示成方块、备案或认证卡住、审核被拒时也使用。
+description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从注册小游戏账号推进到版本提审，主线是个人主体、纯广告变现。用户要发布、上架、提审到微信小游戏时使用；要接入微信小游戏的流量主广告、分享、排行榜、游戏圈、存档、安全区和胶囊按钮时使用；问流量主的钱怎么结算、财务资料怎么填，或遇到微信小游戏黑屏、中文显示成方块、备案或认证卡住、审核被拒时也使用。
 ---
 
 # 微信小游戏：从注册到提审
@@ -16,7 +16,7 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 
 **实测覆盖范围（截至 2026-11-02）**
 - 已实测：注册、开通快适配、Unity 6 包在真机上运行、资质审核（已通过）、微信认证（已完成）、小游戏备案（已提交，正在主管部门审核）。
-- 只有 `[官方]` 依据：小程序备案、上传代码、提交审核、流量主。
+- 只有 `[官方]` 依据：小程序备案、上传代码、提交审核、流量主和收款。
 
 ## 本人事项
 
@@ -31,7 +31,7 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 | P6 | 小程序备案：证件照片、人脸核身、两个本人手机号（负责人和应急联系人）、24 小时内完成工信部短信核验 `[官方]`（[备案操作指引](https://developers.weixin.qq.com/minigame/product/record/guidelines.html)） |
 | P7 | 走命令行上传时，生成「小程序代码上传密钥」，一般要管理员扫码（未实测） |
 | P8 | 在提审闸门里说「提交」；审核通过后点「发布」同样要用户确认 |
-| 上线后 | 开通流量主时同意广告协议 `[官方]`（[广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/ad.html)） |
+| 上线后 | 开通流量主时同意广告协议；开通后补财务资料：开户名称、身份证号、银行账号 `[官方]`（[广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/ad.html)、[payouts.md](references/payouts.md)） |
 
 ## 工程要求（总入口第 3 步对照）
 
@@ -194,7 +194,7 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 **发布**：审核通过并且拿到备案号后，在「版本管理 → 审核版本」点「发布」，选全量或分阶段发布。发布前同样先问用户 `[官方]`（[协同工作和发布](https://developers.weixin.qq.com/miniprogram/dev/framework/quickstart/release.html)）。
 
 **上线后**
-- 流量主：累计独立访客超过 500 才能开通（或者满足游戏圈条件）。开通后建广告位，把 ID 填进游戏，再发一版，见 [capabilities.md](references/capabilities.md#广告流量主)。
+- 流量主：累计独立访客超过 100 才能开通（或者满足游戏圈条件）。开通当天补财务资料，再建广告位，把 ID 填进游戏，再发一版。见 [capabilities.md](references/capabilities.md#广告流量主)，收款见 [payouts.md](references/payouts.md)。
 - 安卓黑屏：上线后在后台「实时日志」看失败启动的日志，记进进度档案。
 
 **被拒或卡住时**：看 [review.md](references/review.md#被拒或卡住) 和 [troubleshooting.md](references/troubleshooting.md)。

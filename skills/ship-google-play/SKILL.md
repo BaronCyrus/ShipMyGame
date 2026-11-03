@@ -1,6 +1,6 @@
 ---
 name: ship-google-play
-description: Google Play 发布：把 Unity 游戏打成签名 AAB，从注册 Play 开发者账号、创建应用、填应用内容和商品详情、封闭测试送审、凑满 12 名测试者连续 14 天，一直推进到申请正式版并提审。用户要发布、上架、提审到 Google Play；要接 Play 游戏服务（登录、成就、排行榜、云存档）、AdMob 广告、应用内评价或更新、内购；或 Play 审核被拒、送审被拦、测试人数不够时使用。
+description: Google Play 发布：把 Unity 游戏打成签名 AAB，从注册 Play 开发者账号、创建应用、填应用内容和商品详情、封闭测试送审、凑满 12 名测试者连续 14 天，一直推进到申请正式版并提审。用户要发布、上架、提审到 Google Play；要接 Play 游戏服务（登录、成就、排行榜、云存档）、AdMob 广告、应用内评价或更新、内购；Play 审核被拒、送审被拦、测试人数不够；或者问 AdMob、Play 的钱怎么收（PIN 码、银行账户、税务信息）时使用。
 ---
 
 # Google Play：从注册开发者账号推到提审
@@ -39,6 +39,7 @@ description: Google Play 发布：把 Unity 游戏打成签名 AAB，从注册 P
 | OAuth 同意屏幕的「发布应用」、PGS 的「发布游戏项目」 | P6 |
 | 注册 AdMob：国家、条款、人机验证、付款和税务资料 | P6 |
 | 同意把隐私政策、app-ads.txt 发布到用户的网站；托管需要付费时由用户决定 | P2、P6 |
+| 收款：AdMob 的身份证件、PIN 码、收款方式、美国税务信息；Play 的商家付款资料和银行账户 | 上线后 |
 
 ## 工程要求
 
@@ -169,4 +170,5 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 - **等 14 天**：每天看卡片上的人数和天数；按反馈发 1～2 个更新；能力接入放在这段时间做。
 - **等正式版权限审核**（约 7 天）：准备正式版的广告 ID、商店推广素材。
 - **上线后**：在 AdMob 关联商店并完成 app-ads.txt 验证（capabilities.md 第 2.7 节）；在 Android vitals 里盯崩溃率和 ANR。2027-02 起会考核内存，DEX 超过 50 MB 的游戏还要做代码优化（[官方](https://support.google.com/googleplay/android-developer/answer/17492799)）。每次更新都加 versionCode，改动攒齐一次送审。
+- **收款**：AdMob 余额满 10 美元要验证身份和地址（PIN 码平邮，约 3 周），满 100 美元后每月 21 日前后付款；卖内购要先建商家付款资料、加银行账户，每月 15 日起付上月的收入。见 [payouts.md](references/payouts.md)。
 - **被拒或被拦**：见 [review.md](references/review.md) 第 4 节和 [troubleshooting.md](references/troubleshooting.md)。

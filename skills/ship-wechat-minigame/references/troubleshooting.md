@@ -61,6 +61,6 @@
 | 小程序备案的「开始备案」、版本提审的「前往提交」是灰的 | 前面的步骤还没完成：资质、小游戏备案、微信认证 | 按 [filing.md](filing.md) 的顺序推进 |
 | 隐私保护指引里「处理了用户信息」选不了 | 网络类型是单机 | 需要隐私接口时，先在「版本管理 → 网络类型设置」改成联网。备案前就要定好 |
 | 调用隐私接口报 104、112、1025、1026 `[官方]`（[隐私合规开发指南](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/privacy.html)） | 隐私指引里没声明这个接口，或者用户没同意 | 见 [capabilities.md](capabilities.md#隐私授权弹窗联网游戏才需要) |
-| 流量主「开通」点不了 `[官方]`（[广告变现](https://developers.weixin.qq.com/minigame/introduction/commercialization/ad/)） | 累计 UV 没超过 500，或者资格要第二天才刷新 | 上线后等用户量达标，第二天再试 |
+| 流量主「开通」点不了 `[官方]`（[小游戏流量主开通流程](https://ad.weixin.qq.com/docs/237)、[广告变现](https://developers.weixin.qq.com/minigame/introduction/commercialization/ad/)） | 累计 UV 没超过 100（开放文档还写 500，见 [capabilities.md](capabilities.md#开通条件-官方)），或者资格要第二天才刷新 | 上线后等用户量达标，第二天再试 |
 | 想用接口提交审核，返回 87006 或 86000 `[官方]`（[提交代码审核](https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/code-management/api_submitaudit.html)） | 提审接口只给第三方平台用，而且小游戏不能用它提交 | 在网页上提交，见 [automation.md](automation.md#不能自动化的环节) |
 | 小游戏备案驳回，原因是「同名游戏已获批」 `[官方]`（[小游戏备案 Q4](https://developers.weixin.qq.com/minigame/introduction/guide/nrjs.html)） | 同名游戏已经先通过了主管部门审批 | 改名，新名字要和玩法相关；改名后小游戏备案要重新走 |

@@ -259,7 +259,7 @@
    - 新上架的应用要 24～48 小时、最长一周才能搜到。
    - **不公开的 Google Play 应用不能关联** [官方](https://support.google.com/admob/answer/10037806?hl=zh-Hans)。
 2. 「应用设置 → 验证应用 → 检查是否更新」：先通过 app-ads.txt 验证，然后进入「应用就绪审核」，通常 2～3 天。审核期间广告投放受限 [官方](https://support.google.com/admob/answer/14538460?hl=zh-Hans)、[官方](https://support.google.com/admob/answer/10564477)。
-3. 付款门槛：满 US$100 付款 [官方](https://support.google.com/admob/answer/2772208)。
+3. 付款门槛：满 US$100 付款 [官方](https://support.google.com/admob/answer/2772208)。身份和地址验证、收款方式、税务信息见 [payouts.md](payouts.md) 第 1 节。
 
 ### 2.8 Play 管理中心要配合的声明
 
@@ -292,7 +292,7 @@
 - 用 Unity 的 In App Purchasing（`com.unity.purchasing`）。**版本至少 4.14.0 或 5.0.0**：Play 结算库 7 的截止日（延期到 2026-11-01）已过，必须用 PBL 8 以上 [官方](https://developer.android.com/google/play/billing/deprecation-faq)。5.4.0 起用 PBL 9；最新 5.4.4 [Unity 官方](https://docs.unity3d.com/Packages/com.unity.purchasing@5.4/changelog/CHANGELOG.html)。
 - 接入写法按 Unity 手册（v5 用 `StoreController`）：https://docs.unity3d.com/Packages/com.unity.purchasing@5.4/manual/index.html
 - 后台：
-  - 先上传一个带 `com.android.vending.BILLING` 权限的包（Unity IAP 会自动加），并由账号所有者设好付款资料；
+  - 先上传一个带 `com.android.vending.BILLING` 权限的包（Unity IAP 会自动加），并由账号所有者设好商家付款资料和银行账户，见 [payouts.md](payouts.md) 第 2 节；
   - 再在「借助 Play 变现 → 商品 → 应用内商品」建商品 [官方](https://support.google.com/googleplay/android-developer/answer/1153481?hl=zh-Hans)；
   - 测试：「设置 → 许可测试」里加测试账号，应用要已发布到某个测试轨道，商品要已发布 [官方](https://support.google.com/googleplay/android-developer/answer/6062777?hl=zh-Hans)。
 - 个人账号开始在 Google Play 上创收后，会公开完整地址，见 [onboarding.md](onboarding.md) 第 1 节。本仓库的实测游戏没有内购。

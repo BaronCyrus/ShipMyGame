@@ -47,7 +47,7 @@
 
 ### 以后想做广告时
 
-TapADN（Dirichlet）账号的主体必须和 TapTap 开发者主体一致，而广告结算要开增值税专用发票，个人开不出来。打算以后用个体户或公司收广告钱的，从认证这一步就要用那个主体。这条是 2026-10 调研 Dirichlet 协议得出的，不在 TapTap 官方文档里，所以只当线索。广告的现状见 [capabilities.md](capabilities.md)。
+TapADN（Dirichlet）账号的主体必须和 TapTap 开发者主体一致。这条是 2026-10 调研得出的，不在 TapTap 官方文档里，只当线索。Dirichlet 协议要求每次结算都附增值税专用发票，个人能不能代开还没确认，见 [payouts.md](payouts.md)。打算以后用个体户或公司收广告钱的，从认证这一步就要用那个主体。
 
 ### 信用等级
 

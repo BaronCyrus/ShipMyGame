@@ -199,12 +199,12 @@ TapCloudSave.CreateArchive(new CreateArchiveOption
 - 后台的「广告变现」页（以及官方 MCP 的广告指南）只适用于星火、H5 小游戏和 TapTap 制造 `[实测]` [官方](https://developer.taptap.cn/minigameapidoc/quick-start/mcp-guide/ad-integration-guide/)。
 - Dirichlet 零分成，个人和企业都能接入 [官方](https://developer.taptap.cn/minigameapidoc/quick-start/monetization/IAA-game/)。
 
-**个人能不能拿到钱**：难。以下是 2026-10 调研的结论，来源是 Dirichlet 协议，不在 TapTap 文档里，只当线索：
-- 每次结算要一张等额的增值税专用发票，个人开不出来；
-- 累计满 1000 元才结算；
-- Dirichlet 账号主体要和 TapTap 开发者主体一致。
+**个人能不能拿到钱**：未确认。依据是 Dirichlet 的《服务协议》，不在 TapTap 文档里：
+- 协议允许个人开发者结算，个人累计不足 1000 元可暂不结算；
+- 但每次结算都要附等额的增值税专用发票。个人自己开不了专票，能不能代开、Dirichlet 认不认，协议没写；
+- Dirichlet 账号主体要和 TapTap 开发者主体一致（2026-10 调研得出，只当线索）。
 
-要靠广告赚钱，得用个体户或公司主体。把这些先讲给用户听，由他决定接不接。
+把这些先讲给用户听，由他决定接不接；接之前请他先问 Dirichlet 客服。详见 [payouts.md](payouts.md)。
 
 **步骤**：
 1. 在 https://ssp.dirichlet.cn/ 用 TapTap 开发者账号登录，新建媒体时「应用类型」选「小游戏」，再建广告位，拿到 adUnitId。TapTap 小游戏支持激励视频、插屏、横幅三种。这一条来自 Dirichlet 帮助页，只当线索。

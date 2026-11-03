@@ -32,6 +32,9 @@ REDACT = [
     (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "<aws-key>"),
     (re.compile(r"\bsk-[A-Za-z0-9_-]{20,}"), "<api-key>"),
 ]
+# support.google.com prints a line holding only a 19-20 digit number that differs on every load; without this every
+# Google source would show as changed each week.
+VOLATILE = re.compile(r"\d{12,}")
 BLOCK = {"p", "br", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "div", "section", "article", "pre", "table", "dt", "dd"}
 
 
@@ -78,7 +81,7 @@ def normalize(text, ignore):
         line = re.sub(r"\s+", " ", html.unescape(line)).strip()
         for pattern, placeholder in REDACT:
             line = pattern.sub(placeholder, line)
-        if line and not any(re.search(p, line) for p in ignore):
+        if line and not VOLATILE.fullmatch(line) and not any(re.search(p, line) for p in ignore):
             lines.append(line)
     return "\n".join(lines) + "\n"
 
