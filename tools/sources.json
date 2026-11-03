@@ -849,10 +849,11 @@
     "channel": "steam",
     "type": "page",
     "url": "https://partner.steamgames.com/doc/gettingstarted/onboarding",
-    "note": "个人选 Sole Proprietorship；交费后的等待天数（现写 21 天，和 steam-direct 的 30 天不一致）；不接受的内容（含基于广告的商业模式）",
+    "note": "个人选 Sole Proprietorship；个人登记时银行户名必须和「公司法定名称」一致；交费后的等待天数（现写 21 天，和 steam-direct 的 30 天不一致）；不接受的内容（含基于广告的商业模式）",
     "affects": [
       "skills/ship-steam/SKILL.md",
       "skills/ship-steam/references/onboarding.md",
+      "skills/ship-steam/references/payouts.md",
       "skills/ship-steam/references/build.md"
     ],
     "from": "^Steamworks 文献库 > ",
@@ -875,7 +876,7 @@
     "channel": "steam",
     "type": "page",
     "url": "https://partner.steamgames.com/doc/gettingstarted/faq",
-    "note": "法定名称规则（法定姓名、不用 DBA、不用英文以外的特殊字符）；税务问卷 5～10 分钟不能保存、名称和公司信息一致、审核 2～7 个工作日最长 30 天、只有情况变了才重做；外国 TIN 是享受协定待遇的前提",
+    "note": "法定名称规则（法定姓名、不用 DBA、不用英文以外的特殊字符；姓名变了要用新名字重新登记合作伙伴账户）；税务问卷 5～10 分钟不能保存、名称和公司信息一致、审核 2～7 个工作日最长 30 天、只有情况变了才重做；外国 TIN 是享受协定待遇的前提",
     "affects": [
       "skills/ship-steam/references/onboarding.md",
       "skills/ship-steam/references/payouts.md"
