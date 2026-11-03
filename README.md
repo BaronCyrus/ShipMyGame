@@ -83,7 +83,7 @@ npx skills add BaronCyrus/ShipMyGame
 
 ## 路线图
 
-- [ ] Steam
+- [ ] Steam：注册、收款和税务已实测，草稿在 [`skills/ship-steam`](skills/ship-steam/SKILL.md)；建应用之后的阶段还没走过
 - [ ] App Store / TestFlight
 - [ ] 抖音小游戏
 - [ ] 快手小游戏、国内安卓应用商店

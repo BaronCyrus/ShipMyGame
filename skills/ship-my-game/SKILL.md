@@ -35,7 +35,7 @@ description: 上架 Unity 游戏的总入口：把用户做好的 Unity 游戏�
 | Unity 产物 | AAB（安卓） | WebGL → 微信转换工具 | WebGL → TapTap 转换工具 |
 | Unity 版本 | Unity 6 实测通过 | Unity 6 实测可在真机运行（要打补丁，脚本已内置），但官方只算预览；新项目优先 2022.3 LTS 或团结引擎 | Unity 6 实测通过包体准入测试（要打补丁，脚本已内置）；官方声明支持 Unity 2022+ 和团结引擎 |
 
-目前收录的就是这三个渠道。用户要发 Steam、App Store、抖音小游戏等，如实说明本仓库还没收录、没有实测流程，可以按通用经验协助，但别承诺走得通。
+目前收录的就是这三个渠道。Steam 在规划中：注册、收款和税务已实测，建应用之后的阶段还没走过。用户要发 Steam 时读 [`ship-steam`](../ship-steam/SKILL.md)，并如实告诉用户这一点。用户要发 App Store、抖音小游戏等，如实说明本仓库还没收录、没有实测流程，可以按通用经验协助，但别承诺走得通。
 
 完成标准：渠道写进进度档案。
 
@@ -58,6 +58,7 @@ description: 上架 Unity 游戏的总入口：把用户做好的 Unity 游戏�
 | Google Play | `ship-google-play` |
 | 微信小游戏 | `ship-wechat-minigame` |
 | TapTap 小游戏 | `ship-taptap-minigame` |
+| Steam（规划中） | `ship-steam` |
 
 skill 没有自动加载时，直接读同级目录里的 `../ship-<渠道>/SKILL.md`。渠道 skill 从「账号」阶段开始，用户已有账号就跳到下一阶段。
 
