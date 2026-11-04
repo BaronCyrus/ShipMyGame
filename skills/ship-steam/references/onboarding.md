@@ -44,7 +44,7 @@
 - 改 Steam 的法定名称：后台的「更改名称」只让联系客服，改名完成前不要改银行和税务信息。法定姓名本身变了的，官方的做法是用新名字重新登记一个合作伙伴账户，银行和税务信息也要重填 [官方](https://partner.steamgames.com/doc/gettingstarted/faq)。
 - 让收款平台补登记 Steam 上的写法：要上传截图、等审核。实测第一次被拒，第二次当天通过，见 [payouts.md](payouts.md) 第 3 节。
 
-**拼音的顺序**：这次实测的 Payoneer 账户，持有人名称是名在前；护照上是姓在前。Steam 的身份验证会不会因为顺序和证件不同而不通过，**未确认**：实测用的是姓在前，身份验证还在等结果。拿不准时先问 [Steam 客服](https://help.steampowered.com/wizard/HelpWithPublishing)。
+**拼音的顺序和证件上的姓名**：这次实测的 Payoneer 账户，持有人名称是名在前；护照上是姓在前。实测 Steam 填的是姓在前，身份验证传的是身份证，上面只有中文名。拼音的顺序、身份证上没有拼音，会不会让身份验证不通过，**未确认**，还在等结果。拿不准时先问 [Steam 客服](https://help.steampowered.com/wizard/HelpWithPublishing)。
 
 ## 3. 第二段注册：Steam Direct 分销计划和注册费 `[实测]`
 
