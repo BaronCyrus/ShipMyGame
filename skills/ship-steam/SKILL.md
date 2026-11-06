@@ -16,7 +16,7 @@ description: Steam 发布（规划中：注册、收款和税务已实测，建�
 
 **开工先问用户这三件事**，答案写进进度档案：
 1. 用哪个 Steam 账号注册？新开的账号是「受限账户」，账号的商店国家由第一次购买时所在的位置决定，见 [onboarding.md](references/onboarding.md) 第 1 节。
-2. 收款用哪个账户：国内银行（SWIFT 电汇），还是第三方平台的美国收款账户？**在 P1 填法定英文名称之前，先拿到这个账户认的英文户名**，Steam 里照它原样填。两边不一致，银行信息存不进去，姓和名的顺序不同也不行 `[实测-失败 → 已修复]`；名字填进 Steam 以后再改，要找 Steam 客服，或者让收款平台截图审核补登记，都慢。Payoneer 认哪些名字、在哪看，见 [onboarding.md](references/onboarding.md) 第 2 节。
+2. 收款用哪个账户：国内银行（SWIFT 电汇），还是第三方平台的美国收款账户？**在 P1 填法定英文名称之前，先拿到这个账户认的英文户名**，Steam 里照它原样填。两边不一致，银行信息存不进去，姓和名的顺序不同也不行 `[实测-失败 → 已修复]`；名字填进 Steam 以后再改，Steam 这边要从头注册（税务问卷交了的，还得先请客服取消税务问卷和身份验证），收款平台那边要截图审核补登记，都慢。Payoneer 认哪些名字、在哪看，见 [onboarding.md](references/onboarding.md) 第 2 节。
 3. 拿哪个游戏上 Steam？游戏里有没有广告？Steam 不接受以广告为商业模式的应用 [官方](https://partner.steamgames.com/doc/gettingstarted/onboarding)。
 
 **然后告诉用户时间线**：
