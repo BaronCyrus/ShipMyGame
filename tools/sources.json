@@ -13,6 +13,17 @@
     "type": "page"
   },
   {
+    "id": "gp-testing-tracks",
+    "channel": "google-play",
+    "url": "https://support.google.com/googleplay/android-developer/answer/9845334?hl=zh-Hans",
+    "note": "测试轨道：首次发布后加入链接可能要几个小时才对测试人员生效；正式版版本代码更高时，加入测试的用户会收到正式版；暂停轨道后测试人员不再收到测试版更新、应用仍留在设备上",
+    "affects": [
+      "skills/ship-google-play/references/review.md",
+      "skills/ship-google-play/SKILL.md"
+    ],
+    "type": "page"
+  },
+  {
     "id": "gp-target-sdk",
     "channel": "google-play",
     "url": "https://developer.android.com/google/play/requirements/target-sdk",

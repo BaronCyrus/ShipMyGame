@@ -152,10 +152,10 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 
 ### P7 申请正式版并发布正式版（提审闸门）
 
-1. 卡片上三项都打勾后，按 `templates/production-access-answers.md` 起草三部分问卷，交给用户逐条确认 [官方](https://support.google.com/googleplay/android-developer/answer/14151465?hl=zh-Hans)。
-2. 按提审闸门列给用户：问卷答案、测试人数和天数、预计 7 天内出结果。用户说「提交」后，在「信息中心 → 申请正式版发布权限」点「申请发布正式版」，三部分都点「下一步」，最后点「申请」。
+1. 卡片上三项都打勾后，先到模板列出的页面查测试数据，再按 `templates/production-access-answers.md` 起草三部分问卷（共 9 题，每道文字题最多 300 个字符），交给用户逐条确认 `[实测]`。
+2. 按提审闸门列给用户：问卷答案、测试人数和天数、预计 7 天内出结果。用户说「提交」后，在「信息中心 → 申请正式版发布权限」点「申请发布正式版」，前两步点「下一步」，最后一步点「应用」。页面出现「我们已收到您的正式版发布权限申请」才算交上 `[实测]`。进度档案记下提交时间，结果看邮件和信息中心卡片。
 3. 获批后（邮件通知账号所有者），按 [review.md](references/review.md) 第 6 节准备正式版：
-   - 换上正式广告 ID 和 App ID，versionCode 加 1；
+   - 换上正式广告 ID 和 App ID，versionCode 加 1（可以在等结果时先打好包，这个包只发正式版）；
    - 先发布 PGS 配置，至少 2 小时后再上线游戏；
    - 「测试和发布 → 正式版 →『创建新的发布版本』」。
 4. 再走一次提审闸门，把正式版送审，读页面确认进入「审核中」。
@@ -168,7 +168,7 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 
 - **等封闭测试审核**（实测几十分钟）：去做商店素材、PGS 和 AdMob 的后台配置。
 - **等 14 天**：每天看卡片上的人数和天数；按反馈发 1～2 个更新；能力接入放在这段时间做。
-- **等正式版权限审核**（约 7 天）：准备正式版的广告 ID、商店推广素材。
-- **上线后**：在 AdMob 关联商店并完成 app-ads.txt 验证（capabilities.md 第 2.7 节）；在 Android vitals 里盯崩溃率和 ANR。2027-02 起会考核内存，DEX 超过 50 MB 的游戏还要做代码优化（[官方](https://support.google.com/googleplay/android-developer/answer/17492799)）。每次更新都加 versionCode，改动攒齐一次送审。
+- **等正式版权限审核**（约 7 天）：打好正式广告包并核对清单（review.md 第 6 节）；准备商店推广素材。
+- **上线后**：在 AdMob 关联商店并完成 app-ads.txt 验证（capabilities.md 第 2.7 节）；封闭测试的测试人员也会收到正式版和真实广告，暂停测试轨道挡不住（review.md 第 6 节）；在 Android vitals 里盯崩溃率和 ANR。2027-02 起会考核内存，DEX 超过 50 MB 的游戏还要做代码优化（[官方](https://support.google.com/googleplay/android-developer/answer/17492799)）。每次更新都加 versionCode，改动攒齐一次送审。
 - **收款**：AdMob 余额满 10 美元要验证身份和地址（PIN 码平邮，约 3 周），满 100 美元后每月 21 日前后付款；卖内购要先建商家付款资料、加银行账户，每月 15 日起付上月的收入。见 [payouts.md](references/payouts.md)。
 - **被拒或被拦**：见 [review.md](references/review.md) 第 4 节和 [troubleshooting.md](references/troubleshooting.md)。
