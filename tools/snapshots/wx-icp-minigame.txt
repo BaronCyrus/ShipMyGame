@@ -1,0 +1,18 @@
+# 小程序备案
+## 1. 操作流程
+### step1: 首页，设置-小程序备案，点击去完善
+![](https://mmbiz.qpic.cn/sz_mmbiz_png/Sbw85vxU5W238rWFtV9iaicYFAt3mEHumTxM6cWbHp8HXBtsuQZsk5PfocSmPGkxc20YaBSuBe0cuiaBvic7aayJrQ/0?wx_fmt=png)
+### step2: 根据实际情况选择情况一或者情况二
+![](https://mmgame.qpic.cn/image/c5ca920b8651ece7b36e8b0fd6eb2a9360161a243793092b8ae1dcb89a5e66b3/0)
+IAP 游戏选择情况一
+IAA 游戏选择情况二
+### step3：展示相应的流程引导页面
+（1）情况一：
+![](https://mmgame.qpic.cn/image/7b705c34d0a8139367f6ec2df65cfc2d3a847f67101c2a732fdb361fb3998ed9/0)
+（2）情况二：
+![](https://mmgame.qpic.cn/image/02f354e7c7c771ac11180f819453fe62efecd26db7899d9639a823ad1932a67c/0)
+## 2. 办结时限
+情况一，约 5~12 个工作日
+情况二，约 10~30 个工作日
+## 3. 操作指引
+请见文档 [小程序备案操作指引 | 微信开放文档](/minigame/product/record/guidelines.md)

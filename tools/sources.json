@@ -417,6 +417,49 @@
     "url": "https://developers.weixin.qq.com/minigame/product/record/guidelines.md",
     "note": "小程序备案（ICP）：个人主体材料、人脸核身、12381 短信 24 小时内核验、通管局 1～20 个工作日",
     "affects": [
+      "skills/ship-wechat-minigame/references/filing.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-icp-minigame",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/minigame/introduction/guide/xcxba.md",
+    "note": "小游戏的小程序备案：入口、先选情况一（IAP）或情况二（IAA）、办结时限（情况二约 10～30 个工作日）",
+    "affects": [
+      "skills/ship-wechat-minigame/references/filing.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-icp-materials",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/miniprogram/product/record/record_material.md",
+    "note": "小程序备案材料：证件照片和有效期要求、广东 / 新疆个人主体要手写承诺书并上传、承诺书签署日期 1 个月内",
+    "affects": [
+      "skills/ship-wechat-minigame/references/filing.md",
+      "skills/ship-wechat-minigame/SKILL.md"
+    ]
+  },
+  {
+    "id": "wx-icp-faq",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/miniprogram/product/record/record_faq.md",
+    "note": "小程序备案常见问答：通讯地址精确到门牌、要交居住证明的省份、手机号邮箱不能共用、0755 回访电话、驳回后 7 个工作日、撤回规则、备案号在短信里",
+    "affects": [
+      "skills/ship-wechat-minigame/references/filing.md"
+    ]
+  },
+  {
+    "id": "wx-icp-sms",
+    "channel": "wechat",
+    "type": "page",
+    "url": "https://developers.weixin.qq.com/miniprogram/product/record/sms_verification.md",
+    "note": "工信部短信核验：初审通过后 5～10 分钟收到 12381 短信、24 小时内核验、12 小时自动重发、输错 5 次退回、备案类型自动判定",
+    "affects": [
       "skills/ship-wechat-minigame/references/filing.md"
     ]
   },
