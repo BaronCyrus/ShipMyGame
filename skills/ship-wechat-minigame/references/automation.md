@@ -124,7 +124,7 @@ cli quit
 |---|---|---|
 | 设为体验版 | miniprogram-ci 没有这个功能 | [ci 文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)列出的能力只有上传、预览、构建 npm、云开发、代理、sourceMap |
 | 提交审核 | 官方提审接口 `wxa/submit_audit`，原文：「本接口支持「第三方平台」账号类型代调用……其他账号类型如无特殊说明，均不可调用」。它的错误码表里还有 `87006 this is game miniprogram submitaudit is forbidden`（小游戏不能提交） | [提交代码审核](https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/code-management/api_submitaudit.html) |
-| 发布 | 同样是网页操作，并且要先拿到小程序备案号 | [版本审核](https://developers.weixin.qq.com/minigame/introduction/guide/bbsh.html) |
+| 发布 | 同样是网页操作，还要管理员微信扫码确认；联网游戏要先拿到小程序备案号（单机实测不用等） | [版本审核](https://developers.weixin.qq.com/minigame/introduction/guide/bbsh.html) |
 | 备案的签署、证件、人脸、短信核验 | 本人事项 | [filing.md](filing.md) |
 
 这些环节按 SKILL.md 的阶段，把页面停在对应按钮上，然后走提审闸门。
