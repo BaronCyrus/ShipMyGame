@@ -87,7 +87,9 @@ public static class ShipWeChatBuild
 
 #if UNITY_6000_0_OR_NEWER
     /// <summary>
-    /// Fixes the converted framework JS for Unity 6000.x (each verified on a phone):
+    /// Fixes the converted framework JS for Unity 6000.x (all found on 6000.6; B1-B5 verified on phones, B7 in the
+    /// devtools simulator with a held-back data package):
+    /// - B7: the engine must wait for the plugin's data package (see WaitForDataPackage);
     /// - the SDK swaps Unity's audio/video/keyboard JS for wx versions only when declared as `function _JS_Sound_X(`;
     ///   6000.x also emits `var _JS_Sound_Init=function(){...}`, whose Web Audio path ends in alert();
     /// - mini-games have no alert(), so Unity's fatal-error popups become console errors;
@@ -99,6 +101,7 @@ public static class ShipWeChatBuild
     {
         var path = Path.Combine(dst, "minigame", "webgl.wasm.framework.unityweb.js");
         var js = File.ReadAllText(path);
+        js = WaitForDataPackage(js);
         js = RouteToSdk(js);
         js = "var alert = globalThis.alert || function (m) { console.error(m); };" + js;
         js = js.Replace("Module[\"ConnectToProfiler\"]=ConnectToProfiler;",
@@ -109,6 +112,50 @@ public static class ShipWeChatBuild
             "if (typeof dynCalls==\"object\") for (var k in dynCalls) Module[\"dynCall_\"+k]=Module[\"dynCall_\"+k]||dynCalls[k]; Module.dynCall_vi = Module.dynCall_vi ||");
         File.WriteAllText(path, js);
         Debug.Log("[Ship] framework patched: " + path);
+    }
+
+    /// <summary>
+    /// B7. The UnityPlugin unpacks the first data package (boot.config, scenes, Resources) into the file system and
+    /// then calls removeRunDependency("wasm-preloadAssets"). The SDK adds that dependency, and calls
+    /// Module.wasmInstantiated, by rewriting addRunDependency("wasm-instantiate"), but the emscripten in Unity 6000.6
+    /// no longer has that dependency: it does `wasmExports=await (createWasm());run();`, and the export log lists the
+    /// SDK's rules as "UnMatched WXReplaceRules". So run() never waited for the data. With the data cached (every launch
+    /// after the first) it is unpacked before the wasm compiles and nothing shows; on a first launch with a slow
+    /// download main() runs on an empty file system ("no boot config - using default values") and the screen stays
+    /// black. Review opens the game on a fresh device, so it rejected a build that always worked on the developer's
+    /// phone. It is also why the plugin logged "still waiting runDependencies": its count ended at -1.
+    /// The monitor call also gets the dependency id back, as the SDK's rule gives it, so the plugin's logs name it.
+    /// Where the SDK's rule did match (an emscripten that still has "wasm-instantiate") the framework is left alone;
+    /// a framework with neither stops the export instead of shipping a package that is black on a first launch.
+    /// </summary>
+    static string WaitForDataPackage(string js)
+    {
+        if (js.Contains("addRunDependency(\"wasm-preloadAssets\")"))
+        {
+            Debug.Log("[Ship] B7 not needed: the SDK already makes the engine wait for the data package");
+            return js;
+        }
+        js = ReplaceExactly(js, "wasmExports=await (createWasm());run();",
+            "addRunDependency(\"wasm-preloadAssets\");" +
+            "if(GameGlobal.manager&&GameGlobal.manager.TimeLogger)GameGlobal.manager.TimeLogger.timeStart(\"wasm编译耗时\");" +
+            "wasmExports=await (createWasm());" +
+            "try{if(Module.wasmInstantiated)Module.wasmInstantiated()}catch(e){console.error(\"wasmInstantiated\",e)}" +
+            "run();", 1);
+        // only the plugin's logs use the id, so a framework without these calls still exports
+        js = js.Replace("Module[\"monitorRunDependencies\"]?.(runDependencies)",
+            "Module[\"monitorRunDependencies\"]?.(runDependencies,id)");
+        Debug.Log("[Ship] B7: the engine now waits for the data package");
+        return js;
+    }
+
+    /// <summary>Replaces <paramref name="old"/>, failing the export unless it occurs exactly <paramref name="count"/> times.</summary>
+    static string ReplaceExactly(string js, string old, string replacement, int count)
+    {
+        int found = 0;
+        for (int i = js.IndexOf(old, StringComparison.Ordinal); i >= 0; i = js.IndexOf(old, i + old.Length, StringComparison.Ordinal)) found++;
+        if (found != count)
+            throw new Exception($"[Ship] framework patch expected {count}x but found {found}x: {old}");
+        return js.Replace(old, replacement);
     }
 
     static readonly Regex SdkOwned = new Regex(@"var (_JS_(?:Sound|Video|MobileKeyboard|MobileKeybard)_\w+)=(?:function\s*\(|\()");

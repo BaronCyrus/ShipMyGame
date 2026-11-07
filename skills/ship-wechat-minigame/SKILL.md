@@ -15,8 +15,8 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 - 「已在后台核对」：2026-11-02 在真实后台读到了页面和字段，但没有提交过。
 
 **实测覆盖范围（截至 2026-11-07）**
-- 已实测：注册、开通快适配、Unity 6 包在真机上运行、资质审核（已通过）、微信认证（已完成）、小游戏备案（主管部门已通过）、小程序备案（已提交，平台初审中）。
-- 只有 `[官方]` 依据：小程序备案初审之后的环节、上传代码、提交审核、流量主和收款。
+- 已实测：注册、开通快适配、Unity 6 包在真机上运行、资质审核（已通过）、微信认证（已完成）、小游戏备案（主管部门已通过）、小程序备案（平台初审已通过）、用开发者工具上传和提交审核（第一次提审因为第一次打开黑屏被驳回，已由补丁 B7 修好）。
+- 只有 `[官方]` 依据：小程序备案初审之后的环节、审核通过后的发布、流量主和收款。上传和提审的实测细节还没整理进 review.md。
 
 ## 本人事项
 
@@ -39,10 +39,10 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 - 官方的说法 `[官方]`：
   - 支持 Unity 2018～2022 和团结引擎，推荐 2022.3 或团结引擎（[推荐引擎版本](https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/UnityVersion.html)）。
   - SDK 更新日志写的是「支持Unity6，预览版本不建议上线使用」（[CHANGELOG](https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk/blob/main/CHANGELOG.md)）。
-- 本仓库实测 `[实测]`：Unity 6000.6 打 11 处补丁后，能在真机上运行，补丁已经写进脚本；已知问题是安卓偶发黑屏。
+- 本仓库实测 `[实测]`：Unity 6000.6 打 12 处补丁后，能在真机上运行，补丁已经写进脚本。以前的「安卓偶发黑屏」是引擎不等资源包，第一次提审因此被驳回，已由补丁 B7 修好（见 [build.md](references/build.md) 第 10 节）。
 - 怎么选：
   - 新项目：用 2022.3 LTS 或团结引擎。
-  - 已有的 Unity 6 工程：可以走本仓库的补丁路线。先把「官方只算预览，安卓偶发黑屏」告诉用户，再写进进度档案。
+  - 已有的 Unity 6 工程：可以走本仓库的补丁路线。先把「官方只算预览」告诉用户，再写进进度档案。
 
 **平台模块**：WebGL Build Support。
 
@@ -95,9 +95,11 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 4. 按「工程要求」改代码 `[实测]`。
 5. 导出：运行 `../ship-my-game/scripts/unity_build.sh <工程> WebGL ShipWeChatBuild.Export wechat` `[实测]`。
 6. 在开发者工具里「项目 → 导入项目」，选 `<工程>/Builds/wechat/minigame`，点「信任并运行」，在模拟器里把主流程走一遍 `[实测]`。
+7. 用 `scripts/wx_cold_start.py` 在模拟器里复现一次第一次打开：删缓存、让资源包晚到 12 秒、编译、看结论、还原。审核员就是这样第一次打开的，自己手机上看不出来。步骤见 [build.md](references/build.md#b7不用手机复现第一次打开)（做法 `[实测]`，脚本整套连起来还没跑过一轮）。
 
 完成标准：
-- 日志里有 `[Ship] wechat export=SUCCEED`。Unity 6 工程还要有 `[Ship] framework patched`。
+- 日志里有 `[Ship] wechat export=SUCCEED`。Unity 6 工程还要有 `[Ship] framework patched`，以及 `[Ship] B7` 开头的一行。
+- 第一次打开的复现：模拟器先出加载页再进主页，`wx_cold_start.py log` 报 `OK`，最后已经 `release`。
 - 模拟器能进主页，触摸有响应，控制台没有红色报错（[可忽略的日志](references/troubleshooting.md)除外）。
 - 预览面板显示的代码包大小在上限以内。
 
@@ -108,7 +110,7 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 1. 把预览面板切到「二维码预览」。不要用「自动预览」或「真机调试」 `[实测]`。
 2. 生成预览码，截图发给用户，或者让用户直接扫开发者工具里的码。码大约 25 分钟后失效 `[实测]`。
 3. 和用户逐项核对 [build.md 的真机清单](references/build.md#真机验证清单)：声音、中文、触摸、退出再进存档还在、刘海和胶囊不挡界面、没有打不开的入口、主页显示中文名。
-4. 黑屏时点右上角「···」→「重新进入小程序」。把黑屏的次数记进进度档案 `[实测]`。
+4. 手机上也做一次第一次打开：先在微信「最近使用」里删掉这个小游戏，再扫码。删掉能不能清掉资源缓存还没核实，结论以第 P2 阶段模拟器里的复现为准。黑屏就停下来按 [troubleshooting.md](references/troubleshooting.md) 查，不要靠「重新进入小程序」过关：审核员只打开一次，第一次提审就是这样被驳回的 `[实测]`。
 
 完成标准：用户在至少一台手机上确认清单全部通过。有安卓和 iOS 设备时两种都测。
 
@@ -198,6 +200,6 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 
 **上线后**
 - 流量主：累计独立访客超过 100 才能开通（或者满足游戏圈条件）。开通当天补财务资料，再建广告位，把 ID 填进游戏，再发一版。见 [capabilities.md](references/capabilities.md#广告流量主)，收款见 [payouts.md](references/payouts.md)。
-- 安卓黑屏：上线后在后台「实时日志」看失败启动的日志，记进进度档案。
+- 启动失败：上线后在后台「实时日志」看失败那次启动的日志，记进进度档案。
 
 **被拒或卡住时**：看 [review.md](references/review.md#被拒或卡住) 和 [troubleshooting.md](references/troubleshooting.md)。

@@ -11,6 +11,8 @@
 | 切到 WebGL 后，Google Play 游戏服务、AdMob 相关脚本编译失败 | 这些插件只支持安卓 | 包进 `#if UNITY_ANDROID` |
 | CS0619 `GetInstanceID`、emcc undefined symbol、wasm 只有几十 KB | Unity 6 和 SDK 不兼容 | 在 Unity 6 工程上重跑 `fetch_wxsdk.sh`（补丁 F1～F4） |
 | 导出日志里没有 `framework patched` | 编辑器不是 6000.x，或者导出失败了 | 先看 `export=` 的结果；2022.3 和团结引擎本来就不需要这些补丁 |
+| 导出失败，日志里有 `[Ship] framework patch expected 1x but found 0x: wasmExports=await (createWasm());run();` | 换了 Unity 版本，emscripten 生成的启动代码和 6000.6 不一样，B7 找不到下手的位置 | 不要删掉这个检查，否则包会在第一次打开时黑屏。按 build.md 第 10 节「升级 Unity 或 SDK 以后」找到新框架里启动和等待依赖的写法，改 `WaitForDataPackage`，再在模拟器里复现一次第一次打开 |
+| 导出日志里有几十条 `UnMatched WXReplaceRules rule: ...` | SDK 的改写规则是照 Unity 2021、2022 的引擎代码写的，6000.6 上有 92 条匹配不到 | 多数无关紧要，和启动、依赖有关的由 B7 补上。升级 Unity 后按 build.md 第 10 节逐条看 |
 | `Font not found` 或 `Missing ... (run make_cjk_font.py)` | build.json 里的字体路径不对，或者还没生成字体子集 | 先运行 `make_cjk_font.py`，再检查 `cjkFont`、`latinFonts` |
 | Unity 异常退出，退出码 6，堆栈在字体设置附近 | 序列化字段名少了 `m_` 前缀 | 用仓库里的 `ShipWeChatBuild.cs`，它已经处理了 |
 
@@ -31,13 +33,15 @@
 | UnityPlugin 升到 1.3.16 后起不来，报 `gameManager.onLaunchProgress is not a function` `[实测-失败]` | 插件版本和 SDK v0.1.34 不配套 | 回退到导出时的 1.3.14；以后不要点「插件有更新」 |
 | `cli islogin` 报「工具的服务端口已关闭」 `[实测-失败]` | 服务端口默认关闭 | 请用户在「设置 → 安全设置」里打开；或者改用 miniprogram-ci，或者用 computer use 操作界面 |
 | computer use 点模拟器没反应 | 后台无障碍点击对 canvas 无效 | 申请全屏控制，做真实的鼠标点击；拖动要用按下、移动、抬起的事件序列 |
+| 想在自己电脑上看到审核员看到的第一次打开 | 自己的手机和模拟器里都有资源缓存，资源包也常常先到 | 用 `scripts/wx_cold_start.py` 删缓存、让资源包晚到 12 秒，再编译、看结论、还原，步骤见 [build.md](build.md#b7不用手机复现第一次打开) |
+| 「工具 → 编译」后模拟器没变化，`wx_cold_start.py log` 显示的还是上一次启动的时间 | 实测那次开发者工具的登录已经过期：右上角显示「未登录」和登录二维码 | 请用户扫码重新登录，再编译 |
 
 ## 真机
 
 | 现象 | 原因 | 解决 |
 |---|---|---|
-| 安卓偶尔黑屏，日志里有 `no boot config - using default values` 和 `[PLUGIN ERROR] still waiting runDependencies` | 数据分包还没装好，引擎就启动了。加载过程在 UnityPlugin 内部，游戏代码管不到。截至 2026-11-02 **原因未查明** | 点「···」→「重新进入小程序」，或者划掉微信再进，一般第二次就好。在进度档案里记下次数。上线后去「实时日志」抓失败那次的日志 |
-| 用真机调试时黑屏，预览却正常 `[实测-失败]` | 和上一条同类；真机调试本来就不适合做验收 | 用「二维码预览」验收；官方也要求用预览，不用真机调试 |
+| 第一次打开一直黑屏，只剩右上角胶囊，再进一次又正常，以前记成「安卓偶尔黑屏」。日志里有 `no boot config - using default values`，30 秒后有 `[PLUGIN ERROR] still waiting runDependencies, ids= []`。提审驳回「需是一个完成品，要求可以打开、可以运行」、附图整屏黑的，就是这个 | Unity 6000.6 的引擎不等资源包就启动。资源包比引擎晚到时（新设备、网慢），引擎在空的文件系统上启动。见 build.md 第 10 节 B7 | 用当前的 `ShipWeChatBuild.cs` 重新导出，日志里要有 `[Ship] B7`；再用 `wx_cold_start.py` 在模拟器里复现第一次打开，确认先出加载页再进主页。「重新进入」只能临时恢复，审核员不会这么做 |
+| 用真机调试时黑屏，预览却正常 `[实测-失败]` | 和上一条同一个原因：那次是新包第一次打开 | B7 修好后应该不再出现，还没在真机调试里复测。验收仍用「二维码预览」，官方也要求用预览，不用真机调试 |
 | 推送到 Mac 微信后，约 1 分钟窗口自己关掉，弹「需在手机上完成登录」 `[实测-失败]` | Mac 微信的登录态被要求在手机上确认 | 不要用 Mac 端真机调试或 PC 端自动预览；截图改由用户在手机上截 |
 | 预览面板开着「自动预览」，上传后直接推到用户手机上 | 面板记住了上次的选项 | 上传前切回「二维码预览」 |
 | 预览码扫不开 | 码大约 25 分钟后失效 | 用户在场时再生成 |
@@ -46,7 +50,7 @@
 | 顶栏被刘海、胶囊或游戏圈按钮挡住；第一次进入时顶部重叠 | `Screen.safeArea` 不避让这些；第一帧 `scaleFactor` 还没算好 | 按 [capabilities.md](capabilities.md#安全区和胶囊按钮) 用微信接口计算，用 referenceResolution 换算 |
 | 关掉再进后，最后几步进度没了 | 关闭小游戏时不一定会触发 `OnApplicationPause` | 每步操作后立即用 `WX.StorageSetStringSync` 保存 |
 | 「隐私政策」「给游戏评分」点了没反应 | 小游戏里不能打开外链和应用商店 | 在微信版里隐藏这些入口 |
-| 下面这些日志 | 正常启动时也会出现 | 可以忽略：`still waiting runDependencies`（只出现一次、之后正常进入时）、`animateCoverView fail`、带 `errMsg ok` 的 `reportUserBehavior`、URP 着色器被裁剪的警告 |
+| 下面这些日志 | 正常启动时也会出现 | 可以忽略：`animateCoverView fail`、带 `errMsg ok` 的 `reportUserBehavior`、URP 着色器被裁剪的警告。**`still waiting runDependencies` 不能忽略**：它说明引擎没等资源包（B7，依赖计数停在 -1）。以前在能进游戏的启动里也出现，只是因为那几次资源包恰好先到 |
 
 ## 后台（mp.weixin.qq.com）
 

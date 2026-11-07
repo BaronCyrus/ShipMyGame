@@ -10,7 +10,7 @@
 | 已有 Unity 6 工程 | 走本仓库的补丁路线，见下面的第 3、4 节和第 10 节 |
 
 - 官方对 Unity 6 的态度：SDK 更新日志写「支持Unity6，预览版本不建议上线使用」，推荐版本表里没有 Unity 6 `[官方]`（[CHANGELOG](https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk/blob/main/CHANGELOG.md)）。
-- 实测 6000.6 能在真机上正常玩，但安卓偶尔会黑屏，原因还没查到（见 [troubleshooting.md](troubleshooting.md)）。
+- 实测 6000.6 能在真机上正常玩。以前记的「安卓偶尔黑屏」已经查明：引擎不等资源包就启动，新设备第一次打开时，资源包只要比引擎晚到就一直黑屏。第一次提审就因此被驳回。第 10 节的 B7 修好了它。
 - 两者冲突时以官方说法为准：把风险告诉用户，并写进进度档案。
 
 同一个工程直接加 WebGL 目标就行，不用开分支：
@@ -72,8 +72,9 @@ WXSDK_REPO=https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.
    日志在 `<工程>/Logs/ship/wechat.log`，实测每次导出约 1 分钟。
 4. 看日志：
    - 成功时有 `[Ship] wechat export=SUCCEED dst=.../minigame appid=... version=...`。
-   - Unity 6 工程还有 `[Ship] framework patched: ...`。
+   - Unity 6 工程还有 `[Ship] framework patched: ...`，以及 `[Ship] B7: ...` 或 `[Ship] B7 not needed: ...` 其中一条。
    - 失败时退出码是 1。
+5. 在模拟器里复现一次第一次打开，步骤见第 10 节 B7 下面的小节。
 
 脚本设置的内容：
 - PlayerSettings：托管代码裁剪 Medium、IL2CPP Release、异常支持 `ExplicitlyThrownExceptionsOnly`、`stripEngineCode`、关闭 Splash。
@@ -83,7 +84,7 @@ WXSDK_REPO=https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.
   - `compressDataPackage = true`：Brotli 压缩。
   - `Webgl2 = true`：Unity 6 必须开（补丁对照表的 B0）。
   - `showMonitorSuggestModal = false`：关掉「优化建议」弹窗。这个弹窗会出现在开发版、体验版里，也会出现在备案截图里。
-- Unity 6 工程还会给导出后的 framework JS 打 5 处补丁（第 10 节的 B1～B5）。
+- Unity 6 工程还会给导出后的 framework JS 打 6 处补丁（第 10 节的 B1～B5 和 B7）。
 - 不用另外设置压缩格式：SDK 导出时自己会把 Player Settings 的 Compression Format 设成 Disabled。官方 QA 也要求「保持为不压缩」。
 
 切到 WebGL 平台后，只在安卓用的代码会编译失败，例如 Google Play 游戏服务、AdMob 的编辑器和运行时脚本。处理方法：
@@ -173,13 +174,13 @@ python3 <ship-my-game 目录>/scripts/make_cjk_font.py --font NotoSansSC[wght].t
 
 **预览**
 1. 点工具栏的「预览」，面板选「二维码预览」页签。
-2. 面板会记住「自动预览 → 启动手机端自动预览」，开着它时，每次上传都会直接推到用户手机上。实测有一次黑屏就发生在这种推送里。
+2. 面板会记住「自动预览 → 启动手机端自动预览」，开着它时，每次上传都会直接推到用户手机上。实测有一次黑屏就发生在这种推送里：新包在手机上第一次打开，正是 B7 的情形。
 3. 约 20 秒出码。码下面写着「将于 MM/DD HH:MM 失效」，实测约 25 分钟后失效。
 4. 你截图并放大预览面板，裁出二维码发给用户；或者请用户直接扫开发者工具窗口里的码。
 5. 用户扫过一次以后，可以从微信下拉的「最近使用」或者「小程序助手」再进开发版。
 
 不要用这些方式做验收 `[实测-失败]`：
-- **真机调试**：第一次就黑屏，日志里有 `still waiting runDependencies`；画面右下角还有 vConsole 按钮。官方也要求用「预览」做真机验证（[来源](https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/Transform.html)）。
+- **真机调试**：画面右下角有 vConsole 按钮，和用户看到的不一样；官方也要求用「预览」做真机验证（[来源](https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/Transform.html)）。修 B7 之前，真机调试第一次打开就黑屏，日志里有 `still waiting runDependencies`，原因就是 B7。
 - **Mac 端真机调试或 PC 端自动预览**：大约 1 分钟后游戏窗口自己关掉，Mac 微信弹「需在手机上完成登录」。
 
 **插件版本**：开发者工具提示 UnityPlugin 可以从 1.3.14 升到 1.3.16 时，**不要升** `[实测-失败]`。升级后报 `gameManager.onLaunchProgress is not a function`，插件版本要跟着 SDK 走。
@@ -196,11 +197,11 @@ python3 <ship-my-game 目录>/scripts/make_cjk_font.py --font NotoSansSC[wght].t
 - [ ] 没有打不开的外链、评分、应用商店入口。
 - [ ] 广告按钮在没有广告位 ID 时提示「暂时没有可播放的视频」，游戏不卡住。
 - [ ] 主页显示已注册的中文游戏名，没有「优化建议」弹窗。
-- [ ] 黑屏时点「···」→「重新进入小程序」能恢复；记下出现的次数。
+- [ ] 第一次打开不黑屏：先在模拟器里按第 10 节 B7 后面的步骤复现过。手机上再删掉微信「最近使用」里的这个小游戏，扫码打开一次，应该先出加载页，再进主页。手机上没黑屏不能证明没问题，资源包先到就看不出来，以模拟器复现为准。黑屏时不要靠「重新进入」过关：审核员只会打开一次。
 
 ## 10. Unity 6 补丁：症状 → 对应补丁
 
-一共 11 处补丁：F1～F6 是 `fetch_wxsdk.sh` 改的 SDK 源码，B1～B5 是 `ShipWeChatBuild.PatchFramework` 导出后改的 `webgl.wasm.framework.unityweb.js`。B0 是导出配置，不算在 11 处之内。每一处都是在 Unity 6000.6 上碰到构建失败或真机黑屏后找到的，修好后在手机上验证过 `[实测]`。升级 SDK 或 Unity 后再看到同样的症状，先查这张表。
+一共 12 处补丁：F1～F6 是 `fetch_wxsdk.sh` 改的 SDK 源码，B1～B5 和 B7 是 `ShipWeChatBuild.PatchFramework` 导出后改的 `webgl.wasm.framework.unityweb.js`。B0 和 B6 是导出配置，不算在 12 处之内。每一处都是在 Unity 6000.6 上碰到构建失败、真机黑屏或提审驳回后找到的 `[实测]`：B7 在模拟器里做过修复前后的对比，其余都在手机上验证过。升级 SDK 或 Unity 后再看到同样的症状，先查这张表。
 
 | # | 症状 / 报错 | 补丁 | 在哪 |
 |---|---|---|---|
@@ -217,6 +218,33 @@ python3 <ship-my-game 目录>/scripts/make_cjk_font.py --font NotoSansSC[wght].t
 | B3 | 导出 `ConnectToProfiler` 时报未定义 | 导出处先用 `typeof` 判断 | ShipWeChatBuild.PatchFramework |
 | B4 | 音频回调里 `getWasmTableEntry` 未定义 | 回退到 `wasmTable.get(cb)` | ShipWeChatBuild.PatchFramework |
 | B5 | 触摸回调要用 `Module.dynCall_viii`，6000.x 没有把它挂到 Module 上 | 把 `dynCalls` 里的 `dynCall_*` 全部挂到 Module | ShipWeChatBuild.PatchFramework |
+| B7 | 新设备第一次打开一直黑屏，只剩右上角胶囊；再打开一次又正常，所以以前看起来像「安卓偶尔黑屏」。日志里有 `no boot config - using default values`，30 秒后有 `[PLUGIN ERROR] still waiting runDependencies, ids= []`。第一次提审就因此被驳回 | 插件把资源包解进文件系统以后，才调用 `removeRunDependency("wasm-preloadAssets")` 放行引擎。这个依赖本来由 SDK 加上：它改写 `addRunDependency("wasm-instantiate")`，编译完再调用 `Module.wasmInstantiated`。6000.6 的 emscripten 已经改成 `wasmExports=await (createWasm());run();`，这几条改写规则匹配不到，导出日志里显示为 `UnMatched WXReplaceRules`，引擎从不等资源包。补丁在这一句前加上依赖，编译完调用 `Module.wasmInstantiated`，并让 `monitorRunDependencies` 带上依赖名。找不到这一句时导出失败；SDK 的规则已经生效时（旧版 emscripten）跳过 | ShipWeChatBuild.PatchFramework（`WaitForDataPackage`） |
+
+### B7：不用手机复现「第一次打开」
+
+审核员用新设备第一次打开游戏。开发者自己的手机上有缓存，又常常是资源包先到，所以 B7 这类问题在自己手机上几乎看不到。`scripts/wx_cold_start.py` 在模拟器里造出「没有缓存、资源包下得慢」的第一次打开。目录按 macOS 版开发者工具写，其他系统用 `--root` 指定。
+
+```bash
+python3 <本 skill 目录>/scripts/wx_cold_start.py clear <AppID>                          # 删掉模拟器缓存的资源包
+python3 <本 skill 目录>/scripts/wx_cold_start.py hold <工程>/Builds/wechat/minigame      # 让资源包晚到 12 秒
+# 开发者工具里：菜单「工具 → 编译」
+python3 <本 skill 目录>/scripts/wx_cold_start.py log <AppID>                            # 启动约 40 秒后看结论
+python3 <本 skill 目录>/scripts/wx_cold_start.py release <工程>/Builds/wechat/minigame   # 预览、上传前一定要做
+```
+
+- 正常：模拟器先显示「正在加载资源（首次加载请耐心等待）」，约 12 秒后进主页；`log` 报 `OK`，插件日志里有 `no dependencies, invoke run`。
+- 有问题：一直黑屏；`log` 报 `BROKEN`，30 秒后插件日志里有 `still waiting runDependencies`。
+- 只查补丁在不在，不用 hold：随便启动一次再跑 `log`，结论一样。
+- `hold` 改的是导出目录里的 `game.js`，`release` 后和导出的文件逐字节相同；重新导出也会覆盖它。上传前确认 `game.js` 里没有 `ship-hold`。
+- 开发者工具要先登录。实测登录过期时（右上角显示「未登录」和登录二维码），点「工具 → 编译」后没有启动新的一次，`log` 读到的还是上一次启动。`log` 第一行会打印日志文件最后写入的时间，早于你点编译的时间就说明这次没启动。
+- 实测情况：B7 修复前后的对比是用同样的手工步骤做的（删缓存、包一层 `wx.loadSubpackage` 让 `data-package` 晚到 12 秒），修复前黑屏，修复后先出加载页再进主页。脚本把这些步骤固化了下来；`hold`、`release`、`clear`、`log` 都对真实的导出目录和模拟器日志跑过，整套命令连起来在模拟器里还没跑过一轮。
+
+### 升级 Unity 或 SDK 以后
+
+- 导出日志里的 `UnMatched WXReplaceRules rule: ...` 表示 SDK 的改写规则在这个 Unity 版本上没匹配到。6000.6 上有 92 条，多数无关紧要，B7 就藏在里面。升级后先看和 `RunDependency`、`wasm-instantiate`、`doRun`、`callMain` 有关的几条。
+- 日志只给出匹配串，替换成什么在 `wx-editor.dll` 里做了混淆。要看全文：写一个临时编辑器脚本，用反射读 `WeChatWASM.ReplaceRules` 的静态字段 `rules`（v0.1.34 有 133 条），打印每条的 `old` 和 `newStr`，用完删掉。
+- UnityPlugin 的 JS 不在导出目录里。模拟器运行过一次以后，它在开发者工具的 Chromium 缓存里：`~/Library/Application Support/微信开发者工具/Partitions/*/Cache/Cache_Data`，键名以 `/plugin.js` 结尾的那一项。
+- 每次升级后都按上一节复现一次第一次打开。
 
 ## 11. 版本号
 

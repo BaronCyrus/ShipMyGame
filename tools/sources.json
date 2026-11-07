@@ -278,7 +278,7 @@
     "channel": "wechat",
     "type": "page",
     "url": "https://raw.githubusercontent.com/wechat-miniprogram/minigame-tuanjie-transform-sdk/pre-release/CHANGELOG.md",
-    "note": "预览版（v0.1.35 起换成 WX-WASM-SDK-V3）何时转正、目录和配置怎么迁移；转正时要重验 11 处补丁和 ShipWeChatBuild.cs 用到的 WXConvertCore 接口",
+    "note": "预览版（v0.1.35 起换成 WX-WASM-SDK-V3）何时转正、目录和配置怎么迁移；转正时要重验 12 处补丁和 ShipWeChatBuild.cs 用到的 WXConvertCore 接口",
     "affects": [
       "skills/ship-wechat-minigame/scripts/fetch_wxsdk.sh",
       "skills/ship-wechat-minigame/scripts/ShipWeChatBuild.cs",
