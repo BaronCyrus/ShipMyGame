@@ -10,6 +10,7 @@
 - 正文在微前端或 shadow DOM 里，`get_page_text`、`find`、`read_page` 往往只能读到左侧菜单。
 - 读正文：用 JS 遍历 `el.shadowRoot` 取 `innerText`。
 - 找按钮：同样遍历 shadow root，找 `innerText` 等于按钮文字的元素并 `click()`；或者截图后按坐标点击。
+- 用 wujie 微前端的页面（例如「运营素材管理」），正文在 `document.querySelectorAll('wujie-app')[i].shadowRoot` 里。实测在 shadow root 里对按钮文字所在的 `span` 调 `click()` 没有打开编辑框；先 `scrollIntoView`，再用 `getBoundingClientRect()` 的中心乘以「截图宽度 ÷ `window.innerWidth`」算出坐标，真点一下就行 `[实测]`。
 
 **跳转页面要带 token**
 - 后台网址都要带 `token=<MP会话token>&lang=zh_CN`，token 每次会话都不一样。
@@ -35,6 +36,8 @@
 | 小游戏备案表单 | `/wxamp/subApp/game/minigame/new-pre-approval-file?status=1` |
 | 小程序备案表单（「验证备案类型」，提交后显示审核状态和「撤回备案」） | `/wxamp/webpocnew/verifyRecord` |
 | 流量主 | `/wxopen/frame?t=promotion/promotion_frame&page=applet/open` |
+| 运营素材管理（游戏简介、封面、推广图等，见 [listing.md](listing.md#运营素材)） | `/wxamp/subApp/game/minigame/material_resource_management` |
+| 详细推广图上传页（从运营素材管理的「前往修改」进入） | `/wxamp/subApp/game/old_minigame_setting/gameset?pageR=gameset&mod=promot&type=vertical`（横版是 `type=horizontal`） |
 
 **登录会过期**
 - 网页登录不到一天就会过期。过期后点「保存」会提示「保存失败」，要请用户重新扫码。
@@ -161,7 +164,7 @@
 |---|---|
 | 快适配 | Unity 包必须开通。点「立即申请」后立即变成「已开启」，见 [onboarding.md](onboarding.md) 第 5 节 |
 | 高性能模式 | iOS 高性能模式。开通后 `game.json` 里的 `iOSHighPerformance: true` 才生效 `[官方]`（[iOS 高性能模式](https://developers.weixin.qq.com/minigame/dev/guide/game-engine/unity-webgl-transform/Design/iOSOptimization.html)）。实测没开通，iOS 上的表现未验证 |
-| 空间提升 | 本地存储从 200MB 提到 1G，条件是上传通用素材封面 `[官方]`（[空间提升](https://developers.weixin.qq.com/minigame/dev/guide/performance/diskspace.html)）。小游戏一般用不到 |
+| 空间提升 | 本地存储从 200MB 提到 1G，条件是上传通用素材封面 `[官方]`（[空间提升](https://developers.weixin.qq.com/minigame/dev/guide/performance/diskspace.html)）。小游戏一般用不到；封面怎么做见 [listing.md](listing.md#运营素材) |
 
 ## 版本管理（已在后台核对）
 

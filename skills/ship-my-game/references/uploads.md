@@ -31,8 +31,43 @@ Claude in Chrome 有上传工具，单次最多 10 MB `[实测]`。截图、宣�
 要点：
 
 - **一次只传一个字段**，等它显示缩略图再传下一个；并行上传时后传的会覆盖先传的 `[实测]`。
-- 有的上传框要先点一下「上传」按钮才会出现在页面上：点开，取消系统文件框，再 `__pub.list()`。
+- 有的上传框要先点一下「上传」按钮才会出现在页面上：点开，取消系统文件框，再 `__pub.list()`。如果按钮是用 `click()` 打开文件框的，按下一节先截住它，就不会弹系统文件框。
 - 文件名尽量用 ASCII；有的后台用文件名做展示。
+
+### 按钮用 click() 打开文件框时
+
+有的按钮点下去，才对一个隐藏的文件框调用 `click()`，直接点会弹出系统文件框。实测：微信后台「运营素材管理」的「上传图片」。先在页面里截住这次调用 `[实测]`：
+
+```js
+window.__captured = [];
+// 微前端（wujie）的脚本跑在同源 iframe 里，那些 iframe 的原型也要改
+const wins = [window, ...[...document.querySelectorAll("iframe")]
+  .map((f) => { try { return f.contentWindow; } catch (e) { return null; } }).filter(Boolean)];
+for (const w of wins) {
+  try {
+    const proto = w.HTMLInputElement.prototype;
+    if (!proto.__origClick) proto.__origClick = proto.click;
+    proto.click = function () {
+      if (this.type === "file") { window.__captured.push(this); return; }
+      return proto.__origClick.call(this);
+    };
+  } catch (e) { /* 跨域 iframe */ }
+}
+```
+
+然后按坐标真点那个按钮。`window.__captured[0]` 就是文件框，把文件放进去：
+
+```js
+const input = window.__captured[0];
+const blob = await (await fetch("http://127.0.0.1:8765/cover.jpg")).blob();
+const dt = new DataTransfer();
+dt.items.add(new File([blob], "cover.jpg", { type: "image/jpeg" }));
+input.files = dt.files;
+input.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+input.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+```
+
+读页面确认出现缩略图，再点后台自己的「提交」。改过的原型刷新页面后就恢复了。
 
 ## 4. 请用户拖进去
 
