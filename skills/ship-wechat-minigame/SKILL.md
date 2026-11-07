@@ -95,7 +95,7 @@ description: 微信小游戏渠道：把 Unity 游戏转成微信小游戏，从
 4. 按「工程要求」改代码 `[实测]`。
 5. 导出：运行 `../ship-my-game/scripts/unity_build.sh <工程> WebGL ShipWeChatBuild.Export wechat` `[实测]`。
 6. 在开发者工具里「项目 → 导入项目」，选 `<工程>/Builds/wechat/minigame`，点「信任并运行」，在模拟器里把主流程走一遍 `[实测]`。
-7. 用 `scripts/wx_cold_start.py` 在模拟器里复现一次第一次打开：删缓存、让资源包晚到 12 秒、编译、看结论、还原。审核员就是这样第一次打开的，自己手机上看不出来。步骤见 [build.md](references/build.md#b7不用手机复现第一次打开)（做法 `[实测]`，脚本整套连起来还没跑过一轮）。
+7. 用 `scripts/wx_cold_start.py` 在模拟器里复现一次第一次打开：删缓存、让资源包晚到 12 秒、编译、看结论、还原。审核员就是这样第一次打开的，自己手机上看不出来。步骤见 [build.md](references/build.md#b7不用手机复现第一次打开) `[实测]`。
 
 完成标准：
 - 日志里有 `[Ship] wechat export=SUCCEED`。Unity 6 工程还要有 `[Ship] framework patched`，以及 `[Ship] B7` 开头的一行。

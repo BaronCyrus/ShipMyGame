@@ -84,7 +84,9 @@ def release(a):
 
 
 def app_dirs(root, appid):
-    return glob.glob(os.path.join(glob.escape(root), "*", "WeappSimulator", "WeappFileSystem", "*", appid))
+    # devtools 2.02.2608 kept a folder per openid above the AppID; 2.02.2609 puts the AppID right under WeappFileSystem
+    base = os.path.join(glob.escape(root), "*", "WeappSimulator", "WeappFileSystem")
+    return glob.glob(os.path.join(base, "*", appid)) + glob.glob(os.path.join(base, appid))
 
 
 def clear(a):
