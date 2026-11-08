@@ -29,14 +29,27 @@ Unity 6 的默认 Activity 是 `com.unity3d.player.UnityPlayerGameActivity`，�
 
 安卓模拟器 `screenrecord` + `input` 自动操作：
 
-```bash
-adb shell screenrecord --bit-rate 8000000 --time-limit 60 /sdcard/demo.mp4 &
-adb shell input swipe <x1> <y1> <x2> <y2> <毫秒>    # 或 input tap <x> <y>
-adb shell pkill -INT screenrecord
-adb pull /sdcard/demo.mp4 publish/<渠道>/video/
-```
+1. 模拟器分辨率直接设成成片尺寸（例如 1080×1920），用 `-gpu host` 启动。游戏跑满 60 帧时，录出来也接近 60fps。
+2. 用截图构建从启动参数直接打开要录的画面（例如空关卡），成片开头就没有加载和转场。
+3. 把操作写成脚本，推到设备上一次跑完，节奏不受 adb 往返影响：
+   ```bash
+   adb push moves.sh /data/local/tmp/moves.sh   # 每行一条 input swipe 或 input tap，中间用 sleep 0.3 这类小数秒隔开
+   adb shell screenrecord --bit-rate 20000000 --time-limit 120 /sdcard/demo.mp4 &
+   adb shell sh /data/local/tmp/moves.sh
+   adb shell pkill -INT screenrecord
+   adb pull /sdcard/demo.mp4 publish/<渠道>/video/raw.mp4
+   ```
+   - 坐标从启动后的截图里算（例如找棋盘的网格线），不要写死：换主题、换关卡后布局会变。
+   - 操作要像真人：按玩家思考的先后顺序走（解谜游戏按推理能确定的顺序），每步之间停 0.2～0.7 秒不等。拖动速度由 `input swipe` 的时长决定；点单个格子可以用起点和终点相同的 swipe。
+4. 模拟器录不到声音。平台要声音时，后期把游戏自己的配乐和音效合进去。音效放在画面变化的那一帧，逐帧比较目标区域的亮度就能找到；各声音的音量比例照游戏里的设置。
+5. 用 ffmpeg 剪辑和编码：
+   - 先统一帧率（`-vf fps=60`），再剪掉头尾。在弹窗、广告出现之前结束；想让最后一帧多停一会儿，用 `tpad=stop_mode=clone:stop_duration=1.2`。
+   - 编码参数：`-c:v libx264 -profile:v high -crf 17 -pix_fmt yuv420p -c:a aac -b:a 192k -ar 44100 -movflags +faststart`。
+   - 平台要求有声轨、而你没有声音时，加一条静音音轨：`-f lavfi -i anullsrc`。
+   - 用 `ffprobe` 核对时长、分辨率、帧率和体积，再交给用户看。
+6. 平台要求封面和视频同一比例时，用录屏里的一帧做底图（`ffmpeg -ss <秒> -i raw.mp4 -frames:v 1 cover.png`），再按渠道规则加游戏名或 logo。
 
-上传前转成常见编码：`ffmpeg -i demo.mp4 -r 30 -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest out.mp4`（没有声轨的平台要求有声轨时，加一条静音音轨：`-f lavfi -i anullsrc`）。
+以上 `[实测]`：微信小游戏推广视频「实机画面」三套，见 [ship-wechat-minigame 的 listing.md](../../ship-wechat-minigame/references/listing.md#运营素材)。
 
 ## 平台要求「在平台里截图」
 

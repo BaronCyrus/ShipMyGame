@@ -11,6 +11,7 @@
 - 读正文：用 JS 遍历 `el.shadowRoot` 取 `innerText`。
 - 找按钮：同样遍历 shadow root，找 `innerText` 等于按钮文字的元素并 `click()`；或者截图后按坐标点击。
 - 用 wujie 微前端的页面（例如「运营素材管理」），正文在 `document.querySelectorAll('wujie-app')[i].shadowRoot` 里。实测在 shadow root 里对按钮文字所在的 `span` 调 `click()` 没有打开编辑框；先 `scrollIntoView`，再用 `getBoundingClientRect()` 的中心乘以「截图宽度 ÷ `window.innerWidth`」算出坐标，真点一下就行 `[实测]`。
+- 地址是 `/wxamp/frame/pluginRedirect/...` 的页面（例如推广视频列表里「上传素材」打开的页），正文在跨域 iframe（gamemp.weixin.qq.com）里，页面脚本读不到也改不了。同一个页面一般还有 `/wxamp/subApp/game/<路径>` 的地址，换成它，正文就在 wujie 的 shadow root 里了 `[实测]`。
 
 **跳转页面要带 token**
 - 后台网址都要带 `token=<MP会话token>&lang=zh_CN`，token 每次会话都不一样。
@@ -38,6 +39,7 @@
 | 流量主 | `/wxopen/frame?t=promotion/promotion_frame&page=applet/open` |
 | 运营素材管理（游戏简介、封面、推广图等，见 [listing.md](listing.md#运营素材)） | `/wxamp/subApp/game/minigame/material_resource_management` |
 | 详细推广图上传页（从运营素材管理的「前往修改」进入） | `/wxamp/subApp/game/old_minigame_setting/gameset?pageR=gameset&mod=promot&type=vertical`（横版是 `type=horizontal`） |
+| 推广视频上传页（列表页「上传素材」打开的是 `pluginRedirect` 版，脚本碰不到；用这个） | `/wxamp/subApp/game/old_minigame_setting/gameset?pageR=gameset&mod=video` |
 
 **登录会过期**
 - 网页登录不到一天就会过期。过期后点「保存」会提示「保存失败」，要请用户重新扫码。
