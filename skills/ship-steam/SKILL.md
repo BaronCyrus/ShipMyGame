@@ -24,7 +24,7 @@ description: Steam 发布（规划中：注册、收款和税务已实测，建�
 | 事项 | 时长 | 依据 |
 |---|---|---|
 | 银行、税务、身份审核 | 15～30 天；实测提交税务信息后，后台提示最长约 30 个工作日 | [官方](https://partner.steamgames.com/steamdirect)；`[实测]` |
-| 交注册费到可以发售 | 30 天。入门文档写的是 21 天，和 Steam Direct 页面不一致，按 30 天准备 | [Steam Direct](https://partner.steamgames.com/steamdirect)、[入门文档](https://partner.steamgames.com/doc/gettingstarted/onboarding) |
+| 交注册费到可以发售 | 21 天。Steam Direct 页面以前写 30 天，2026-11 改成了和入门文档一样的 21 天 | [Steam Direct](https://partner.steamgames.com/steamdirect)、[入门文档](https://partner.steamgames.com/doc/gettingstarted/onboarding)（2026-11-09 读取） |
 | 「即将推出」页面公开 | 至少 2 周才能发售 | [官方](https://partner.steamgames.com/doc/store/coming_soon) |
 | 商店页审核 | 一般 3～5 个工作日，建议在想上线的日子前至少 7 天提交 | [官方](https://partner.steamgames.com/doc/store/releasing) |
 | 构建审核 | 1～5 天 | [官方](https://partner.steamgames.com/steamdirect) |
@@ -67,7 +67,7 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 完成标准：
 - 公司信息页的法定名称和收款账户认的某个户名一字不差。
 - 公司信息页的「已签署协议」里有保密协议和软件分销协议两条。
-- 注册费已付，付费日期写进了进度档案（30 天的发售等待从这天算）。
+- 注册费已付，付费日期写进了进度档案（21 天的发售等待从这天算）。
 - 账号的商店国家和用户实际居住的国家一致。
 
 ### P2 收款、税务和身份验证 `[实测：证件已上传，等审核]`
@@ -110,7 +110,7 @@ ship-my-game 第 3 步按这张表列差距。细节见 [references/build.md](re
 
 ### P6 发售（未实测）
 
-- 商店页和构建都通过审核、「即将推出」满 2 周、交费满 30 天之后，按[提审闸门](../ship-my-game/SKILL.md)把要发售的内容列给用户；用户说「发售」后再点。
+- 商店页和构建都通过审核、「即将推出」满 2 周、交费满 21 天之后，按[提审闸门](../ship-my-game/SKILL.md)把要发售的内容列给用户；用户说「发售」后再点。
 - 依据：[发行流程](https://partner.steamgames.com/doc/store/releasing)。
 
 ## 等待期

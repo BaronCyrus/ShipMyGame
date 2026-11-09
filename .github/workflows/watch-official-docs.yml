@@ -2,7 +2,7 @@ name: 官方文档巡检
 
 on:
   schedule:
-    - cron: "0 1 * * 1"   # 每周一 09:00（北京时间）
+    - cron: "17 1 * * 1"   # 每周一 09:17（北京时间）。避开整点：GitHub 整点负载高，定时任务会推迟甚至被丢弃
   workflow_dispatch:
 
 permissions:

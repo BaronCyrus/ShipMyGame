@@ -2,7 +2,6 @@ Windows requirements and compatibility • Windows • 6000.5 • Unity Editor
 Windows requirements and compatibility
 Check the supported versions and compatibility information before you start developing for Windows.
 Read time 1 minute
-Last updated 2 months ago
 Check that your Windows setup meets Unity’s OS, CPU, graphics, and IL2CPP tool requirements.
 Before you begin to develop a Windows application in Unity, check Unity’s requirements and compatibility information for Windows.
 Windows version support

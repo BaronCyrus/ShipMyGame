@@ -67,6 +67,7 @@ Play 应用签名：新应用默认由 Google 生成并保管应用签名密钥�
 - bundletool：`<A>/Tools/bundletool-all-<版本>.jar`
 - java：`<A>/OpenJDK/bin/java`
 - zipalign：`<A>/SDK/build-tools/<版本>/zipalign`
+- llvm-readelf：`<A>/NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-readelf`（同一目录里也有 llvm-objdump）
 
 ```bash
 # 1. 清单：包名、versionCode/versionName、minSdk/targetSdk、权限、AdMob App ID（测试版里应是测试 ID）
@@ -87,18 +88,23 @@ unzip -l <x>.aab | grep BUNDLE-METADATA
 ```bash
 "<A>/OpenJDK/bin/java" -jar "<A>/Tools/bundletool-all-<版本>.jar" dump config --bundle <x>.aab | grep -i alignment   # 应含 PAGE_ALIGNMENT_16K
 unzip -o <x>.apks -d apks_out && "<A>/SDK/build-tools/<版本>/zipalign" -c -P 16 -v 4 apks_out/universal.apk          # 最后一行应是 Verification successful
+unzip -o <x>.aab 'base/lib/arm64-v8a/*.so' -d so_out
+for f in so_out/base/lib/arm64-v8a/*.so; do echo "== $f"; "<A>/NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-readelf" -Wl "$f" | grep 'LOAD\|RELRO'; done   # 判断方法见下
 ```
 
-- 还可以用 `llvm-objdump -p <lib>.so | grep LOAD` 逐个看 `.so`：`align` 不能小于 `2**14`。
+- 最后两行逐个看 `arm64-v8a` 的 `.so`。16 KB 只针对 64 位库，本仓库的配置不打 x86_64。
+  - `LOAD` 行最后一列 `Align` 不能小于 `0x4000`。用 `llvm-objdump -p <lib>.so | grep LOAD` 看，就是 `align` 不能小于 `2**14`。
+  - RELRO 满足下面一条就合规：没有 `GNU_RELRO` 行；`GNU_RELRO` 的结束地址（`VirtAddr + MemSiz`）是 `0x4000` 的整数倍；这个结束地址正好等于它所在 `LOAD` 段的结束地址，也就是后面没有可写数据。三条都不满足的库，在 16 KB 设备上写数据时会崩溃（SIGSEGV），多见于用 NDK r27 及更低版本、没加相关链接参数编出来的库 [官方](https://developer.android.com/guide/practices/page-sizes)。
+  - `[实测]`：Unity 6000.6.5f1 打的两款游戏 release AAB，`arm64-v8a` 下 7 个 `.so` 都合规。其中 `libunity.so` 属于第三种：结束地址不是 `0x4000` 的整数倍，但后面没有可写数据。只算余数会把它误判成不合规。
 - 不合规的通常是旧的第三方原生插件，或 1.8.21 以下的 Burst（Unity 公告）。Play 管理中心的「App bundle 资源管理器」（「测试和发布 → 最新版本和 app bundle → 所有应用版本」里）也会显示合规情况。
 - 官方几处日期说法不一致，一律按「上传前必须合规」处理：
   - 2025-05 的官方博客写的是 2025-11-01 起，以 Android 15+ 为目标的新应用和更新必须支持 16 KB [官方](https://android-developers.googleblog.com/2025/05/prepare-play-apps-for-devices-with-16kb-page-size.html)；
-  - page-sizes 页（2026-10-16 更新）写的是 2027-02-01 起不支持 16 KB 的更新不能发布；
+  - page-sizes 页（2026-11-08 更新）写的是 2027-02-01 起不支持 16 KB 的更新不能发布；
   - Play 帮助中心「技术质量要求」把它列为现行要求：含原生代码的应用必须支持 [官方](https://support.google.com/googleplay/android-developer/answer/17492799)。
 
 完成标准：
 - `dump manifest` 里 targetSdkVersion = 36，versionCode 比上一次上传的大，AdMob App ID 符合当前阶段（测试期用测试 ID）。
-- 16 KB 两项检查都通过。
+- 16 KB 三项检查都通过。
 - 调试 APK 在模拟器或真机上能启动；声音由用户在真机外放确认（模拟器验证不了声音，见 troubleshooting）。
 
 ## 5. 插件相关的构建步骤

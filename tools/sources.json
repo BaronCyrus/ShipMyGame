@@ -892,7 +892,7 @@
     "channel": "steam",
     "type": "page",
     "url": "https://partner.steamgames.com/steamdirect",
-    "note": "Steam Direct 费（每个产品 100 美元，满 1000 美元返还，不能用 Steam 钱包）；银行、税务、身份审核 15～30 天；交费后 30 天才能发行；「即将推出」至少两周；构建审核 1～5 天",
+    "note": "Steam Direct 费（每个产品 100 美元，满 1000 美元返还，不能用 Steam 钱包）；银行、税务、身份审核 15～30 天；交费后 21 天才能发行（2026-11 之前写 30 天）；「即将推出」至少两周；构建审核 1～5 天",
     "affects": [
       "skills/ship-steam/SKILL.md",
       "skills/ship-steam/references/onboarding.md"
@@ -903,7 +903,7 @@
     "channel": "steam",
     "type": "page",
     "url": "https://partner.steamgames.com/doc/gettingstarted/onboarding",
-    "note": "个人选 Sole Proprietorship；个人登记时银行户名必须和「公司法定名称」一致；交费后的等待天数（现写 21 天，和 steam-direct 的 30 天不一致）；不接受的内容（含基于广告的商业模式）",
+    "note": "个人选 Sole Proprietorship；个人登记时银行户名必须和「公司法定名称」一致；交费后的等待天数（21 天，和 steam-direct 一致）；不接受的内容（含基于广告的商业模式）",
     "affects": [
       "skills/ship-steam/SKILL.md",
       "skills/ship-steam/references/onboarding.md",

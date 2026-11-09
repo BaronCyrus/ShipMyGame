@@ -16,8 +16,8 @@
 
 - 来源清单：[`tools/sources.json`](tools/sources.json)。每项写明它决定了 skill 里的哪条规则（`note`）和受影响的文件（`affects`）。
 - 脚本：[`tools/watch_sources.py`](tools/watch_sources.py)，只用 Python 标准库。本地运行：`python3 tools/watch_sources.py`。
-- 自动运行：[`.github/workflows/watch-official-docs.yml`](.github/workflows/watch-official-docs.yml) 每周一 09:00（北京时间）运行，也可以在 Actions 页面手动运行。它刷新 `tools/snapshots/` 里的快照；有变化时开一个带 `docs-changed` 标签的 Issue，里面有差异节选和受影响的文件。
-- 页面里每次都会变、但与规则无关的行（日期、计数器）会造成误报：在该来源的 `ignore` 里加正则。
+- 自动运行：[`.github/workflows/watch-official-docs.yml`](.github/workflows/watch-official-docs.yml) 每周一 09:17（北京时间）运行，也可以在 Actions 页面手动运行。GitHub 负载高时定时任务会推迟（2026-11-09 那次晚了近 7 小时），处理前先看 Issue 开出来没有。它刷新 `tools/snapshots/` 里的快照；有变化时开一个带 `docs-changed` 标签的 Issue，里面有差异节选和受影响的文件。
+- 页面里每次都会变、但与规则无关的行（日期、计数器）会造成误报：在该来源的 `ignore` 里加正则。整个网站都有的这种行（例如 Unity 文档按抓取时间算的「Last updated 10 days ago」），加进 `watch_sources.py` 的 `VOLATILE`。
 - 正文外面套着很长的站点导航时（例如 Steamworks 文档的侧边栏，别处加一篇文档就会让每个来源都报变化），用 `from` / `to` 两个正则只保留正文：`from` 匹配要保留的第一行，`to` 匹配正文后第一行不要的。匹配不到时保留整页，页面改版会作为变化报出来。
 - 抓取失败（超时、页面改成纯 JavaScript 渲染）只记在报告里，下次重试；连续失败时换一个能直接读到文字的官方页面。
 

@@ -35,8 +35,9 @@ REDACT = [
     (re.compile(r"\bsk-[A-Za-z0-9_-]{20,}"), "<api-key>"),
 ]
 # support.google.com prints a line holding only a 19-20 digit number that differs on every load; without this every
-# Google source would show as changed each week.
-VOLATILE = re.compile(r"\d{12,}")
+# Google source would show as changed each week. docs.unity.com and docs.unity3d.com print the page age relative to
+# the fetch ("Last updated 10 days ago"), so that line changes every week even when the page does not.
+VOLATILE = re.compile(r"\d{12,}|Last updated (?:(?:an?|\d+) (?:second|minute|hour|day|week|month|year)s? ago|yesterday|today)")
 BLOCK = {"p", "br", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "div", "section", "article", "pre", "table", "dt", "dd"}
 
 

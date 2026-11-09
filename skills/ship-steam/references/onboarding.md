@@ -66,7 +66,7 @@
 |---|---|---|
 | Steam Direct 费 | 每个产品 100 美元，不退，收入满 1000 美元后返还 | [官方](https://partner.steamgames.com/doc/gettingstarted/appfee) |
 | 银行、税务、身份审核 | 15～30 天；税务部分官方写一般 2～7 个工作日、最长 30 天 | [Steam Direct](https://partner.steamgames.com/steamdirect)、[常见问题](https://partner.steamgames.com/doc/gettingstarted/faq) |
-| 交费到可以发售 | 30 天（入门文档写的是 21 天，按 30 天准备） | [Steam Direct](https://partner.steamgames.com/steamdirect)、[入门文档](https://partner.steamgames.com/doc/gettingstarted/onboarding) |
+| 交费到可以发售 | 21 天（Steam Direct 页面以前写 30 天，2026-11 改成和入门文档一致） | [Steam Direct](https://partner.steamgames.com/steamdirect)、[入门文档](https://partner.steamgames.com/doc/gettingstarted/onboarding)（2026-11-09 读取） |
 | 「即将推出」页面 | 至少公开 2 周 | [官方](https://partner.steamgames.com/doc/store/coming_soon) |
 | 商店页审核 | 一般 3～5 个工作日 | [官方](https://partner.steamgames.com/doc/store/releasing) |
 | 构建审核 | 1～5 天 | [官方](https://partner.steamgames.com/steamdirect) |
