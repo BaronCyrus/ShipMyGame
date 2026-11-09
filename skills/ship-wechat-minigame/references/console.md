@@ -13,6 +13,10 @@
 - 用 wujie 微前端的页面（例如「运营素材管理」），正文在 `document.querySelectorAll('wujie-app')[i].shadowRoot` 里。实测在 shadow root 里对按钮文字所在的 `span` 调 `click()` 没有打开编辑框；先 `scrollIntoView`，再用 `getBoundingClientRect()` 的中心乘以「截图宽度 ÷ `window.innerWidth`」算出坐标，真点一下就行 `[实测]`。
 - 地址是 `/wxamp/frame/pluginRedirect/...` 的页面（例如推广视频列表里「上传素材」打开的页），正文在跨域 iframe（gamemp.weixin.qq.com）里，页面脚本读不到也改不了。同一个页面一般还有 `/wxamp/subApp/game/<路径>` 的地址，换成它，正文就在 wujie 的 shadow root 里了 `[实测]`。
 
+**读通知中心**
+- 审核结果、备案进展都发站内信，在「通知中心」（路径见下表）。
+- 列表只显示日期。精确到秒的时间和正文在页面 Vue 数据的 `listInfo` 里：`title`、`create_time`（秒级时间戳）、`content`（HTML）`[实测]`。
+
 **跳转页面要带 token**
 - 后台网址都要带 `token=<MP会话token>&lang=zh_CN`，token 每次会话都不一样。
 - 不要记 token。在已登录的标签页里读当前 URL 的 token，再拼出目标地址：
@@ -39,7 +43,9 @@
 | 流量主 | `/wxopen/frame?t=promotion/promotion_frame&page=applet/open` |
 | 运营素材管理（游戏简介、封面、推广图等，见 [listing.md](listing.md#运营素材)） | `/wxamp/subApp/game/minigame/material_resource_management` |
 | 详细推广图上传页（从运营素材管理的「前往修改」进入） | `/wxamp/subApp/game/old_minigame_setting/gameset?pageR=gameset&mod=promot&type=vertical`（横版是 `type=horizontal`） |
+| 推广视频列表（运营素材管理 → 推广视频） | `/wxamp/subApp/game/minigame/material-resource-management-material-video-list` |
 | 推广视频上传页（列表页「上传素材」打开的是 `pluginRedirect` 版，脚本碰不到；用这个） | `/wxamp/subApp/game/old_minigame_setting/gameset?pageR=gameset&mod=video` |
+| 通知中心 | `/wxamp/tools/wasysnotify` |
 
 **登录会过期**
 - 网页登录不到一天就会过期。过期后点「保存」会提示「保存失败」，要请用户重新扫码。
@@ -62,7 +68,7 @@
 - 完善基础信息：小程序基础信息、小程序类目、添加开发者、运营地区。运营地区的说明原文：「选择小游戏的上架地区，进入对应的运营及开发环境」。
 - 代码开发与调试：方式一是自行开发，用开发者工具；方式二是找服务商。
 - 备案与认证：
-  - 小程序备案原文：「备案可与小程序代码开发并行，在小程序上架发布前完成即可」。提交以后，这里的标签显示审核状态，实测是「平台审核中」`[实测]`。单机游戏实测没等它完成就发布了，见 [review.md](review.md#发布)。
+  - 小程序备案原文：「备案可与小程序代码开发并行，在小程序上架发布前完成即可」。提交以后，这里的标签显示审核状态：实测先是「平台审核中」，负责人做完工信部短信核验后是「管局审核中」`[实测]`。单机游戏实测没等它完成就发布了，见 [review.md](review.md#发布)。
   - 微信认证原文：「完成微信认证后，账号可获得"被搜索"和"被分享"能力。未完成微信认证不影响后续版本发布」。
 
 **第二步 版本管理**：在微信开发者工具上传代码，然后选择版本提交审核，审核通过后的版本可以发布。
