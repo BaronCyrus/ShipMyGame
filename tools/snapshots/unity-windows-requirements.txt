@@ -1,4 +1,4 @@
-Windows requirements and compatibility • Windows • 6000.5 • Unity Editor • Unity Docs
+Windows requirements and compatibility • Windows • 6000.5 • Unity Editor
 Windows requirements and compatibility
 Check the supported versions and compatibility information before you start developing for Windows.
 Read time 1 minute

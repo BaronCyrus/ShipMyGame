@@ -1,8 +1,8 @@
-Introduction to IL2CPP • IL2CPP scripting back end • 6000.3 • Unity Editor • Unity Docs
+Introduction to IL2CPP • IL2CPP scripting back end • 6000.3 • Unity Editor
 Introduction to IL2CPP
 Understand IL2CPP's role in Unity script compilation and how it works.
 Read time 4 minutes
-Last updated 4 days ago
+Last updated 10 days ago
 IL2CPP (Intermediate Language To C++) is Unity's custom, ahead-of-time (AOT) scripting back end, which was originally developed for platforms that don't support Mono and just-in-time (JIT) compilation, such as iOS. IL2CPP converts IL (Intermediate Language) to C++, and compiles it into platform-specific native code, which is then packaged with your application in the standard format for the target platform, such as APK/AAB, iOS app bundle, or Windows executable and DLLs.
 IL2CPP is supported on all platforms and can offer several benefits over the Mono scripting back end, including improved performance and shorter startup times. However, the need to include machine code in built applications generally increases both the build time and the size of the final built application.
 IL2CPP supports the debugging of managed code in the same way as the Mono. For more information, refer to Debugging C# code in Unity.

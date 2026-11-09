@@ -1,8 +1,8 @@
-Android requirements and compatibility • Introducing Android • 6000.0 • Unity Editor • Unity Docs
+Android requirements and compatibility • Introducing Android • 6000.0 • Unity Editor
 Android requirements and compatibility
 Lists requirements for Android development in Unity and Unity feature compatibility on Android devices.
 Read time 5 minutes
-Last updated 3 days ago
+Last updated 10 days ago
 Before you begin to develop an Android application in Unity, check Unity’s requirements and compatibility information for Android to make sure you’re aware of any limitations for developing a Unity application for this platform.
 Android support
 Unity supports Android 6.0 (API level 23) and above. For more information, refer to AndroidSdkVersions.

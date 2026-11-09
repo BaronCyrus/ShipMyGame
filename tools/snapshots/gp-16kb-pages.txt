@@ -54,37 +54,39 @@ Google Play 兼容性要求
 如果您的应用使用了任何原生代码，则应重新构建应用，使其支持 16 KB 设备。如果您不确定自己的应用是否使用了原生代码，可以使用 APK 分析器来确定是否存在任何原生代码，然后检查您找到的任何共享库的 ELF 段对齐情况。Android Studio 还提供了一些功能，可帮助您自动检测对齐问题。
 如果您的应用仅使用以 Java 或 Kotlin 编程语言编写的代码（包括所有库或 SDK），则该应用已支持 16 KB 设备。不过，我们建议您在 16 KB 环境中测试应用，以验证应用行为是否出现意外的回归。
 您的应用是否使用了原生代码？
-如果您的应用符合以下任何条件，则表明其使用了原生代码：
-您的应用使用了任何 C/C++（原生）代码。如果您的应用使用 Android NDK，则表明您的应用使用了原生代码。
-您的应用与任何使用这些 API 的第三方原生库或依赖项（例如 SDK）关联。
-您的应用是通过使用设备上的原生库的第三方应用构建程序构建而成。
+如果您的应用符合以下任何情况，则表明其使用了原生代码：
+您的应用使用了任何 C/C++（原生）代码。如果您的应用使用 Android NDK，则表明其使用了原生代码。
+您的应用与使用这些 API 的任何第三方原生库或依赖项（例如 SDK）相关联。
+您的应用是通过使用设备上原生库的第三方应用构建程序构建而成。
 使用 APK 分析器识别原生库
 APK 分析器是一款可用于对所构建的 APK 进行各方面评估的工具。如需检查您的应用是否使用了原生代码（无论是否符合 16 KB 对齐要求），请执行以下操作：
 打开 Android Studio，然后依次点击 File > Open，并选择任一项目。
 在菜单栏中，依次点击 Build > Analyze APK…
-选择要分析的 APK。
+选择您要分析的 APK。
 查看 lib 文件夹，其中会托管共享对象 (.so) 文件（如有）。如果存在任何共享对象文件，则表明您的应用使用了原生代码。对齐列会针对存在对齐问题的任何文件显示警告消息。如果不存在共享对象文件或 lib 文件夹，则表示您的应用未使用原生代码。
 通过自动检查检测对齐问题
-如果预构建的库或 APK 不符合 16 KB 的要求，Android Studio 会主动发出警告。使用 APK 分析器工具查看哪些库需要更新，或者是否需要进行任何代码更改。
-Android Studio 中的 Lint 还会突出显示未按 16 KB 对齐的原生库。
-检查共享库的 ELF 段的对齐情况
-对于任何共享库，请验证共享库的 ELF 段是否已使用 16 KB ELF 对齐方式正确对齐。如果您是在 Linux 或 macOS 上进行开发，则可以使用 check_elf_alignment.sh 脚本，如以下部分所述。您也可以直接使用命令行工具。
+如果您的预构建库或 APK 不符合 16 KB 页面大小要求，Android Studio 会主动发出警告。使用 APK 分析器工具查看哪些库需要更新，或者是否需要更改代码。
+Android Studio 中的 Lint 也会突出显示未进行 16 KB 对齐的原生库。
+检查共享库的 ELF 段对齐方式
+对于任何共享库，请验证共享库的 ELF 段是否已使用 16 KB ELF 对齐方式正确对齐。
+使用 APK 分析器（推荐）
+如需验证共享库的对齐情况，最简单的方法是在 Android Studio 中使用 APK 分析器。如果共享对象文件未按 16 KB 对齐，对齐列将显示警告消息。
 使用 check_elf_alignment.sh 脚本（Linux 或 macOS）
-按照以下步骤使用 check_elf_alignment.sh 脚本检查 ELF 段的对齐情况：
+如果您在 Linux 或 macOS 上进行开发，并且更喜欢使用脚本，则可以使用 check_elf_alignment.sh 脚本：
 将 check_elf_alignment.sh 脚本保存到文件中。
 对应用的 APK 文件运行该脚本：
 check_elf_alignment.sh APK_NAME.apk
 该脚本会针对所有 arm64-v8a 共享库输出 ALIGNED 或 UNALIGNED。
-如果任何 arm64-v8a 或 x86_64 共享库是 UNALIGNED，您需要更新这些库的打包，然后重新编译应用，并按照本部分中的步骤重新测试。
+如果任何 arm64-v8a 或 x86_64 共享库为 UNALIGNED，您需要更新这些库的打包方式，然后重新编译应用，并按照本部分中的步骤重新测试。
 直接使用命令行工具
 请按照以下步骤直接使用命令行工具检查 ELF 段的对齐情况：
-确保使用 Android Studio 中的 SDK 管理器或 sdkmanager 命令行工具安装 Android SDK Build-Tools 版本 35.0.0 或更高版本以及 Android NDK。
+确保使用 Android Studio 中的 SDK 管理器或 sdkmanager 命令行工具安装 Android SDK Build-Tools 35.0.0 或更高版本以及 Android NDK。
 提取应用的 APK 文件：
 Linux 或 macOS
 unzip APK_NAME.apk -d /tmp/my_apk_out
 Windows (PowerShell)
 Expand-Archive -Path .\APK_NAME.apk -DestinationPath ~\tmp\my_apk_out
-在您将 APK 文件提取到的临时目录中，检查 lib 目录的内容，看看是否有共享对象 (.so) 文件。这些共享对象文件与您在使用 APK 分析器识别原生库时看到的文件相同。对每个共享对象文件运行以下命令：
+在您将 APK 文件解压到的临时目录中，检查 lib 目录的内容，看看是否有共享对象 (.so) 文件。这些共享对象文件与您在使用 APK 分析器识别原生库时看到的文件相同。对每个共享对象文件运行以下命令：
 Linux 或 macOS
 SDK_ROOT_LOCATION/Android/sdk/ndk/NDK_VERSION/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-objdump -p SHARED_OBJECT_FILE.so | grep LOAD
 Windows (PowerShell)
@@ -93,7 +95,7 @@ SDK_ROOT_LOCATION\Android\sdk\ndk\NDK_VERSION\toolchains\llvm\prebuilt\windows-x
 LOAD off 0x0000000000000000 vaddr 0x0000000000000000 paddr 0x0000000000000000 align 2**14
 LOAD off 0x0000000000042a90 vaddr 0x0000000000043a90 paddr 0x0000000000043a90 align 2**14
 LOAD off 0x0000000000046230 vaddr 0x0000000000048230 paddr 0x0000000000048230 align 2**14
-检查输出行，确保负载段的值不小于 2**14。如果任何加载段的值为 2**13、2**12 或更低，您需要更新相应库的封装，然后按照本部分中的步骤重新编译应用并重新测试。
+检查输出行，确保负载段的值不小于 2**14。如果任何加载段为 2**13、2**12 或更低值，您需要更新这些库的打包方式，然后重新编译应用，并按照本部分中的步骤重新测试。
 接下来，对应用的 APK 文件运行 zipalign 命令行工具：
 Linux 或 macOS
 SDK_ROOT_LOCATION/Android/sdk/build-tools/35.0.0/zipalign -v -c -P 16 4 APK_NAME.apk
@@ -102,25 +104,52 @@ SDK_ROOT_LOCATION\Android\sdk\build-tools\35.0.0\zipalign.exe -v -c -P 16 4 APK_
 其中 SDK_ROOT_LOCATION 是您安装 Android SDK 的目录的路径，APK_NAME 是应用的 APK 文件的名称。如果所有共享库都正确对齐，则输出的最后一行将显示“Verification successful”。
 如果验证失败，则需要重新对齐一些共享库，因此您需要更新这些库的打包方式，然后重新编译应用，并按照本部分中的步骤重新测试。
 检查 RELRO 安全标志
-为了缓解安全漏洞，现代链接器使用 Relocation Read-Only (RELRO) 标志在加载后将共享对象文件的重定位部分设为只读。在build中启用 RELRO 标志。
-如果 RELRO 区段的起始地址加上区段大小 (MemSize) 未按 16 KB 对齐，则应用会在运行时因出现内存段错误而崩溃。如果 .so 文件是使用 NDK 工具链 r27 及更低版本构建的，但未启用相关标志，则会发生这种情况。
-在每个共享对象文件（Linux 或 macOS）上运行以下命令：
-SDK_ROOT_LOCATION/Android/sdk/ndk/NDK_VERSION/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-readelf -Wl SHARED_OBJECT_FILE.so | grep 'RELRO\|Type'
-如果有 RELRO 段，则会打印 GNU_RELRO 字符串。
-接下来，将 RELRO 段的虚拟偏移地址 (VirtAddr) 与段内存大小 (MemSiz) 相加，然后除以 16 KB (0x4000)，以检查 RELRO 段对齐情况。如果余数（模数）为零，则 RELRO 段为 16 KB 对齐。
-以下是一个未对齐的 .so 文件示例：
+为了缓解安全漏洞，现代链接器使用重定位只读 (RELRO) 标志，在动态重定位完成后，将共享对象文件的重定位目标部分（例如 .got 和 .data.rel.ro）设为只读。在 build 中启用 RELRO 标志。
+当 GNU_RELRO 与后续可写数据（例如 .data 或 .bss）共享可写 LOAD 段时，GNU_RELRO 段的结束地址 (VirtAddr + MemSiz) 必须与 16 KB 对齐 (0x4000)。否则，当 Android 链接器将包含 GNU_RELRO 结尾的 16 KB 页面标记为只读时，位于同一 16 KB 页面其余部分的任何相邻可写数据也会变为只读，从而在写入该数据时导致应用在运行时崩溃并出现段错误 (SIGSEGV)。
+如果 .so 文件是使用 NDK 工具链 r27 及更低版本构建的，并且未启用相关标志，通常会出现这种情况。
+使用 APK 分析器（推荐）
+您可以使用 Android Studio 中的 APK 分析器直接检查共享对象文件的 RELRO 对齐状态。
+使用命令行工具
+如果您希望手动检查对齐情况或需要自动执行该过程，请按以下步骤操作：
+第 1 步：检查程序头
+对每个共享对象文件运行以下命令（在 Linux 上，将 darwin-x86_64 替换为 linux-x86_64）：
+Linux 或 macOS
+SDK_ROOT_LOCATION/Android/sdk/ndk/NDK_VERSION/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-readelf -Wl SHARED_OBJECT_FILE.so | grep 'LOAD\|RELRO\|Type'
+Windows (PowerShell)
+SDK_ROOT_LOCATION\Android\sdk\ndk\NDK_VERSION\toolchains\llvm\prebuilt\windows-x86_64\bin\llvm-readelf.exe -Wl SHARED_OBJECT_FILE.so | Select-String -Pattern 'LOAD|RELRO|Type'
+如果存在 RELRO 区段，系统会输出 GNU_RELRO 字符串。
+第 2 步：验证 RELRO 是否符合 16 KB 页面大小要求
+如果满足以下任一条件，则共享对象文件在 RELRO 方面符合 16 KB 页面大小要求：
+节目头中不存在 GNU_RELRO 段。
+GNU_RELRO 结束地址按 16 KB 对齐：其虚拟地址 (VirtAddr) 与内存大小 (MemSiz) 之和除以 16 KB (0x4000) 的余数（模）为零：(VirtAddr + MemSiz) % 0x4000 == 0。
+在同一 LOAD 段中，GNU_RELRO 后面没有可写数据：GNU_RELRO 占据了其所在的 LOAD 段的整个剩余部分（即 LOAD.VirtAddr + LOAD.MemSiz == RELRO.VirtAddr + RELRO.MemSiz），因此没有可写的 .data 或 .bss 部分共享尾页。
+示例
+以下示例展示了如何针对不同的 GNU_RELRO 配置评估 llvm-readelf 输出。
+示例 1：未对齐的 .so 文件（不合规）
+在此示例中，GNU_RELRO 与后续可写数据共享 RW LOAD 段，并且其结束地址不是 0x4000 的倍数：
 Type Offset VirtAddr PhysAddr FileSiz MemSiz Flg Align
+LOAD 0x000000 0x0000000000000000 0x0000000000000000 0x0cfaf0 0x0cfaf0 R E 0x4000
+LOAD 0x0cfaf0 0x00000000000dfaf0 0x00000000000dfaf0 0x02510 0x04510 RW 0x4000
 GNU_RELRO 0x0cfaf0 0x00000000000dfaf0 0x00000000000dfaf0 0x01510 0x01510 R 0x1
 公式：(VirtAddr + MemSiz) % 0x4000 == 0
 结果：(0xdfaf0 + 0x01510) % 0x4000 = 0xE1000 % 0x4000 == 0x1000
-由于 0x1000 不为零，因此该 .so 文件不符合 16 KB 对齐要求。从 DC000（上一个分页符）到 E4000 的 RELRO 保护范围是只读的，但 Android 链接器希望从 E1000 到 E4000 的子范围是可写的，从而导致分段错误。在这种情况下，请按照使用 16 KB ELF 对齐编译应用部分中的说明重新构建 .so 文件。
-下面是一个包含 RELRO 段的对齐 .so 文件示例：
+由于 0x1000 不为零，并且包含 LOAD 的段在 0xE1000 之后继续（在 0xdfaf0 + 0x04510 = 0xE4000 处结束），因此该 .so 文件不符合 16 KB 页面大小。在 16 KB 设备上，链接器会将 RELRO 保护范围舍入到 16 KB 页面边界，并将 0xDC000（上一个分页符）到 0xE4000 标记为只读。不过，.so 文件的可写 .data 和 .bss 部分位于 0xE1000 到 0xE4000 的子范围内，因此在运行时修改时会导致分段错误。按照使用 16 KB ELF 对齐编译应用部分中的说明，重新构建此 .so 文件。
+示例 2：具有 RELRO 段的对齐 .so 文件（合规）
+在此示例中，GNU_RELRO 段的末尾位于 16 KB 页面边界上：
 Type Offset VirtAddr PhysAddr FileSiz MemSiz Flg Align
-GNU_RELRO 0x0cfaf0 0x00000000000dfaf0 0x00000000000dfaf0 0x01510 0x00510 R 0x1
-以下是不含 RELRO 段的 .so 文件示例：
+LOAD 0x000000 0x0000000000000000 0x0000000000000000 0x0cfaf0 0x0cfaf0 R E 0x4000
+LOAD 0x0cfaf0 0x00000000000dfaf0 0x00000000000dfaf0 0x01510 0x03510 RW 0x4000
+GNU_RELRO 0x0cfaf0 0x00000000000dfaf0 0x00000000000dfaf0 0x00510 0x00510 R 0x1
+公式：(VirtAddr + MemSiz) % 0x4000 == 0
+结果：(0xdfaf0 + 0x00510) % 0x4000 = 0xE0000 % 0x4000 == 0
+由于余数为 0，因此 RELRO 保护会在 0xE0000 页面边界处干净利落地结束，从而使从 0xE0000 开始的所有可写数据不受影响。
+示例 3：不含 RELRO 区段的 .so 文件（合规）
 Type Offset VirtAddr PhysAddr FileSiz MemSiz Flg Align
-这是一个符合 16 KB 要求的简单 .so 文件，没有任何 RELRO 段。
-以下是一个对齐的 .so 文件示例，其中 GNU_RELRO 位于其自己的 LOAD 段中：
+LOAD 0x000000 0x0000000000000000 0x0000000000000000 0x000680 0x000680 R E 0x4000
+LOAD 0x000680 0x0000000000004680 0x0000000000004680 0x0001d8 0x0001d8 RW 0x4000
+此 .so 文件没有 GNU_RELRO 段，因此 RELRO 页面边界问题不适用（但出于安全考虑，仍建议启用 RELRO）。
+示例 4：GNU_RELRO 位于其自己的 LOAD 片段中（符合要求）
+在此示例中，GNU_RELRO 并非在 16 KB 边界处结束，但它仍然符合要求，因为在同一 LOAD 段中，其后没有可写入的数据：
 Type Offset VirtAddr PhysAddr FileSiz MemSiz Flg Align
 LOAD 0x000000 0x0000000000000000 0x0000000000000000 0x000680 0x000680 R E 0x4000
 LOAD 0x000680 0x0000000000004680 0x0000000000004680 0x0001d8 0x000980 RW 0x4000
@@ -128,28 +157,27 @@ GNU_RELRO 0x000680 0x0000000000004680 0x0000000000004680 0x0001d8 0x000980 R 0x1
 公式：(VirtAddr + MemSiz) % 0x4000 == 0
 结果：(0x4680 + 0x0980) % 0x4000 = 0x5000 % 0x4000 == 0x1000
 虽然 0x1000 不为零，但此 .so 文件仍符合 16 KB 对齐要求。
-当 GNU_RELRO 与后续可写入数据（例如 .data 或 .bss）共享 LOAD 段时，适用模数公式。
-如需检查 GNU_RELRO 是否位于其自己的 LOAD 段中，请通过运行 llvm-readelf -Wl 并使用 grep 'LOAD\|RELRO\|Type' 进行过滤来检查程序标头。将 GNU_RELRO 的 VirtAddr 和 MemSiz 与包含 LOAD 的片段进行比较。在此示例中，两者都有 VirtAddr 0x4680 和 MemSiz 0x0980。
-由于整个 LOAD 段仅包含 RELRO 数据，因此 0x5000 到 0x8000 的子范围内没有可写数据。此外，任何后续可写 LOAD 段都会在单独的 16 KB 页面边界（0x8000 或更高）处开始。链接器的只读保护不会与任何可写数据重叠，因此不会发生分段错误。
-构建支持 16 KB 设备的 Android 应用
-如果您的应用使用原生代码，请完成以下部分中列出的步骤，以确保您的应用支持 16 KB 设备：
+将 GNU_RELRO 与其包含的 LOAD 段（第二个 LOAD 条目）进行比较，发现两者都从 VirtAddr 0x4680 开始，并在完全相同的地址 (0x4680 + 0x0980 = 0x5000) 结束。
+由于整个 LOAD 段仅包含 RELRO 数据，因此从 0x5000 到 0x8000 的子范围内没有可写的 .data 或 .bss 数据（库没有非 RELRO 可写数据，或者任何后续可写 LOAD 段都从 0x8000 或更远处的单独 16 KB 页面边界开始）。链接器的只读保护不会与任何可写数据重叠，因此不会发生分段错误。
+构建支持 16 KB 设备的应用
+如果您的应用使用原生代码，请完成以下部分中列出的步骤，确保您的应用支持 16 KB 设备：
 更新共享库的打包方式
 使用 16 KB ELF 对齐方式编译应用
 修复代码并解决运行时问题
 优化自定义内存分配器（如果适用）
 检查 SDK 是否支持 16 KB
-提示： 如果您将工具更新到最新版本（AGP 8.5.1 或更高版本，以及 NDK r28 或更高版本），并使用与 16 KB 兼容的预构建依赖项，那么您的应用默认与 16 KB 兼容，您可以跳到修复代码和解决运行时问题这一步。
+提示：如果您将工具更新到最新版本（AGP 8.5.1 或更高版本，以及 NDK r28 或更高版本），并使用与 16 KB 兼容的预构建依赖项，那么您的应用默认与 16 KB 兼容，您可以跳到修复代码和解决运行时问题这一步。
 更新共享库的打包方式
-升级到 AGP 版本 8.5.1 或更高版本，并使用未压缩的共享库。
-使用 bundletool 验证 ZIP 对齐情况
-如需查看您的软件包的对齐情况，请使用：
+请升级到 AGP 版本 8.5.1 或更高版本，并使用未压缩的共享库。
+使用 bundletool 验证 zip 对齐
+如需查看 bundle 的对齐情况，请使用：
 bundletool dump config --bundle=<my .aab> | grep alignment
-如果您看到 PAGE_ALIGNMENT_16K，则表示您的软件包请求 16 KB 的 zip 对齐。如果您看到 PAGE_ALIGNMENT_4K，则表示根据此 AAB 构建的 APK 将在 zip 文件中包含 4 KB 对齐的 .so 文件。
-AGP 版本 8.5.1 或更高版本
+如果您看到 PAGE_ALIGNMENT_16K，则表示您的 app bundle 请求 16 KB 的 ZIP 对齐。如果您看到 PAGE_ALIGNMENT_4K，则表示此 AAB 构建的 APK 在 ZIP 文件中具有 4 KB 对齐的 .so 文件。
+AGP 8.5.1 版或更高版本
 16 KB 设备要求随附未压缩共享库的应用在 16 KB ZIP 对齐边界上对齐这些共享库。为此，您需要升级到 Android Gradle 插件 (AGP) 8.5.1 或更高版本。如需详细了解升级流程，请参阅 Android Gradle 插件升级助理部分。
-AGP 版本 8.5 或更低版本
-注意： 在 AGP 8.3 至 8.5 版中，应用默认采用 16 KB 对齐。不过，bundletool 默认不会对 APK 进行 zipalign 优化。因此，该应用可能看起来可以正常运行，但从 Play 中的软件包构建时，它将无法安装。
-如果您无法将 AGP 升级到 8.5.1 或更高版本，则可以改用压缩的共享库。更新 Gradle 配置，让 Gradle 在打包应用时压缩共享库，以避免因共享库未对齐而导致应用安装问题。
+AGP 8.5 或更低版本
+注意：在 AGP 8.3 至 8.5 版中，应用默认采用 16 KB 对齐。不过，bundletool 默认不会对 APK 进行 zipalign 优化。因此，应用可能看起来可以正常运行，但如果从 Play 中的 app bundle 构建，则无法安装。
+如果您无法将 AGP 升级到 8.5.1 或更高版本，则可以改用压缩共享库。更新 Gradle 配置，让 Gradle 在打包应用时压缩共享库，以避免因共享库未对齐而导致应用安装问题。
 Groovy
 在 build.gradle 文件中，添加以下选项：
 android {
@@ -171,22 +199,23 @@ useLegacyPackaging = true
 }
 }
 AGP 8.0 或更低版本
-如果您使用的是 8.0 或更低版本的 AGP，则还需要在 gradle.properties 文件中停用 App Bundle 的未压缩原生库选项：
+如果您使用的是 8.0 或更低版本的 AGP，则还需要在 gradle.properties 文件中为 App Bundle 停用未压缩的原生库选项：
 android.bundle.enableUncompressedNativeLibs=false
-警告： 使用压缩的共享库时，应用在安装后会占用更多空间，因为系统会从 APK 中提取库并将其复制到磁盘上。您的应用可能会更频繁地安装失败，因为磁盘用量增加意味着设备上的空间减少。为避免此问题，请升级到 AGP 8.5.1 或更高版本。
+警告：如果您使用压缩的共享库，应用在安装后会占用更多空间，因为库会从 APK 中提取并复制到磁盘上。您的应用可能更频繁地安装失败，因为磁盘用量增加意味着设备上的空间减少。为避免此问题，请升级到 AGP 8.5.1 或更高版本。
 使用 16 KB ELF 对齐方式编译应用
-16 KB 设备要求使用 16 KB ELF 对齐方式正确对齐共享库的 ELF 段，以便您的应用能够运行。
-对于游戏开发者，如果您的游戏在 Unity 游戏引擎上运行，请参阅 Unity 指南。如果您的游戏基于 Unreal 游戏引擎运行，请参阅 Unreal 指南。对于原生游戏引擎，请继续阅读本指南。
-注意： 如果您的应用不会将原生库解压缩到文件系统（extractNativeLibs 设置为 false），那么在使用 16 KB ELF 对齐方式进行编译后，您可能会注意到应用的二进制文件大小略有增加。Android 15 中对软件包管理器的优化可抵消这种增加带来的运行时成本。
-如需使用 16 KB ELF 对齐方式编译应用，请根据您使用的 Android NDK 版本完成以下部分中的步骤。
-重要提示： 如果您的应用使用任何预构建的共享库，您还必须以相同的方式重新编译这些库，并将 16 KB 对齐的库重新导入到您的应用中。
+16 KB 设备要求共享库的 ELF 段使用 16 KB ELF 对齐方式正确对齐，以便您的应用能够运行。
+对于游戏开发者，如果您的游戏在 Unity 游戏引擎上运行，请参阅 Unity 指南。
+如果您的游戏在 Unreal 游戏引擎上运行，请参阅 Unreal 指南。对于原生游戏引擎，请继续阅读本指南。
+注意：如果您的应用不会将原生库解压缩到文件系统（extractNativeLibs 设置为 false），您可能会注意到，在使用 16 KB ELF 对齐方式进行编译后，应用的二进制文件大小会略有增加。Android 15 中对软件包管理器的优化可抵消这种增加带来的运行时成本。
+如需使用 16 KB ELF 对齐编译应用，请根据您使用的 Android NDK 版本，完成以下某个部分中的步骤。
+重要提示：如果您的应用使用任何预构建的共享库，您还必须以相同的方式重新编译这些库，并将 16 KB 对齐的库重新导入到您的应用中。
 Android NDK r28 及更高版本
-NDK 版本 r28 及更高版本默认编译为 16 KB 对齐。
+NDK 版本 r28 及更高版本默认编译 16 KB 对齐。
 Android NDK r27 及更低版本
-如需支持使用 Android NDK 版本 r27 或更低版本编译 16 KB 对齐的共享库，请使用以下链接器标志：
+如需支持使用 Android NDK r27 或更低版本编译 16 KB 对齐的共享库，请使用以下链接器标志：
 -Wl,-z,max-page-size=16384
 -Wl,-z,common-page-size=16384
-以下是更新 build 系统配置文件的方法：
+下面介绍了如何更新构建系统配置文件：
 ndk-build
 如果您使用的是 ndk-build，请更新 Android.mk 以启用 16 KB ELF 对齐：
 LOCAL_LDFLAGS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
@@ -196,45 +225,45 @@ target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
 "-Wl,-z,max-page-size=16384"
 "-Wl,-z,common-page-size=16384"
 )
-注意： 即使您的应用动态链接到 NDK r26 及更低版本的 C++ 标准库 (libc++_shared.so)，其中一些库没有 16 KB 对齐的 libc++_shared.so，您仍应在此处更新所有其他库的对齐方式，并应更新代码以避免依赖 PAGE_SIZE。为了在 16 KB 设备上测试这些较低版本的 NDK，Android CI 上提供了 LTS NDK 版本 r23 和 r25 的 Canary 版本，其中包含 16 KB 对齐的 libc++_shared.so 库。注意： 如果您无法改用较新版本的 Android NDK，则可以更新应用，将 C++ 标准库静态编译到共享库中。如需详细了解如何静态关联到 C++ 标准库，请参阅 C++ 库支持部分，并务必阅读重要注意事项部分。
+注意：即使您的应用动态链接到 NDK r26 及更低版本的 C++ 标准库 (libc++_shared.so)（其中一些库没有 16 KB 对齐的 libc++_shared.so），您仍应在此处更新所有其他库的对齐方式，并应更新代码以避免依赖 PAGE_SIZE。为了在 16 KB 设备上使用这些较低版本的 NDK 进行测试，Android CI 上提供了 LTS NDK 版本 r23 和 r25 的 Canary 版本，其中包含 16 KB 对齐的 libc++_shared.so 库。注意：如果您无法改用较新版本的 Android NDK，则可以更新应用，将 C++ 标准库静态编译到共享库中。如需详细了解如何静态关联到 C++ 标准库，请参阅 C++ 库支持部分，并务必阅读重要注意事项部分。
 修复代码并解决运行时问题
-即使您的应用已对齐到 16 KB，如果代码中的某些位置假定设备使用了特定的页面大小，您的应用仍可能会遇到错误。为避免这种情况，请完成以下步骤：
-移除引用 PAGE_SIZE 常量的任何硬编码依赖项，或代码逻辑中假定设备页面大小为 4 KB (4096) 的实例。
+即使您的应用已进行 16 KB 对齐，如果代码中的某些位置假定设备使用的是特定页面大小，应用也可能会遇到错误。为避免这种情况，请完成以下步骤：
+移除代码逻辑中引用 PAGE_SIZE 常量或假定设备页面大小为 4 KB (4096) 的实例的所有硬编码依赖项。
 请改用 getpagesize() 或 sysconf(_SC_PAGESIZE)。
-查找 mmap() 和其他需要内存页对齐实参的 API 的用法，并在必要时替换为替代方案。
-在某些情况下，如果您的应用使用 PAGE_SIZE 作为与底层页面大小无关的便捷值，那么在 16 KB 模式下使用时，这不会导致应用崩溃。不过，如果此值通过 mmap（不含 MAP_FIXED）传递给内核，内核仍会使用整个页面，这会浪费一些内存。因此，在 NDK r27 及更高版本上启用 16 KB 模式时，PAGE_SIZE 未定义。
-如果您的应用以这种方式使用 PAGE_SIZE，并且从未将此值直接传递给内核，请不要使用 PAGE_SIZE，而是创建一个具有新名称的新变量，以反映该变量用于其他用途，并不反映实际内存页。
+查找 mmap() 和其他需要页面对齐参数的 API 的使用情况，并在必要时替换为替代方案。
+在某些情况下，如果您的应用将 PAGE_SIZE 用作与底层页面大小无关的便捷值，那么在 16 KB 模式下使用时，这不会导致应用崩溃。但是，如果此值通过 mmap（不含 MAP_FIXED）传递给内核，内核仍会使用整个页面，这会浪费一些内存。因此，在 NDK r27 及更高版本上启用 16 KB 模式时，PAGE_SIZE 未定义。
+如果您的应用以这种方式使用 PAGE_SIZE，并且从不直接将此值传递给内核，请不要使用 PAGE_SIZE，而是创建一个具有新名称的新变量，以反映该变量用于其他目的，并不反映实际内存页。
 优化自定义内存分配器
-注意： 本部分仅适用于您的应用、游戏引擎或原生库实现了自定义内存管理器、堆或 slab 分配器（例如在自定义游戏引擎、嵌入式数据库或嵌入 jemalloc 或 mimalloc 的运行时中）的情况。如果您的应用使用标准 Android 内存分配器 (scudo)，则可以跳过本部分。
-在 16 KB 系统上，操作系统分配的最小物理内存单位是 4 KB 系统的四倍。如果自定义分配器是基于 4 KB 假设设计的，则可能会将小对象分散到多个 16 KB 页面中，并保留不必要的空内存。这会大幅增加物理内存用量 (RSS)，并降低压缩交换空间 (ZRAM) 的效率。
+注意：本部分仅适用于您的应用、游戏引擎或原生库实现了自定义内存管理器、堆或 slab 分配器（例如在自定义游戏引擎、嵌入式数据库或嵌入 jemalloc 或 mimalloc 的运行时中）的情况。如果您的应用使用标准 Android 内存分配器 (scudo)，则可以跳过本部分。
+在 16 KB 系统中，操作系统分配的最小物理内存单元是 4 KB 系统的 4 倍。如果自定义分配器是基于 4 KB 假设设计的，则可能会将小对象分散在多个 16 KB 页面中，并保留不必要的空内存。这可能会大幅增加物理内存用量 (RSS)，并降低压缩交换空间 (ZRAM) 的效率。
 如果您的代码管理自己的内存池，请遵循以下建议：
 1. 避免使用硬编码的字节阈值来释放内存
 许多分配器使用固定的字节限制来决定何时使用 madvise(MADV_DONTNEED) 将内存释放回操作系统（例如，仅在活动对象占用的内存小于 8 KB 时释放内存）。
-在 16 KB 系统上，即使是单个 16 字节的有效对象也会固定整个 16 KB 页面（大于 8 KB）。因此，永远无法达到释放阈值，分配器也永远不会将周围未使用的内存返回给内核。
-应采取的措施：切勿将硬编码的字节常量用于页面释放启发式方法。
-使用 sysconf(_SC_PAGESIZE) 在运行时根据实际页面大小动态扩缩版本阈值。
+在 16 KB 系统中，即使是单个 16 字节的活跃对象也会固定整个 16 KB 页面（大于 8 KB）。因此，永远不会达到释放阈值，分配器也永远不会将周围未使用的内存返回给内核。
+应对措施：切勿使用硬编码字节常量进行页面释放启发。
+使用 sysconf(_SC_PAGESIZE)，在运行时根据实际页面大小动态调整释放阈值。
 2. 先填满已使用的页面（密集优先分配）
-如果分配器以先进先出 (FIFO) 或轮循顺序分配内存，则新的分配会分散在许多部分填充的 16 KB 页面中。页面上的单个对象会将所有 16 KB 页面保留在物理 RAM 中。
-操作方法：在触及空页面或使用较少的页面之前，始终从最满（最密集）的页面或 slab 分配新对象。将新分配集中在已脏页上，可让轻度使用的页面自然地排空到零个活跃对象，从而将整个 16 KB 页面释放给操作系统。
+如果分配器以先进先出 (FIFO) 或轮循顺序分配内存，则新的分配会分散在许多部分填充的 16 KB 页面中。页面上的单个对象会将所有 16 KB 驻留在物理 RAM 中。
+应对措施：在接触空页或轻度使用的页之前，始终从最满（最密集）的页或 slab 分配新对象。将新分配集中在已脏页上，可让轻度使用的页自然地排空到零个活跃对象，从而将整个 16 KB 页释放到操作系统。
 3. 将内存池对齐到 16 KB，并保持池大小适中
-专为 4 KB 系统设计的多页 span 可能会在 16 KB 内核上保留过多未释放的内存空闲空间。此外，无法均匀划分为 16 KB 的大小类会导致每个页面末尾出现碎片。
-操作步骤：
+专为 4 KB 系统设计的多页 span 可能会在 16 KB 内核上保留过多未释放的内存空闲空间。此外，如果大小类别无法被 16 KB 整除，则会导致每个页面末尾出现碎片。
+应对措施：
 确保所有内存池、slab 边界和缓冲区对齐都是运行时页面大小的整数倍。
-重新评估了小对象类的多页跨度大小，以避免分配过大的 slab 导致空闲内存被困住。
+重新评估小对象类的多页 span 大小，以避免分配过大的 slab，从而导致空闲内存被占用。
 4. 立即释放缓存的大型缓冲区所占用的物理内存
-自定义分配器通常会将大型缓冲区（> 64 KB）缓存在内存中池中，以便重复使用，而无需支付 mmap 或 munmap 系统调用的开销。不过，在等待逐出计时器期间，将这些脏缓冲区保留在内存中会浪费数兆字节的物理 RAM。
-应采取的措施：保留为快速重用而预留的虚拟内存地址范围，但在将缓冲区返回到缓存时立即调用 madvise(..., MADV_DONTNEED) 或 madvise(..., MADV_FREE)。操作系统会立即回收物理 RAM，而您的应用仍可以立即重复使用虚拟地址，而无需重新分配。
+自定义分配器通常会将大型缓冲区（> 64 KB）缓存在内存池中，以便重复使用，而无需支付 mmap 或 munmap 系统调用的开销。不过，在等待逐出计时器期间，将这些脏缓冲区保留在内存中会浪费数兆字节的物理 RAM。
+应对措施：保留虚拟内存地址范围以供快速重复使用，但在将缓冲区返回到缓存时，立即调用 madvise(..., MADV_DONTNEED) 或 madvise(..., MADV_FREE)。操作系统会立即回收物理 RAM，而您的应用仍可以立即重复使用虚拟地址，而无需重新分配。
 5. 在释放时（而非分配时）将内存清零，以便进行 ZRAM 压缩
-Android 使用压缩交换空间 (ZRAM) 将后台应用保留在内存中。在 16 KB 设备上，如果一个页面即使只包含一个活动对象，整个 16 KB 页面也会保持常驻或被交换到 ZRAM。该页面先前释放的部分中残留的垃圾数据（例如过时的指针和字符串）压缩效果不佳。
+Android 使用压缩交换空间 (ZRAM) 将后台应用保留在内存中。在 16 KB 设备上，如果一个页面即使只包含一个活跃对象，整个 16 KB 页面也会保持常驻或被交换到 ZRAM。该页面先前释放的部分中残留的垃圾数据（例如过时的指针和字符串）压缩效果不佳。
 如果您的分配器会将内存归零（例如出于安全考虑或为了进行零初始化分配），请考虑在解除分配 (free()) 时归零，而不是在分配时归零：
-固定页面的开销更低：在 ZRAM 中，部分填充的 16 KB 页面上的空闲内存会压缩到几乎为零，因此固定页面不会浪费物理交换空间。
-最小的缓存开销：在调用 free() 时，内存已在 CPU 缓存中预热，从而避免了后续的额外缓存未命中。
+固定页面成本更低：部分填充的 16 KB 页面上的空闲内存在 ZRAM 中几乎压缩到零，因此固定页面不会浪费物理交换空间。
+最小缓存开销：调用 free() 时，内存已在 CPU 缓存中处于热状态，从而避免了以后出现额外的缓存未命中。
 建议摘要
 领域
 建议
 预期影响
 清除阈值
-使用 sysconf(_SC_PAGESIZE) 动态调整发布阈值。
+使用 sysconf(_SC_PAGESIZE) 动态扩缩发布阈值。
 防止释放逻辑永久死锁。
 分配顺序
 首先从最密集（几乎已满）的页面或 slab 中分配。
@@ -244,12 +273,12 @@ Android 使用压缩交换空间 (ZRAM) 将后台应用保留在内存中。在 
 消除尾页碎片并减少内存松弛。
 缓冲区缓存
 缓存大型缓冲区时，请立即调用 madvise(MADV_DONTNEED)。
-在保持快速虚拟重用的同时，消除空闲 RAM 膨胀。
-交换 / ZRAM
-在 free() 上将内存归零，而不是在分配时归零。
+消除空闲 RAM 膨胀，同时保持快速虚拟重用。
+交换/ZRAM
+在 free() 时将内存清零，而不是在分配时清零。
 提高 ZRAM 压缩比，从而降低固定页面的开销。
 检查 SDK 是否支持 16 KB
-许多 SDK 都与 16 KB 页面大小兼容，尤其是当您自行构建这些 SDK 或获取最新的预构建版本时。不过，由于某些 SDK 预构建版本或 SDK 版本与 16 KB 不兼容，因此您应查看每个 SDK 提供方 的网站，以确定要与 16 KB 搭配使用的版本。
+许多 SDK 都与 16 KB 页面大小兼容，尤其是当您自行构建 SDK 或获取最新的预构建 SDK 时。不过，由于某些 SDK 预构建版本或 SDK 版本与 16 KB 不兼容，因此您应查看每个 SDK 提供方 的网站，以确定要与 16 KB 搭配使用的版本。
 在 16 KB 环境中测试应用
 在构建支持 16 KB 设备的应用后，您需要在 16 KB 环境中测试应用，看看应用是否会出现任何回归问题。请按以下步骤进行此操作：
 设置 Android 15 SDK 或更高版本。
@@ -262,7 +291,7 @@ Android 使用压缩交换空间 (ZRAM) 将后台应用保留在内存中。在 
 启动测试设备，然后运行以下命令，验证其是否使用的是 16 KB 环境：
 adb shell getconf PAGE_SIZE
 该命令应返回值 16384。
-运行以下 zipalign 命令，验证您的应用是否已按 16 KB 对齐，其中 APK_NAME 是应用 APK 文件的名称：
+运行以下 zipalign 命令，验证您的应用是否已进行 16 KB 对齐，其中 APK_NAME 是应用的 APK 文件的名称：
 zipalign -c -P 16 -v 4 APK_NAME.apk
 全面测试您的应用，重点关注可能受更改引用特定页面大小的代码实例影响的所有区域。
 使用基于 16 KB 的系统映像设置 Android 模拟器
@@ -270,12 +299,13 @@ zipalign -c -P 16 -v 4 APK_NAME.apk
 在 Android Studio 中，依次点击 Tools > SDK Manager。
 在 SDK Platforms 标签页中，选择 Show Package Details，然后展开 Android VanillaIceCream 或更高版本部分，并根据要创建的虚拟设备选择以下一个或两个模拟器系统映像：
 Google APIs Experimental 16 KB Page Size ARM 64 v8a System Image
-Google API 实验性 16 KB 页面大小 Intel x86_64 Atom 系统映像
-注意： 如果您打算模拟受支持的 Google Pixel 设备，则只需 ARM 64 v8a 系统映像。
-点击应用 > 确定，下载您选择的所有系统映像。
-按照为 Android 15 设置虚拟设备中的步骤操作，当系统提示您选择系统映像时，选择您下载的 16 KB 系统映像。如果系统未自动推荐，您可以在 Other Images 标签页中找到 16 KB 系统映像。
+Google APIs Experimental 16 KB Page Size Intel x86_64 Atom System
+Image
+注意：如果您打算模拟受支持的 Google Pixel 设备，则只需要 ARM 64 v8a 系统映像。
+点击 Apply > OK，下载您选择的所有系统映像。
+按照为 Android 15 设置虚拟设备的步骤操作，当系统提示您选择系统映像时，选择您下载的 16 KB 系统映像。如果系统未自动推荐，您可以在 Other Images 标签页中找到 16 KB 系统映像。
 启动模拟器
-完成 Android 模拟器和虚拟设备的设置后，从目标设备菜单或从命令行启动模拟器。
+设置好 Android 模拟器和虚拟设备后，从目标设备菜单或从命令行启动模拟器。
 使用开发者选项在设备上启用 16 KB 模式
 切换以 16KB 页面大小启动设备开发者选项，以在 16 KB 模式下启动设备。
 在 Android 15 的 QPR 版本中，您可以使用某些设备上提供的开发者选项，以 16 KB 模式启动设备并执行设备端测试。在使用开发者选项之前，请依次前往设置 > 系统 > 软件更新，并应用所有可用的更新。
@@ -302,7 +332,7 @@ adb shell setprop pm.16kb.app_compat.disabled true
 在 Android 17 中，您还可以强制为每个应用停用 16 KB 向后兼容，并导致任何不兼容的二进制文件立即中止：
 adb shell setprop bionic.linker.16kb.app_compat.enabled fatal
 adb shell setprop pm.16kb.app_compat.disabled true
-将 android:pageSizeCompat 属性设为“enabled”或“disabled”，以在特定应用的 AndroidManifest.xml 中开启或关闭向后兼容模式。设定此属性后，该应用在启动时不会显示向后兼容模式警告。
+将 android:pageSizeCompat 属性设为“已启用”或“已停用”，以在特定应用的 AndroidManifest.xml 中开启或关闭向后兼容模式。设定此属性后，该应用在启动时不会显示向后兼容模式警告。
 本页面上的内容和代码示例受内容许可部分所述许可的限制。Java 和 OpenJDK 是 Oracle 和/或其关联公司的注册商标。
-最后更新时间 (UTC)：2026-10-16。
-[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-10-16。"],[],[]]
+最后更新时间 (UTC)：2026-11-08。
+[[["易于理解","easyToUnderstand","thumb-up"],["解决了我的问题","solvedMyProblem","thumb-up"],["其他","otherUp","thumb-up"]],[["没有我需要的信息","missingTheInformationINeed","thumb-down"],["太复杂/步骤太多","tooComplicatedTooManySteps","thumb-down"],["内容需要更新","outOfDate","thumb-down"],["翻译问题","translationIssue","thumb-down"],["示例/代码问题","samplesCodeIssue","thumb-down"],["其他","otherDown","thumb-down"]],["最后更新时间 (UTC)：2026-11-08。"],[],[]]

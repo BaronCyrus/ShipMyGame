@@ -1,8 +1,8 @@
-Supported platforms on each builder OS • Reference • Build Automation • Unity Docs
+Supported platforms on each builder OS • Build Automation
 Supported platforms on each builder OS
 Review supported platforms for each builder operating system in Unity Build Automation.
 Read time 1 minute
-Last updated 4 hours ago
+Last updated 6 days ago
 The following table lists builder operating systems and the target platforms they support:
 Platform
 Windows 11 22H2
