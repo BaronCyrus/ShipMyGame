@@ -106,30 +106,72 @@ public static class WxInsets
 
 ## 广告（流量主）
 
-### 开通条件 `[官方]`
+**实测情况** `[实测]`（2026-11-11，个人主体的单机游戏，上线第 4 天）
+- 走过的：开通后进流量主后台 → 建 3 个广告位 → 接激励视频、插屏、原生模板横幅 → 在开发者工具里验证 → 上传、提审。
+- 没走过的：广告组件审核、线上的实际填充和收入。这几项按官方写。
 
-来源：微信广告帮助中心的[小游戏流量主开通流程](https://ad.weixin.qq.com/docs/237)（2026-11-03 读取）。满足任一条件即可开通：
+### 开通
+
+来源：微信广告帮助中心的[小游戏流量主开通流程](https://ad.weixin.qq.com/docs/237)。满足任一条件即可开通 `[官方]`：
 
 1. 小程序累计独立访客（UV）超过 100，没有刷粉行为，也没有严重违规记录。
 2. 开通内置游戏圈，并产生有效活跃（用户从游戏进入游戏圈后有消费或转评赞），还要发布 5 篇官方帖。
 3. 同公司主体名下已有开通流量主、连续一个季度有变现的小程序。个人主体用不上这一条。
 
 注意：
-- 满足条件后资格要**次日**才刷新。
-- 开通时要同意《微信公众平台广告展示服务协议》等协议，由用户本人确认。
-- 前两个条件都需要上线后有真实用户。所以顺序只能是：上线 → 用户达标 → 开通流量主 → 建广告位 → 把 ID 填进游戏 → 再发一版。**审核期间接不了真实广告。**
-- 门槛数字各处不一样：开放文档的[广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/ad.html)页还写「> 500」，之前实测时后台「功能 → 流量主」页面也是 500；Unity 的 WX_SDK 页写「UV>1000」。用户 2026-11-03 确认门槛已更新为 100，以帮助中心的「> 100」为准。
+- 满足条件后资格要**次日**才刷新 `[官方]`。
+- 开通时要同意《微信公众平台广告展示服务协议》等协议，由用户本人操作 `[实测]`。
+- 前两个条件都需要上线后有真实用户。所以顺序只能是：上线 → 用户达标 → 开通流量主 → 建广告位 → 把 ID 填进游戏 → 再发一版。**首版审核期间接不了真实广告。**
+- 门槛数字各处不一样：后台「流量主」页和帮助中心写「> 100」`[实测]`；开放文档的[广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/ad.html)页还写「> 500」。以后台页面为准。
 - 开通后要马上补财务资料，否则结算会卡住，见 [payouts.md](payouts.md)。
 
-### 广告位 `[官方]`
+**开通后的后台** `[实测]`
+- 入口是左侧菜单「功能 → 流量主」，路径见 [console.md](console.md#读后台的技巧)。页签：概览、广告管理、数据统计、合作计划、财务管理、权限管理、公告消息。
+- 第一次进会连着弹两样东西：
+  - 两页欢迎弹窗，第二页是规则提示（禁止诱导点击、反对滥用组件），按钮「知道了」。
+  - 「服务协议更新，请确认同意」，按钮「我已知晓并同意」。这是同意协议，留给用户点。弹窗不关，页面上别的都点不了。
+- 概览的「待办」里有一条「财务信息」，见 [payouts.md](payouts.md)。
 
-- 开通后在流量主的「广告管理」里新建广告位，每个位置单独建一个，建好得到 `adunit-` 开头的 ID。
-- 具体按钮名本仓库**未核对**。
-- 有一条只在搜索摘要里见过、**未核实**的说法：广告位关闭后 24 小时内不能重新开启。
+### 建广告位 `[实测]`
+
+位置：「广告管理 → 广告位管理」。第一次进是「创建你的第一个广告位 → 自主开发接入」，以后是右上角的「新建广告位」。
+
+| 广告位类型 | 表单 | 实测怎么选 |
+|---|---|---|
+| 激励广告 | 名称；最大激励时长 15 秒 / 30 秒 | 默认选中的是 15 秒，但页面提示「限制 15 秒的激励时长会降低eCPM与广告收入，非必要不建议勾选」，实测选 30 秒 |
+| 插屏广告 | 名称 | — |
+| 原生模板广告 | 名称；模板托管「优选模式 / 自定义模式」；模板选择 | 优选模式 → 卡片广告 → 横版卡片 → 20:7 横幅卡片。它就是以前的 Banner |
+
+- 名称上限 30 字，只用来自己区分。一个位置建一个，例如「激励视频-道具」「插屏-过关」「横幅-底部」。
+- **新建不了 Banner 广告位**：
+  - 帮助中心原文：「原生模板广告（横幅模板）注：原Banner广告位」（[小游戏广告组件](https://ad.weixin.qq.com/docs/236)）`[官方]`。
+  - 开放文档原文：Banner 接口「从基础库 3.5.5 开始，本接口停止维护，请使用原生模板广告 wx.createCustomAd 代替」`[官方]`。
+- 自定义模式可以选横幅（左图右文、单图）和格子，「进入编辑」会在新标签页打开模板编辑器。优选模式不支持格子。实测没用自定义模式。
+- 点「确认」后弹「创建成功」和 `adunit-` 开头的广告位 ID。回到列表，状态是「已开启」，「获取代码」给示例代码；横幅的示例是 `wx.createCustomAd({ adUnitId, style: { left: 0, top: 0, width: 350 } })`。
+- 列表页原文：「组件审核: 首次提交小程序广告组件，需经过合规性审核才能在线上展示；审核时间为1个工作日，审核期间暂时关闭线上广告展示。」
+- 建广告位是在改后台配置：用户说要接广告之后再建，建完把类型、名称和选项报给用户。
+- 广告位 ID 写进游戏工程和进度档案，不要写进本仓库。
+
+### 先读规范再接
+
+来源 `[官方]`：[小游戏流量主运营规范](https://ad.weixin.qq.com/docs/239)、[平台运营规范](https://developers.weixin.qq.com/minigame/product/)。违规的处罚是驳回广告组件、扣掉全部未结算收入，重的冻结或终止账号。
+
+| 条款 | 原文要点 | 接的时候怎么做 |
+|---|---|---|
+| 平台运营规范 | 广告不可遮挡「开始/继续游戏」等功能按钮；用户点这类按钮时不能打开广告；按钮或广告位置不能漂移 | 插屏不挂在按钮点击上；横幅位置固定，它出现、消失时按钮都不挪位置 |
+| 2.3 强制点击 | 不能让所有内容都只能看激励视频才解锁 | 激励视频只给「提前拿到」或额外奖励，正常玩也拿得到 |
+| 2.4 诱骗点击 | 移动 banner、高频点击后突然出现广告、用户没有广告预期 | 广告不出现在手指马上要点的地方 |
+| 2.6 | 激励视频必须由用户点击触发 | — |
+| 3.1.2 | 激励视频入口的描述要写明会播广告 | 入口文字写「看视频……」，只放一个视频图标不够 |
+| 3.1.3、3.1.4 | 没看完不能发奖励；看完必须发 | 只认关闭回调里的 `isEnded` |
+| 3.1.6 | 不能自己给广告做关闭按钮 | — |
+| 3.1.7 | 一屏里不能有两个以上 banner、原生广告位 | 一个界面只放一条横幅 |
+| 3.2.1、3.2.2 | 不能用内容遮挡广告；广告和可点击区域之间要有间距 | 横幅和按钮之间留出空隙 |
+| 2.1 | 不能自己反复制造曝光和点击 | 测试时每种广告只看一两次，**不点广告内容** |
 
 ### 代码 `[实测]`
 
-实测游戏的做法：ID 为空时什么都不创建；激励视频只在用户主动点「观看视频」时才播。
+下面的类照实测游戏的代码整理，接口调用和实测一致，单独编译通过（SDK v0.1.34）。ID 留空的那一种广告不创建。
 
 ```csharp
 using System;
@@ -138,83 +180,269 @@ using UnityEngine;
 using WeChatWASM;
 #endif
 
-public static class WxAds
+/// <summary>微信小游戏广告：激励视频、插屏、底部横幅（原生模板广告，20:7 横幅卡片）。ID 留空的那一种不创建。</summary>
+public class WxAds : MonoBehaviour
 {
-    public static string RewardedId = "";      // 流量主开通后填 adunit-…；空着就不创建
+    public static string RewardedId = "";       // 流量主开通后填 adunit-…
     public static string InterstitialId = "";
-    public static string CustomId = "";
+    public static string BannerId = "";
+
+    public static WxAds I { get; private set; }
+    /// <summary>底部给横幅让出的高度：从屏幕下沿算起，单位是屏幕像素；没有横幅时是 0。</summary>
+    public float BannerHeightScreenPx { get; private set; }
+    public static event Action BannerChanged;
+
+    public static void Ensure()                 // 在 WX.InitSDK 的回调里、游戏界面建好之后调用
+    {
+        if (I != null) return;
+        var go = new GameObject("WxAds");
+        DontDestroyOnLoad(go);
+        I = go.AddComponent<WxAds>();
+        I.Init();
+    }
 
 #if UNITY_WEBGL && !UNITY_EDITOR && !SHIP_NO_WECHAT
-    static WXRewardedVideoAd rewarded;
-    static WXInterstitialAd interstitial;
-    static WXCustomAd custom;
-    static Action<bool> pending;
+    const float FirstInterstitialAfter = 180f, InterstitialGap = 150f;   // 游戏自己定的节奏，不是平台规定
+    const int BreaksBetweenInterstitials = 2;
+    const float BannerAspect = 7f / 20f;        // 20:7 横幅卡片的高宽比
+    const float BannerMaxWidthCss = 350f;       // 后台「获取代码」的示例宽度
+    const float BannerGapCss = 14f;             // 横幅和上面按钮之间多留的空隙
+    const float BannerShowDelay = 0.6f;         // 能显示了也再等一下：手指可能还停在上一次点击的地方
 
-    public static void Init()                  // 在 WX.InitSDK 回调里、游戏创建之后调用
+    WXRewardedVideoAd _rewarded;
+    bool _rewardedLoaded;
+    Action<bool> _rewardedDone;
+    WXInterstitialAd _interstitial;
+    bool _interstitialLoaded;
+    Action _interstitialDone;
+    float _start, _lastFullScreenAd = -9999f;
+    int _breaks;
+    WXCustomAd _banner;
+    bool _bannerLoaded, _bannerReserved, _bannerSuppressed, _bannerShowing;
+    float _bannerShowAt = -1f;
+
+    void Init()
     {
-        if (rewarded != null || string.IsNullOrEmpty(RewardedId)) return;
-        rewarded = WX.CreateRewardedVideoAd(new WXCreateRewardedVideoAdParam { adUnitId = RewardedId });
-        rewarded.OnLoad((WXADLoadResponse r) => { });
-        rewarded.OnError((WXADErrorResponse e) => Debug.LogWarning("rewarded error " + e.errCode + " " + e.errMsg));
-        rewarded.OnClose((WXRewardedVideoAdOnCloseResponse r) => Finish(r != null && r.isEnded));   // 只注册一次
+        _start = Time.realtimeSinceStartup;
+        if (!string.IsNullOrEmpty(RewardedId)) CreateRewarded();
+        if (!string.IsNullOrEmpty(InterstitialId)) CreateInterstitial();
+        CreateBanner();                         // 先藏着加载，进到有横幅的界面时才可能显示
     }
 
-    public static bool CanShowRewarded => rewarded != null;
+    // ---------- 激励视频：只在玩家点了写明「看视频」的按钮之后播 ----------
 
-    // onDone(true) 才发奖励。播放期间暂停游戏和声音，回调里再恢复。
-    public static void ShowRewarded(Action<bool> onDone)
+    void CreateRewarded()
     {
-        if (rewarded == null || pending != null) { onDone(false); return; }
-        pending = onDone;
-        rewarded.Show((WXTextResponse ok) => { },
-            (WXTextResponse fail) => rewarded.Load(
-                (WXTextResponse loaded) => rewarded.Show((WXTextResponse ok2) => { }, (WXTextResponse f2) => Finish(false)),
-                (WXADErrorResponse le) => Finish(false)));
-    }
-
-    static void Finish(bool ended) { var cb = pending; pending = null; cb?.Invoke(ended); }
-
-    public static void ShowInterstitial()      // 只在通关这类自然断点调用
-    {
-        if (string.IsNullOrEmpty(InterstitialId)) return;
-        if (interstitial == null)
+        _rewarded = WX.CreateRewardedVideoAd(new WXCreateRewardedVideoAdParam { adUnitId = RewardedId });
+        _rewarded.OnLoad(_ => _rewardedLoaded = true);
+        _rewarded.OnError(e =>
         {
-            interstitial = WX.CreateInterstitialAd(new WXCreateInterstitialAdParam { adUnitId = InterstitialId });
-            interstitial.OnError((WXADErrorResponse e) => Debug.LogWarning("interstitial error " + e.errCode));
-            interstitial.OnClose(() => { });
-        }
-        interstitial.Show((WXTextResponse ok) => { }, (WXTextResponse fail) => { });   // 没拉到或被限频：直接继续游戏
-    }
-
-    public static void ShowBottomCustomAd()    // 原生模板广告（代替 Banner）
-    {
-        if (string.IsNullOrEmpty(CustomId) || custom != null) return;
-        WindowInfo win = WX.GetWindowInfo();   // 逻辑像素
-        custom = WX.CreateCustomAd(new WXCreateCustomAdParam
-        {
-            adUnitId = CustomId,
-            adIntervals = 30,
-            style = new CustomStyle { left = 0, top = (int)(win.windowHeight - 120), width = (int)win.windowWidth }
+            Debug.LogWarning("[WxAds] rewarded " + e?.errCode + " " + e?.errMsg);
+            _rewardedLoaded = false;
+            Invoke(nameof(LoadRewarded), 30f);
         });
-        custom.OnError((WXADErrorResponse e) => Debug.LogWarning("custom ad error " + e.errCode));
-        custom.OnLoad((WXADLoadResponse r) => custom.Show((WXTextResponse ok) => { }, (WXTextResponse f) => { }));
+        _rewarded.OnClose(r => FinishRewarded(r != null && r.isEnded));   // 只注册一次；看完（isEnded）才发奖励
     }
 
-    public static void HideBottomCustomAd() { if (custom != null) { custom.Destroy(); custom = null; } }
+    void LoadRewarded() => _rewarded?.Load(_ => { }, _ => { });
+
+    public bool RewardedReady => _rewarded != null && _rewardedLoaded;
+
+    /// <summary>onDone(true) 才发奖励。按钮先看 RewardedReady，没准备好就显示「暂时没有可播放的视频」。</summary>
+    public void ShowRewarded(Action<bool> onDone)
+    {
+        if (!RewardedReady) { onDone?.Invoke(false); LoadRewarded(); return; }
+        _rewardedDone = onDone;
+        _rewardedLoaded = false;
+        AudioListener.pause = true;
+        _rewarded.Show(_ => { }, _ => FinishRewarded(false));
+        _lastFullScreenAd = Time.realtimeSinceStartup;   // 刚看完激励视频，插屏往后推
+    }
+
+    void FinishRewarded(bool earned)
+    {
+        AudioListener.pause = false;
+        var done = _rewardedDone;
+        _rewardedDone = null;
+        done?.Invoke(earned);
+        LoadRewarded();
+    }
+
+    // ---------- 插屏：一局结束时调用，不要挂在任何按钮的点击上 ----------
+
+    void CreateInterstitial()
+    {
+        _interstitial = WX.CreateInterstitialAd(new WXCreateInterstitialAdParam { adUnitId = InterstitialId });
+        _interstitial.OnLoad(_ => _interstitialLoaded = true);
+        _interstitial.OnError(e =>
+        {
+            Debug.LogWarning("[WxAds] interstitial " + e?.errCode + " " + e?.errMsg);
+            _interstitialLoaded = false;
+        });
+        _interstitial.OnClose(FinishInterstitial);
+    }
+
+    /// <summary>显示了返回 true，广告关掉后调 onClosed（结算弹窗等它）；没显示返回 false，调用方照常继续。</summary>
+    public bool TryShowInterstitial(Action onClosed)
+    {
+        _breaks++;
+        float now = Time.realtimeSinceStartup;
+        if (now - _start < FirstInterstitialAfter || now - _lastFullScreenAd < InterstitialGap) return false;
+        if (_breaks < BreaksBetweenInterstitials || _interstitial == null || !_interstitialLoaded) return false;
+        _lastFullScreenAd = now;
+        _breaks = 0;
+        _interstitialLoaded = false;
+        _interstitialDone = onClosed;
+        AudioListener.pause = true;
+        _interstitial.Show(_ => { }, _ => FinishInterstitial());
+        Invoke(nameof(FinishInterstitial), 60f);         // 保险：关闭事件万一没来，游戏不能一直等下去
+        return true;
+    }
+
+    void FinishInterstitial()
+    {
+        CancelInvoke(nameof(FinishInterstitial));
+        AudioListener.pause = false;
+        var done = _interstitialDone;
+        _interstitialDone = null;
+        done?.Invoke();
+        _interstitial?.Load(_ => { }, _ => { });
+    }
+
+    // ---------- 横幅：只在留了位置的界面上显示；它出现、消失，按钮都不挪位置 ----------
+
+    /// <summary>进入、离开「有横幅的界面」时调用。进入那一刻横幅已经加载好才显示，位置一直留到离开。</summary>
+    public void SetBannerScreen(bool on)
+    {
+        _bannerReserved = on && _banner != null && _bannerLoaded;
+        float h = 0;
+        if (_bannerReserved)
+        {
+            var win = WX.GetWindowInfo();
+            float fromBottomCss = BottomInsetCss(win) + BannerWidthCss(win) * BannerAspect + BannerGapCss;
+            h = fromBottomCss * Screen.height / (float)win.windowHeight;
+        }
+        if (!Mathf.Approximately(h, BannerHeightScreenPx))
+        {
+            BannerHeightScreenPx = h;
+            BannerChanged?.Invoke();
+        }
+        RefreshBanner();
+    }
+
+    /// <summary>有弹窗、或这一局已经结束时传 true：藏起横幅，留的位置不动。可以每帧调用。</summary>
+    public void SetBannerSuppressed(bool suppressed)
+    {
+        if (_bannerSuppressed == suppressed) return;
+        _bannerSuppressed = suppressed;
+        RefreshBanner();
+    }
+
+    bool BannerShouldShow => _bannerReserved && !_bannerSuppressed && _banner != null && _bannerLoaded;
+
+    void RefreshBanner()                        // 藏是立刻藏；显示要晚 BannerShowDelay
+    {
+        if (BannerShouldShow)
+        {
+            if (!_bannerShowing) _bannerShowAt = Time.realtimeSinceStartup + BannerShowDelay;
+            return;
+        }
+        _bannerShowAt = -1f;
+        if (!_bannerShowing) return;
+        _bannerShowing = false;
+        _banner?.Hide(_ => { }, _ => { });
+    }
+
+    void Update()
+    {
+        if (_bannerShowAt < 0 || Time.realtimeSinceStartup < _bannerShowAt) return;
+        _bannerShowAt = -1f;
+        if (!BannerShouldShow || _bannerShowing) return;
+        _bannerShowing = true;
+        _banner.Show(_ => { }, _ => _bannerShowing = false);
+    }
+
+    static float BannerWidthCss(WindowInfo win) => Mathf.Min((float)win.windowWidth, BannerMaxWidthCss);
+
+    static float BottomInsetCss(WindowInfo win) // 底部安全区（手势条）的高度
+    {
+        float safeBottom = (float)win.safeArea.bottom;
+        return safeBottom > 0 ? Mathf.Max(0f, (float)win.windowHeight - safeBottom) : 0f;
+    }
+
+    void CreateBanner()
+    {
+        if (_banner != null || string.IsNullOrEmpty(BannerId)) return;
+        var win = WX.GetWindowInfo();
+        if (win.windowHeight / win.windowWidth < 1.9) return;   // 16:9 的屏和平板：这一条的高度要从游戏画面里挤，不放
+        float width = BannerWidthCss(win), height = width * BannerAspect;
+        _bannerLoaded = false;
+        _banner = WX.CreateCustomAd(new WXCreateCustomAdParam
+        {
+            adUnitId = BannerId,
+            adIntervals = 30,                   // 自动换素材的间隔（秒）
+            style = new CustomStyle             // 逻辑像素。底部居中，贴着安全区上沿；建好以后位置不再变
+            {
+                left = Mathf.RoundToInt(((float)win.windowWidth - width) / 2f),
+                top = Mathf.RoundToInt((float)win.windowHeight - BottomInsetCss(win) - height),
+                width = Mathf.RoundToInt(width),
+            },
+        });
+        _banner.OnLoad(_ => _bannerLoaded = true);   // 这里不显示：等下一次 SetBannerScreen(true)
+        _banner.OnError(e =>
+        {
+            Debug.LogWarning("[WxAds] banner " + e?.errCode + " " + e?.errMsg);
+            if (_bannerLoaded) return;          // 换素材失败：上一条还在
+            DropBanner();
+            Invoke(nameof(CreateBanner), 60f);
+        });
+        _banner.OnClose(() =>                   // 玩家自己关掉的：这个界面里空位留着，过一阵再建
+        {
+            DropBanner();
+            Invoke(nameof(CreateBanner), 90f);
+        });
+    }
+
+    void DropBanner()
+    {
+        _banner?.Destroy();
+        _banner = null;
+        _bannerLoaded = _bannerShowing = false;
+        _bannerShowAt = -1f;
+    }
 #else
-    public static void Init() { }
-    public static bool CanShowRewarded => false;
-    public static void ShowRewarded(Action<bool> onDone) => onDone(false);
-    public static void ShowInterstitial() { }
-    public static void ShowBottomCustomAd() { }
-    public static void HideBottomCustomAd() { }
+    void Init() { }
+    public bool RewardedReady => false;
+    public void ShowRewarded(Action<bool> onDone) => onDone?.Invoke(false);
+    public bool TryShowInterstitial(Action onClosed) => false;
+    public void SetBannerScreen(bool on) { }
+    public void SetBannerSuppressed(bool suppressed) { }
 #endif
 }
 ```
 
-**激励视频** `[官方]`（[激励视频广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/rewarded-video-ad.html)）
+**游戏这边怎么接** `[实测]`
+- 激励视频：
+  - 入口文字写明要看视频，例如「看视频：+3次提示」「观看视频立即解锁」。
+  - 打开入口时看 `RewardedReady`，没准备好就把按钮换成「暂时没有可播放的视频」。
+  - `onDone(true)` 才发奖励。
+- 插屏：
+  - 在一局结束的结算动画播完时调用，例如 `if (!WxAds.I.TryShowInterstitial(ShowResult)) ShowResult();`。显示了插屏，结算弹窗就等它关掉再出。
+  - 不要在「下一关」「返回」这类按钮的点击里调用。安卓上常见的这种写法，在微信里正好是规范禁止的。
+  - 玩家在结算动画期间已经离开这个界面时，不要再调。
+- 横幅：
+  - 只放在给它留了位置的界面上。实测只放在游戏进行的界面，列表和首页不放：横幅盖在一列可点的卡片上，容易误触。
+  - 进这个界面时调 `SetBannerScreen(true)`，离开时调 `SetBannerScreen(false)`。界面订阅 `BannerChanged`，把贴底的按钮栏整体上移 `BannerHeightScreenPx`（先减掉底部安全区的高度，再换算成画布单位）。
+  - 每帧调 `SetBannerSuppressed(有弹窗 || 这一局已经结束)`。弹窗的按钮可能离横幅很近，结算时又要出插屏。
+- 播放激励视频和插屏期间暂停声音，回调里恢复，示例里用的是 `AudioListener.pause`。
+
+**横幅的几个事实** `[实测]`
+- 20:7 横幅卡片会按 `style.width` 缩放：宽 350 时实测高约 121（逻辑像素）。`adIntervals` 是自动换素材的间隔，实测设 30 秒。
+- SDK 的 `WXCustomAd` 读不到广告的实际尺寸，高度要自己按 20:7 算。
+- 这么高的一条放在 16:9 的屏上会挤掉游戏画面，所以示例在高宽比小于 1.9 的屏幕上不建横幅。
+
+**激励视频的几个事实** `[官方]`（[激励视频广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/rewarded-video-ad.html)）
 - 激励视频是全局单例，只创建一次，`OnClose` 也只注册一次。重复注册会导致一次关闭发好几次奖励。
-- 只有 `isEnded == true` 才发奖励，中途关闭不给。
 - C# 收到的回调对象由 SDK 拼出来，不会是 null。所以不要照搬 JS 示例里的 `res === undefined` 分支：在 2.1.0 以下的基础库，`isEnded` 会是 false。
 - 自动拉取失败后，`Show` 会走失败回调，要先 `Load` 再 `Show`。
 - 每个用户每天能看的激励视频次数有限，所以按钮要能接受「暂时没有可播放的视频」。
@@ -226,25 +454,32 @@ public static class WxAds
 
 **服务端校验**：可选。在流量主后台开启「服务端奖励回调」，需要服务器，单机游戏一般不用 `[官方]`（[激励广告反作弊](https://developers.weixin.qq.com/minigame/dev/guide/security/antiadcheat.html)）。
 
-**插屏**
-- 实测的节奏：开局 180 秒内不出；两次之间至少 150 秒、至少隔两次断点；看完激励视频后，插屏重新计时。这个节奏是游戏自己定的，不是平台规定。
-- 平台的规定是：不能在点「开始/继续游戏」时弹，不能挡住功能按钮（[运营规范](https://developers.weixin.qq.com/minigame/product/) 3.2.10）`[官方]`。
+**插屏的几个事实**
+- 组件创建后会自己拉一次广告，用户关掉后会拉下一条 `[官方]`（[插屏广告](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/ad/interstitialAd-ad.html)）。
+- 示例里的节奏（开局 180 秒内不出，两次全屏广告之间至少 150 秒、至少隔两局）是游戏自己定的，不是平台规定。
 
-**Banner**
-- 实测游戏用的是 `WX.CreateFixedBottomMiddleBannerAd(adUnitId, 30, height)`，编译通过。
-- 但官方原文：「从基础库 3.5.5 开始，本接口停止维护，请使用原生模板广告 wx.createCustomAd 代替」。
-- 新代码用上面的原生模板广告。模板实际高度随模板变化，示例里的 120 只是示意，要按真机效果调整。
+### 怎么测
 
-**怎么测**
-- 开通流量主之前：确认 ID 为空时按钮提示没有视频，游戏不卡、不报错。
-- 开通之后：用体验版或线上版在真机上测三件事：
-  1. 中途关闭不发奖励；
-  2. 看完才发奖励；
-  3. 没广告时 `Show` 失败，`Load` 之后再 `Show` 的流程正常。
-- 开发者工具能不能出测试广告，**未确认**。
+**开通之前**：确认 ID 为空时按钮提示没有视频，游戏不卡、不报错。
 
-**收入** `[官方]`（[商业化](https://developers.weixin.qq.com/minigame/introduction/commercialization/)、[广告变现激励政策](https://developers.weixin.qq.com/minigame/introduction/commercialization/guide/ad-monetization.html)）
-- IAA 游戏现金分成 50%。
+**开通之后，先在开发者工具里测** `[实测]`
+- 模拟器里三种广告都会出，而且是**真实的广告素材**。每种只看一两次，广告内容一下都不要点。
+- 实测走过的检查：
+  1. 横幅：只在该出现的界面出现；量一下它和按钮之间的空隙；打开弹窗时消失，关掉后回来，按钮位置始终不动。
+  2. 激励视频：左上角从「N 秒后可获得奖励」变成「已获得奖励」后点「关闭」，奖励到账；计时类的数值没有在播放期间多走。
+  3. 插屏：按游戏的节奏等够时间，过一局，先出插屏；点它右上角的 × 之后才出结算弹窗。
+- 控制台里的 `SystemError (appServiceSDKScriptError) {"err_code":-1,"errMsg":"operateWXDataForAd:fail system apperror"}` 是模拟器自己的，栈全在 `WAGame.js` 里，可以忽略。
+- 点模拟器画布要用全屏控制，见 [troubleshooting.md](troubleshooting.md#开发者工具和模拟器)。
+
+**再请用户用体验版在真机上看一遍**
+- 中途关闭激励视频不发奖励，看完才发。
+- 没有广告可播时，入口提示没有视频，游戏照常。
+- 真机上暂时没有广告不一定是代码的问题：广告组件第一次上线要过组件审核，见上面「建广告位」。
+
+### 收入 `[官方]`
+
+来源：[商业化](https://developers.weixin.qq.com/minigame/introduction/commercialization/)、[广告变现激励政策](https://developers.weixin.qq.com/minigame/introduction/commercialization/guide/ad-monetization.html)、[小游戏广告组件](https://ad.weixin.qq.com/docs/236)。
+- 普通小游戏按单日广告收入流水的 50% 分成，不设上限；实际分成以后台「数据统计」页为准。
 - 半月结算，在「流量主 → 财务管理」查看。
 - 激励政策会调整，以页面为准。
 - 个人不用开发票，腾讯代扣代缴个税。财务资料、结算时间和到账见 [payouts.md](payouts.md)。

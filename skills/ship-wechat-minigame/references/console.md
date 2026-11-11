@@ -19,7 +19,7 @@
 
 **跳转页面要带 token**
 - 后台网址都要带 `token=<MP会话token>&lang=zh_CN`，token 每次会话都不一样。
-- 不要记 token。在已登录的标签页里读当前 URL 的 token，再拼出目标地址：
+- 不要记 token。在已登录的标签页里读当前 URL 的 token，再拼出目标地址。用以前记下的 token 拼地址，页面会显示「登录超时，请重新登录」；这时登录本身没掉，重新打开 mp.weixin.qq.com 首页就回来了 `[实测]`。
 
   ```js
   const t = new URL(location.href).searchParams.get('token');
@@ -40,7 +40,10 @@
 | 小游戏备案&发布流程指引 | `/wxamp/subApp/game/minigame_new_setting/record/step?type=2` |
 | 小游戏备案表单 | `/wxamp/subApp/game/minigame/new-pre-approval-file?status=1` |
 | 小程序备案表单（「验证备案类型」，提交后显示审核状态和「撤回备案」） | `/wxamp/webpocnew/verifyRecord` |
-| 流量主 | `/wxopen/frame?t=promotion/promotion_frame&page=applet/open` |
+| 流量主（开通前后都只显示开通条件，看不出开没开通） | `/wxopen/frame?t=promotion/promotion_frame&page=applet/open` |
+| 流量主概览（开通后，从左侧菜单「流量主」进来就是它） | `/wxopen/frame?t=promotion/promotion_frame&page=applet/overview` |
+| 流量主 → 广告管理 | `/wxopen/frame?t=promotion/promotion_frame&page=applet/index` |
+| 流量主 → 财务管理 | `/wxopen/frame?t=promotion/promotion_frame&page=applet/recharge` |
 | 运营素材管理（游戏简介、封面、推广图等，见 [listing.md](listing.md#运营素材)） | `/wxamp/subApp/game/minigame/material_resource_management` |
 | 详细推广图上传页（从运营素材管理的「前往修改」进入） | `/wxamp/subApp/game/old_minigame_setting/gameset?pageR=gameset&mod=promot&type=vertical`（横版是 `type=horizontal`） |
 | 推广视频列表（运营素材管理 → 推广视频） | `/wxamp/subApp/game/minigame/material-resource-management-material-video-list` |
@@ -190,5 +193,10 @@
 ## 流量主
 
 入口：「功能 → 流量主」。开通条件见 [capabilities.md](capabilities.md#广告流量主)。上线前点不开，这是正常的。
+
+开通后 `[实测]`：
+- 页签是概览、广告管理、数据统计、合作计划、财务管理、权限管理、公告消息。
+- 第一次进会弹欢迎弹窗，接着可能弹「服务协议更新，请确认同意」。同意协议留给用户点。
+- 建广告位在「广告管理 → 广告位管理」，见 [capabilities.md](capabilities.md#建广告位-实测)。
 
 开通后的财务资料和结算在「流量主 → 财务管理」，见 [payouts.md](payouts.md)。

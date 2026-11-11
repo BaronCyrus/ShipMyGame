@@ -33,6 +33,8 @@
 | UnityPlugin 升到 1.3.16 后起不来，报 `gameManager.onLaunchProgress is not a function` `[实测-失败]` | 插件版本和 SDK v0.1.34 不配套 | 回退到导出时的 1.3.14；以后不要点「插件有更新」 |
 | `cli islogin` 报「工具的服务端口已关闭」 `[实测-失败]` | 服务端口默认关闭 | 请用户在「设置 → 安全设置」里打开；或者改用 miniprogram-ci，或者用 computer use 操作界面 |
 | computer use 点模拟器没反应 | 后台无障碍点击对 canvas 无效 | 申请全屏控制，做真实的鼠标点击；拖动要用按下、移动、抬起的事件序列 |
+| 接了广告后，控制台报 `SystemError (appServiceSDKScriptError) {"err_code":-1,"errMsg":"operateWXDataForAd:fail system apperror"}` `[实测]` | 模拟器自己的广告数据上报失败，栈全在 `WAGame.js` 里 | 可以忽略。游戏打的广告错误日志才要看 |
+| 模拟器里出现了真实的广告 `[实测]` | 开发者工具用真实广告位 ID 拉到的就是真实素材 | 每种只看一两次，不点广告内容：自己制造曝光和点击是违规，见 [capabilities.md](capabilities.md#先读规范再接) |
 | 想在自己电脑上看到审核员看到的第一次打开 | 自己的手机和模拟器里都有资源缓存，资源包也常常先到 | 用 `scripts/wx_cold_start.py` 删缓存、让资源包晚到 12 秒，再编译、看结论、还原，步骤见 [build.md](build.md#b7不用手机复现第一次打开) |
 | 「工具 → 编译」后模拟器没变化，`wx_cold_start.py log` 显示的还是上一次启动的时间 | 实测那次开发者工具的登录已经过期：右上角显示「未登录」和登录二维码 | 请用户扫码重新登录，再编译 |
 
@@ -60,12 +62,14 @@
 | 备案的上传框用 `find` 或文件上传工具都找不到 `[实测-失败]` | `input[type=file]` 藏在 shadow root 里，而且是隐藏的 | 用本机中转法，再用 `DataTransfer` 赋值，见 [filing.md](filing.md#小游戏备案) |
 | 连续上传几栏截图，前面几栏的图被覆盖 `[实测-失败]` | 并行上传时，后传的覆盖了先传的 | 一次只传一栏，等缩略图出现再传下一栏 |
 | 点「保存」提示「保存失败」 | MP 登录过期了（实测页面开了约 17 小时） | 请用户扫码重新登录；草稿还在。长流程要趁用户在场时做完 |
+| 打开一个后台地址，显示「登录超时，请重新登录」，别的标签页却还登录着 `[实测-失败]` | 地址里的 token 是以前记下的，已经不是这次会话的 | 重新打开 mp.weixin.qq.com 首页，从当前地址里现读 token，见 [console.md](console.md#读后台的技巧) |
+| 进流量主页面后什么都点不了 `[实测]` | 弹着「服务协议更新，请确认同意」 | 同意协议留给用户点，点完再继续 |
 | 关掉一个过期的标签页，用户正在看的页面也没了 `[实测-失败]` | 关标签时把整个标签组都关了 | 只关自己新建的、确认无关的标签页 |
 | 备案第 2 步的系统 1 是「货币系统」 | 这是默认值 | 游戏里没有货币，就改成实际的系统 |
 | 小程序备案的「开始备案」、版本提审的「前往提交」是灰的 | 前面的步骤还没完成：资质、小游戏备案、微信认证 | 按 [filing.md](filing.md) 的顺序推进 |
 | 小程序备案提交后，「基本设置」里还是「去完善」，流程指引页还是「开始备案」 `[实测]` | 这两处不显示审核状态 | 看首页「备案与认证」里小程序备案的标签，见 [filing.md](filing.md#小程序备案icp) |
 | 隐私保护指引里「处理了用户信息」选不了 | 网络类型是单机 | 需要隐私接口时，先在「版本管理 → 网络类型设置」改成联网。备案前就要定好 |
 | 调用隐私接口报 104、112、1025、1026 `[官方]`（[隐私合规开发指南](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/privacy.html)） | 隐私指引里没声明这个接口，或者用户没同意 | 见 [capabilities.md](capabilities.md#隐私授权弹窗联网游戏才需要) |
-| 流量主「开通」点不了 `[官方]`（[小游戏流量主开通流程](https://ad.weixin.qq.com/docs/237)、[广告变现](https://developers.weixin.qq.com/minigame/introduction/commercialization/ad/)） | 累计 UV 没超过 100（开放文档还写 500，见 [capabilities.md](capabilities.md#开通条件-官方)），或者资格要第二天才刷新 | 上线后等用户量达标，第二天再试 |
+| 流量主「开通」点不了 `[官方]`（[小游戏流量主开通流程](https://ad.weixin.qq.com/docs/237)、[广告变现](https://developers.weixin.qq.com/minigame/introduction/commercialization/ad/)） | 累计 UV 没超过 100（开放文档还写 500，见 [capabilities.md](capabilities.md#开通)），或者资格要第二天才刷新 | 上线后等用户量达标，第二天再试 |
 | 想用接口提交审核，返回 87006 或 86000 `[官方]`（[提交代码审核](https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/code-management/api_submitaudit.html)） | 提审接口只给第三方平台用，而且小游戏不能用它提交 | 在网页上提交，见 [automation.md](automation.md#不能自动化的环节) |
 | 小游戏备案驳回，原因是「同名游戏已获批」 `[官方]`（[小游戏备案 Q4](https://developers.weixin.qq.com/minigame/introduction/guide/nrjs.html)） | 同名游戏已经先通过了主管部门审批 | 改名，新名字要和玩法相关；改名后小游戏备案要重新走 |
