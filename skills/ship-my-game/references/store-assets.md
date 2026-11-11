@@ -47,9 +47,11 @@ Unity 6 的默认 Activity 是 `com.unity3d.player.UnityPlayerGameActivity`，�
    - 编码参数：`-c:v libx264 -profile:v high -crf 17 -pix_fmt yuv420p -c:a aac -b:a 192k -ar 44100 -movflags +faststart`。
    - 平台要求有声轨、而你没有声音时，加一条静音音轨：`-f lavfi -i anullsrc`。
    - 用 `ffprobe` 核对时长、分辨率、帧率和体积，再交给用户看。
-6. 平台要求封面和视频同一比例时，用录屏里的一帧做底图（`ffmpeg -ss <秒> -i raw.mp4 -frames:v 1 cover.png`），再按渠道规则加游戏名或 logo。
+6. 封面和视频用同一比例。动手前先读渠道对封面的要求：
+   - 渠道要「主视觉」、不许出现按钮和界面元素时，不要用录屏帧：录屏里一定带着游戏的按钮。用游戏自己的美术另画一张，放 logo 和核心画面。
+   - 渠道接受游戏截图时，才用录屏里的一帧做底图（`ffmpeg -ss <秒> -i raw.mp4 -frames:v 1 cover.png`），再按渠道规则加游戏名或 logo。
 
-以上 `[实测]`：微信小游戏推广视频「实机画面」三套，见 [ship-wechat-minigame 的 listing.md](../../ship-wechat-minigame/references/listing.md#运营素材)。
+第 1～5 步 `[实测]`：微信小游戏推广视频「实机画面」三套。第 6 步：那三套的封面用的是录屏帧加 logo，全部被驳回 `[实测-失败]`；改成主视觉图后重新提交，结果待补。见 [ship-wechat-minigame 的 listing.md](../../ship-wechat-minigame/references/listing.md#运营素材)。
 
 ## 平台要求「在平台里截图」
 
