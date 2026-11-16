@@ -21,7 +21,7 @@ Google 会在 Google Play 上显示您的法定全名、所在国家/地区（�
 邓白氏编码（如果您的开发者账号是为政府组织或机构创建的，请参阅下文）
 组织名称
 组织地址
-Important: Applying for a D-U-N-S number through Dun & Bradstreet is a completely free process. Be aware of third-party services that may attempt to charge high administrative fees for this free registration.
+重要提示：通过邓白氏申请邓白氏编码是完全免费的。某些第三方服务可能会针对这项免费注册服务收取高额管理费。
 组织电话号码
 组织网站
 联系人姓名
@@ -35,7 +35,7 @@ Important: Applying for a D-U-N-S number through Dun & Bradstreet is a completel
 您的联系邮箱、联系电话号码、开发者邮箱和开发者电话号码必须通过动态密码进行验证，并且在您的开发者账号存续期间持续有效。如需了解详情，请参阅下方的最佳做法部分。
 什么是邓白氏编码？如何获取？
 邓白氏编码是具有唯一性的九位数标识符，由 Dun & Bradstreet 分配给各组织，广泛用于验证商家。组织可以通过 Dun & Bradstreet 平台查询名下是否已有邓白氏编码，如果没有的话可以免费申请一个。出于经营业务的需要，许多组织已拥有邓白氏编码。在申请新的邓氏编码之前，您应先检查组织是否已有邓氏编码。您可在 Dun & Bradstreet 官方网站中进行查询。如要详细了解邓白氏编码，您可以展开下文部分。
-Important: Applying for a D-U-N-S number through Dun & Bradstreet is a completely free process. Be aware of third-party services that may attempt to charge high administrative fees for this free registration.
+重要提示：通过邓白氏申请邓白氏编码是完全免费的。某些第三方服务可能会针对这项免费注册服务收取高额管理费。
 大型组织可能会有多个邓白氏编码，用于旗下的不同实体，因此您必须确保用于创建开发者账号的邓白氏编码中含有您希望与开发者账号相关联的组织详细信息。
 如果没有邓白氏编码，您可从 Dun & Bradstreet 网站申请一个。此过程最多可能需要 30 天，所以您应提前规划。如果没有邓氏编码，您将无法为组织创建开发者账号。
 如果我无法获取邓白氏编码，该怎么办？
@@ -78,7 +78,7 @@ Important: Applying for a D-U-N-S number through Dun & Bradstreet is a completel
 提示：如需详细了解付款信息验证，请访问 Google 付款中心帮助页面。
 更新付款资料以使用 Dun & Bradstreet 商家资料中的名称和地址
 如果您的开发者账号代表的是组织，您必须确保 Google 付款资料中的法定名称和地址与 Dun & Bradstreet 商家资料中的相应信息一致。这对维护您在 Google Play 上的开发者账号和应用的运行和可用状况至关重要。
-Important: Applying for a D-U-N-S number through Dun & Bradstreet is a completely free process. Be aware of third-party services that may attempt to charge high administrative fees for this free registration.
+重要提示：通过邓白氏申请邓白氏编码是完全免费的。某些第三方服务可能会针对这项免费注册服务收取高额管理费。
 您可在 Play 管理中心内查看 Google Play 开发者身份的付款资料信息：
 前往开发者账号页面。
 点击关于您，然后滚动到开发者资料部分。
